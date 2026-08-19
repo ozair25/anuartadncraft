@@ -6,13 +6,20 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
 import { getOrderById } from "@/lib/services/db-service"
-import { CheckCircle2, PackageCheck, ShoppingBag, ArrowRight } from "lucide-react"
+import { CheckCircle2, PackageCheck, ShoppingBag, ArrowRight, MessageCircle } from "lucide-react"
 
 export default function OrderSuccessPage({ params }: { params: Promise<{ orderId: string }> }) {
   const resolvedParams = use(params)
   const orderNumber = resolvedParams.orderId
 
   const order = getOrderById(orderNumber)
+
+  const savedPhone = typeof window !== "undefined" ? localStorage.getItem("anu_arts_whatsapp_phone") || "919000000000" : "919000000000"
+  const cleanPhone = savedPhone.replace(/[^0-9]/g, "")
+  const messageText = encodeURIComponent(
+    `Hello Anu Arts & Craft Store!\n\nI have placed order #${orderNumber} for ₹${order?.total || 0}.\nItems: ${order?.items?.map((i) => `${i.name} (x${i.quantity})`).join(", ")}\nCustomer: ${order?.userName || "Customer"}`
+  )
+  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${messageText}`
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -68,6 +75,15 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ orderId
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-xs font-bold shadow-md transition-all hover:scale-105"
+              >
+                <MessageCircle className="h-4 w-4" /> Confirm Order via WhatsApp
+              </a>
+
               <Link
                 href={`/track-order?id=${orderNumber}`}
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-6 py-2.5 text-xs font-bold text-foreground hover:bg-muted"

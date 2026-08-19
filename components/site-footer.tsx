@@ -1,105 +1,196 @@
-import { Camera, AtSign, Send, Share2, Phone, Mail, MapPin } from "lucide-react"
+"use client"
 
-const columns = [
-  {
-    title: "Shop",
-    links: ["All Products", "Painting", "Drawing", "Crafting", "DIY Kits", "Stationery"],
-  },
-  {
-    title: "Help",
-    links: [
-      "FAQs",
-      "Shipping & Delivery",
-      "Returns & Refunds",
-      "Terms & Conditions",
-      "Privacy Policy",
-      "Track Your Order",
-    ],
-  },
-  {
-    title: "About",
-    links: ["Our Story", "Blog", "Wholesale Enquiry", "Careers", "Contact Us"],
-  },
-]
-
-const socials = [Camera, AtSign, Send, Share2]
+import Link from "next/link"
+import { BrandLogo } from "@/components/brand-logo"
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  Camera,
+  MessageCircle,
+  Heart,
+  Sparkles,
+} from "lucide-react"
 
 export function SiteFooter() {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <footer className="bg-ink text-cream">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.2fr]">
-        {/* Brand */}
-        <div>
-          <p className="font-serif text-2xl font-black text-cream">ANU ARTS</p>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-cream/50">
-            Art &amp; Craft Supplies
-          </p>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream/60">
-            Your one-stop destination for quality art and craft supplies. Inspiring
-            creativity since day one.
-          </p>
-          <div className="mt-5 flex gap-3">
-            {socials.map((Icon, i) => (
-              <a
-                key={i}
-                href="#"
-                aria-label="Social link"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/20 text-cream/80 transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
-              >
-                <Icon className="h-4 w-4" />
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Link columns */}
-        {columns.map((col) => (
-          <div key={col.title}>
-            <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-cream">
-              {col.title}
-            </h3>
-            <ul className="space-y-2.5">
-              {col.links.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-sm text-cream/60 transition-colors hover:text-primary"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-
-        {/* Contact */}
-        <div>
-          <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-cream">
-            Contact
-          </h3>
-          <ul className="space-y-3 text-sm text-cream/60">
-            <li className="flex items-center gap-2">
-              <Phone className="h-4 w-4 shrink-0 text-primary" />
-              +91 98765 43210
-            </li>
-            <li className="flex items-center gap-2">
-              <Mail className="h-4 w-4 shrink-0 text-primary" />
-              hello@anuarts.in
-            </li>
-            <li className="flex items-start gap-2">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              G-1, Art Street, Creative Nagar, India - 452001
-            </li>
-          </ul>
-        </div>
+    <footer className="relative overflow-hidden bg-gradient-to-b from-[#fffaff] via-[#fdf2f8] to-[#fff8ee] text-stone-700 border-t border-pink-200/70 pt-14 pb-8">
+      
+      {/* Decorative Botanical Blossom Floral Branches on the edges with Pink and Amber accents */}
+      <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none opacity-60">
+        <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
+          <path
+            d="M 200 0 Q 150 50 120 120 Q 90 170 0 200"
+            stroke="#c084fc"
+            strokeWidth="1.5"
+            strokeDasharray="4 4"
+            opacity="0.4"
+          />
+          <circle cx="150" cy="40" r="10" fill="#f472b6" opacity="0.6" />
+          <circle cx="120" cy="100" r="8" fill="#fbbf24" opacity="0.6" />
+          <circle cx="60" cy="160" r="7" fill="#f97316" opacity="0.5" />
+        </svg>
+      </div>
+      
+      <div className="absolute bottom-0 left-0 w-52 h-52 pointer-events-none opacity-50">
+        <svg viewBox="0 0 200 200" fill="none" className="w-full h-full">
+          <circle cx="40" cy="160" r="14" fill="#f472b6" opacity="0.4" />
+          <circle cx="80" cy="180" r="9" fill="#fbbf24" opacity="0.4" />
+        </svg>
       </div>
 
-      <div className="border-t border-cream/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-cream/50 md:flex-row md:px-6">
-          <p>© 2024 Anu Arts. All Rights Reserved.</p>
-          <p>Made with love for creators.</p>
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
+        
+        {/* Main 4-Column Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-pink-200/70">
+          
+          {/* Column 1: Brand Info (4 Cols) */}
+          <div className="lg:col-span-4 space-y-4">
+            <BrandLogo size="md" variant="dark" showTagline={false} />
+            <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed max-w-sm">
+              Your one-stop destination for art and craft materials. Explore art
+              classes and a variety of creative workshops.
+            </p>
+            <p className="text-xs text-stone-500 font-medium pt-2">
+              © {currentYear} Anu Arts. All Rights Reserved.
+            </p>
+          </div>
+
+          {/* Column 2: Quick Links (2 Cols) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h3 className="font-serif text-sm sm:text-base font-bold text-stone-900">
+              Quick Links
+            </h3>
+            <ul className="space-y-2 text-xs sm:text-sm font-medium text-stone-600">
+              <li>
+                <Link href="/about" className="hover:text-[#7c2d8a] transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <a href="/#workshops-section" className="hover:text-[#7c2d8a] transition-colors">
+                  Workshops
+                </a>
+              </li>
+              <li>
+                <a href="/#gallery-section" className="hover:text-[#7c2d8a] transition-colors">
+                  Gallery
+                </a>
+              </li>
+              <li>
+                <Link href="/shop" className="hover:text-[#7c2d8a] transition-colors">
+                  Shop
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-[#7c2d8a] transition-colors">
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Contact Us (3 Cols) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h3 className="font-serif text-sm sm:text-base font-bold text-stone-900">
+              Contact Us
+            </h3>
+            <ul className="space-y-2.5 text-xs sm:text-sm font-medium text-stone-600">
+              <li className="flex items-start gap-2.5">
+                <MapPin className="h-4 w-4 text-[#d92672] shrink-0 mt-0.5" />
+                <span>30, Chandralok Colony, Indore</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone className="h-4 w-4 text-amber-600 shrink-0" />
+                <a href="tel:+919425356009" className="hover:text-[#7c2d8a] transition-colors">
+                  +91 94253 56009
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Mail className="h-4 w-4 text-[#7c2d8a] shrink-0" />
+                <a href="mailto:anuarts.indore@gmail.com" className="hover:text-[#7c2d8a] transition-colors">
+                  anuarts.indore@gmail.com
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Clock className="h-4 w-4 text-[#7c2d8a] shrink-0" />
+                <span>Mon – Sat: 10:00 AM – 7:00 PM</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Stay Connected (3 Cols) */}
+          <div className="lg:col-span-3 space-y-3">
+            <h3 className="font-serif text-sm sm:text-base font-bold text-stone-900">
+              Stay Connected
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed">
+              Follow us on Instagram for updates, reels &amp; creative inspiration!
+            </p>
+            
+            {/* Social Media Icons */}
+            <div className="flex items-center gap-3 pt-1">
+              <a
+                href="https://instagram.com/ANUARTANDCRAFTSTUDIO"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white border border-pink-200 text-stone-800 hover:text-[#d92672] hover:scale-110 flex items-center justify-center transition-all shadow-xs"
+                title="Instagram: @anuarts_studio"
+                aria-label="Instagram"
+              >
+                <Camera className="h-4 w-4" />
+              </a>
+
+              <a
+                href="https://wa.me/919425356009"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white border border-pink-200 text-stone-800 hover:text-emerald-600 hover:scale-110 flex items-center justify-center transition-all shadow-xs"
+                title="WhatsApp"
+                aria-label="WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4" />
+              </a>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                href="/admin"
+                className="text-[11px] font-bold text-purple-700 hover:underline"
+              >
+                🔐 Studio Admin Dashboard
+              </Link>
+            </div>
+          </div>
+
         </div>
+
+        {/* Bottom Attribution Bar */}
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500 font-medium">
+          <div className="flex items-center gap-4">
+            <Link href="/privacy-policy" className="hover:text-[#7c2d8a]">
+              Privacy Policy
+            </Link>
+            <span>•</span>
+            <Link href="/terms-conditions" className="hover:text-[#7c2d8a]">
+              Terms of Service
+            </Link>
+            <span>•</span>
+            <Link href="/shipping-policy" className="hover:text-[#7c2d8a]">
+              Shipping Policy
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-1 text-stone-700 font-semibold">
+            <span>Designed with</span>
+            <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500 inline" />
+            <span>for Creativity</span>
+          </div>
+        </div>
+
       </div>
     </footer>
   )

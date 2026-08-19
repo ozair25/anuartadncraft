@@ -4,729 +4,650 @@ import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  ChevronDown,
   Search,
   User,
   Heart,
   ShoppingBag,
   Menu,
   X,
-  LogOut,
-  PackageCheck,
+  Star,
+  Camera,
+  MessageCircle,
   Sparkles,
-  Paintbrush,
-  Palette,
-  Scissors,
-  Gift,
-  BookOpen,
-  Frame,
-  HelpCircle,
+  ChevronRight,
+  Shield,
+  PackageCheck,
+  LogIn,
+  UserPlus,
   MoreVertical,
-  ArrowRight,
-  ArrowLeft,
+  Home,
+  Info,
+  Palette,
+  Image as ImageIcon,
+  Calendar,
+  Phone,
   Compass,
 } from "lucide-react"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { useAuth } from "@/lib/context/auth-context"
+import { BrandLogo } from "@/components/brand-logo"
 
-const shopCategories = [
-  { label: "Painting Supplies", href: "/shop/painting", icon: Palette, desc: "Acrylics, oils, watercolors & brushes" },
-  { label: "Drawing & Sketching", href: "/shop/drawing", icon: Paintbrush, desc: "Pencils, markers, charcoal & sketchbooks" },
-  { label: "Crafting & DIY", href: "/shop/crafting", icon: Scissors, desc: "Clay, resin, adhesives & craft tools" },
-  { label: "DIY Art Kits", href: "/shop/diy-kits", icon: Gift, desc: "All-in-one starter kits for all ages" },
-  { label: "Stationery & Journals", href: "/shop/stationery", icon: BookOpen, desc: "Fine paper, notebooks & calligraphy" },
-  { label: "Decor & Framing", href: "/shop/decor-and-more", icon: Frame, desc: "Frames, canvases & wall decor" },
-]
+interface SiteHeaderProps {
+  onOpenCart?: () => void
+  onOpenBookClass?: () => void
+  onOpenStores?: () => void
+  onOpenNightMarket?: () => void
+}
 
 const navLinks = [
-  { label: "HOME", href: "/" },
-  { label: "SHOP", href: "/shop", hasDropdown: true },
-  { label: "KITS", href: "/shop/diy-kits" },
-  { label: "COLLECTIONS", href: "/collections" },
-  { label: "BLOG", href: "/blog" },
-  { label: "ABOUT US", href: "/about" },
-  { label: "CONTACT", href: "/contact" },
+  { label: "Home", href: "/", icon: Home },
+  { label: "About", href: "/about", icon: Info },
+  { label: "Workshops", href: "/workshops", icon: Palette },
+  { label: "Gallery", href: "/gallery", icon: ImageIcon },
+  { label: "Shop", href: "/shop", icon: ShoppingBag },
+  { label: "Events", href: "/events", icon: Calendar },
+  { label: "Contact", href: "/contact", icon: Phone },
 ]
 
-export function SiteHeader() {
+export function SiteHeader({
+  onOpenCart,
+  onOpenBookClass,
+  onOpenStores,
+  onOpenNightMarket,
+}: SiteHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [shopDropdownOpen, setShopDropdownOpen] = useState(false)
-  const [mobileShopExpand, setMobileShopExpand] = useState(true)
-  const [allPagesExpand, setAllPagesExpand] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
 
-  const headerRef = useRef<HTMLDivElement>(null)
-
-  const { totalItems, totalPrice } = useCart()
+  const { totalItems } = useCart()
   const { totalWishlist } = useWishlist()
   const { user, logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
 
-  // Automatically close all menus on route change
+  const headerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const moreMenuRef = useRef<HTMLDivElement>(null)
+
+  // Close menus on route change
   useEffect(() => {
     setMobileOpen(false)
-    setShopDropdownOpen(false)
     setUserMenuOpen(false)
+    setMoreMenuOpen(false)
     setSearchOpen(false)
   }, [pathname])
 
-  // Close menus on outside click/tap
+  // Close dropdowns when clicking outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent | TouchEvent) {
-      if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
-        setShopDropdownOpen(false)
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setUserMenuOpen(false)
-        setSearchOpen(false)
+      }
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+        setMoreMenuOpen(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
-    document.addEventListener("touchstart", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-      document.removeEventListener("touchstart", handleClickOutside)
-    }
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
-
-  // Programmatic navigation to guarantee reliable transitions on mobile
-  const handleNavigate = (href: string) => {
-    setMobileOpen(false)
-    setShopDropdownOpen(false)
-    setUserMenuOpen(false)
-    setSearchOpen(false)
-    router.push(href)
-  }
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      handleNavigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
       setSearchQuery("")
+      setSearchOpen(false)
+      setMobileOpen(false)
+    }
+  }
+
+  const handleCartClick = () => {
+    if (onOpenCart) {
+      onOpenCart()
+    } else {
+      router.push("/cart")
     }
   }
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 border-b border-border/60 bg-cream/95 backdrop-blur supports-[backdrop-filter]:bg-cream/80 shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-2.5 md:px-6 md:py-3">
-        {/* Brand / Logo */}
-        <div className="flex items-center gap-2.5">
-          {pathname !== "/" && (
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer shrink-0 shadow-sm"
-              title="Go Back to Previous Page"
-              aria-label="Go Back to Previous Page"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back</span>
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => handleNavigate("/")}
-            className="flex flex-col text-left leading-none group cursor-pointer focus:outline-none"
-          >
-            <span className="font-serif text-2xl font-black tracking-tight text-primary transition-colors group-hover:text-primary/80 md:text-3xl">
-              ANU ARTS
-            </span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-muted-foreground md:text-[10px]">
-              Art &amp; Craft Supplies
-            </span>
-          </button>
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-50 bg-[#fffaff]/95 backdrop-blur-md border-b border-pink-100/80 shadow-xs text-stone-900 transition-all"
+    >
+      {/* 1. Top Announcement Bar */}
+      <div className="bg-gradient-to-r from-purple-900 via-[#7c2d8a] via-[#d92672] via-pink-500 to-amber-500 text-white px-4 py-1.5 text-center text-xs font-semibold tracking-wide flex items-center justify-between md:justify-center gap-3 shadow-2xs">
+        <div className="flex items-center gap-1.5 mx-auto">
+          <Sparkles className="h-3.5 w-3.5 text-amber-300 fill-amber-300 shrink-0" />
+          <span className="hidden sm:inline">
+            ✨ Free Craft Kit on Workshop Registrations this week! Call +91 94253 56009
+          </span>
+          <span className="sm:hidden text-[11px] font-bold">
+            ✨ Free Delivery above ₹999 across India!
+          </span>
+        </div>
+        <a
+          href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%2C%20I%20would%20like%20to%20inquire%20about%20workshops%20and%20art%20supplies!"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden lg:inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all"
+        >
+          <MessageCircle className="h-3 w-3 text-emerald-300 fill-emerald-300" />
+          WhatsApp: +91 94253 56009
+        </a>
+      </div>
+
+      {/* 2. Main Navigation Bar */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 px-3 py-2 sm:px-6 md:px-8 md:py-2.5">
+        {/* Brand Logo (Left) */}
+        <div className="flex items-center gap-2 shrink-0 py-1">
+          <BrandLogo size="lg" showTagline={false} />
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary Navigation">
+        {/* Desktop Navigation Links (Center) */}
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[14px] font-semibold text-stone-700">
           {navLinks.map((link) => {
-            if (link.hasDropdown) {
-              return (
-                <div
-                  key={link.label}
-                  className="relative group"
-                  onMouseEnter={() => setShopDropdownOpen(true)}
-                  onMouseLeave={() => setShopDropdownOpen(false)}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setShopDropdownOpen((prev) => !prev)}
-                    className={`flex items-center gap-1 text-xs font-bold tracking-wider transition-colors py-2 cursor-pointer ${
-                      shopDropdownOpen || pathname.startsWith("/shop")
-                        ? "text-primary border-b-2 border-primary"
-                        : "text-foreground/85 hover:text-primary"
-                    }`}
-                  >
-                    {link.label}
-                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${shopDropdownOpen ? "rotate-180 text-primary" : ""}`} />
-                  </button>
+            const isActive =
+              link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)
 
-                  {/* Shop Mega Dropdown */}
-                  {shopDropdownOpen && (
-                    <div className="absolute left-0 top-full mt-1 w-[500px] rounded-xl border border-border bg-card p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                      <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-3">
-                        <span className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                          <Sparkles className="h-4 w-4 text-primary" /> Browse Categories
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleNavigate("/shop")}
-                          className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
-                        >
-                          All Products <ArrowRight className="h-3 w-3" />
-                        </button>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2">
-                        {shopCategories.map((cat) => {
-                          const IconComp = cat.icon
-                          return (
-                            <button
-                              key={cat.label}
-                              type="button"
-                              onClick={() => handleNavigate(cat.href)}
-                              className="flex items-start gap-3 rounded-lg p-2.5 text-left transition-colors hover:bg-secondary group/item cursor-pointer"
-                            >
-                              <div className="rounded-md bg-cream p-2 text-primary group-hover/item:bg-primary group-hover/item:text-primary-foreground transition-colors shrink-0">
-                                <IconComp className="h-4 w-4" />
-                              </div>
-                              <div>
-                                <p className="text-xs font-bold text-foreground group-hover/item:text-primary transition-colors">
-                                  {cat.label}
-                                </p>
-                                <p className="text-[10px] text-muted-foreground line-clamp-1">
-                                  {cat.desc}
-                                </p>
-                              </div>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )
-            }
-
-            const isActive = pathname === link.href
             return (
-              <button
+              <Link
                 key={link.label}
-                type="button"
-                onClick={() => handleNavigate(link.href)}
-                className={`text-xs font-bold tracking-wider transition-colors py-2 cursor-pointer ${
-                  isActive ? "text-primary border-b-2 border-primary" : "text-foreground/85 hover:text-primary"
+                href={link.href}
+                className={`relative py-1.5 transition-colors cursor-pointer ${
+                  isActive
+                    ? "text-[#7c2d8a] font-bold"
+                    : "text-stone-700 hover:text-[#7c2d8a]"
                 }`}
               >
                 {link.label}
-              </button>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#7c2d8a] rounded-full" />
+                )}
+              </Link>
             )
           })}
         </nav>
 
-        {/* Header Right Action Buttons */}
-        <div className="flex items-center gap-1 md:gap-2">
-          {/* Quick Shop CTA button on Desktop */}
-          <button
-            type="button"
-            onClick={() => handleNavigate("/shop")}
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer mr-1"
+        {/* Right Section: Socials + Search + Cart + Account + 3-Dots + Menu */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Social: Instagram (Desktop/Tablet) */}
+          <a
+            href="https://instagram.com/ANUARTANDCRAFTSTUDIO"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-full items-center justify-center text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 transition-colors"
+            title="Follow us on Instagram (@ANUARTANDCRAFTSTUDIO)"
+            aria-label="Instagram"
           >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Shop Supplies</span>
-          </button>
+            <Camera className="h-4 w-4" />
+          </a>
 
-          {/* Search Button */}
+          {/* Social: WhatsApp (Desktop/Tablet) */}
+          <a
+            href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%20Studio%2C%20I%20would%20like%20to%20inquire%20about%20workshops%20and%20art%20supplies!"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-full items-center justify-center text-stone-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+            title="Chat on WhatsApp (+91 94253 56009)"
+            aria-label="WhatsApp"
+          >
+            <MessageCircle className="h-4 w-4 text-emerald-600" />
+          </a>
+
+          {/* Search Trigger Icon (Functional on Mobile & Desktop) */}
           <button
             type="button"
-            aria-label="Search"
-            onClick={() => {
-              setSearchOpen((v) => !v)
-              setShopDropdownOpen(false)
-              setUserMenuOpen(false)
-            }}
-            className={`rounded-full p-2 transition-colors cursor-pointer ${
-              searchOpen ? "bg-primary text-primary-foreground" : "text-foreground/85 hover:bg-secondary hover:text-primary"
+            onClick={() => setSearchOpen(!searchOpen)}
+            className={`min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+              searchOpen
+                ? "bg-[#7c2d8a] text-white shadow-xs"
+                : "text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100"
             }`}
+            title="Search Products & Workshops"
+            aria-label="Search"
           >
-            <Search className="h-5 w-5" />
+            <Search className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
           </button>
 
-          {/* Account Menu Button */}
-          <div className="relative">
-            <button
-              type="button"
-              aria-label="Account Options"
-              onClick={() => {
-                setUserMenuOpen((v) => !v)
-                setShopDropdownOpen(false)
-                setSearchOpen(false)
-              }}
-              className={`flex items-center gap-1 rounded-full p-2 transition-colors cursor-pointer ${
-                userMenuOpen ? "bg-primary text-primary-foreground" : "text-foreground/85 hover:bg-secondary hover:text-primary"
-              }`}
-            >
-              <User className="h-5 w-5" />
-            </button>
-
-            {/* Account Dropdown Menu */}
-            {userMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border bg-card p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                {user ? (
-                  <>
-                    <div className="border-b border-border/60 pb-2 px-3 pt-2">
-                      <p className="text-xs font-extrabold text-foreground">{user.displayName || "Valued Artist"}</p>
-                      <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
-                    </div>
-                    <div className="py-1 space-y-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleNavigate("/profile")}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary text-left cursor-pointer"
-                      >
-                        <User className="h-4 w-4 text-primary" />
-                        <span>My Account &amp; Orders</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleNavigate("/track-order")}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary text-left cursor-pointer"
-                      >
-                        <PackageCheck className="h-4 w-4 text-primary" />
-                        <span>Track Order</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleNavigate("/wishlist")}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-foreground hover:bg-secondary text-left cursor-pointer"
-                      >
-                        <Heart className="h-4 w-4 text-primary" />
-                        <span>My Wishlist ({totalWishlist})</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          logout()
-                          setUserMenuOpen(false)
-                        }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-destructive hover:bg-destructive/10 text-left cursor-pointer"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="p-2 space-y-2">
-                    <p className="text-[11px] font-bold text-muted-foreground text-center">Welcome to Anu Arts!</p>
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate("/login")}
-                      className="block w-full rounded-lg bg-primary py-2 text-center text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer"
-                    >
-                      Sign In
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate("/register")}
-                      className="block w-full rounded-lg border border-border bg-secondary/50 py-2 text-center text-xs font-semibold text-foreground hover:bg-secondary transition-colors cursor-pointer"
-                    >
-                      Create Account
-                    </button>
-                    <div className="pt-2 border-t border-border/60 space-y-1">
-                      <button
-                        type="button"
-                        onClick={() => handleNavigate("/track-order")}
-                        className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-[11px] font-medium text-foreground hover:bg-secondary text-left cursor-pointer"
-                      >
-                        <PackageCheck className="h-3.5 w-3.5 text-primary" />
-                        <span>Track Order</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleNavigate("/faqs")}
-                        className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-[11px] font-medium text-foreground hover:bg-secondary text-left cursor-pointer"
-                      >
-                        <HelpCircle className="h-3.5 w-3.5 text-primary" />
-                        <span>Help &amp; FAQs</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Wishlist Button */}
-          <button
-            type="button"
+          {/* Wishlist Icon */}
+          <Link
+            href="/wishlist"
+            className="relative hidden md:flex min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full items-center justify-center text-stone-700 hover:text-pink-600 hover:bg-pink-50 transition-colors"
+            title="Wishlist"
             aria-label="Wishlist"
-            onClick={() => handleNavigate("/wishlist")}
-            className="relative rounded-full p-2 text-foreground/85 transition-colors hover:bg-secondary hover:text-primary cursor-pointer"
           >
-            <Heart className="h-5 w-5" />
+            <Heart className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
             {totalWishlist > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground shadow-sm">
+              <span className="absolute 1.5 top-1.5 -right-0.5 bg-pink-600 text-white text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center shadow-xs">
                 {totalWishlist}
               </span>
             )}
-          </button>
+          </Link>
 
-          {/* Cart Button */}
+          {/* Cart Icon / Clickable on Mobile & Desktop */}
           <button
             type="button"
-            aria-label="Shopping Cart"
-            onClick={() => handleNavigate("/cart")}
-            className="relative flex items-center gap-1.5 rounded-full p-2 text-foreground/85 transition-colors hover:bg-secondary hover:text-primary cursor-pointer"
+            onClick={handleCartClick}
+            className="relative min-w-[42px] min-h-[42px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100 transition-all cursor-pointer"
+            title="Shopping Cart"
+            aria-label="Cart"
           >
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingBag className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
             {totalItems > 0 && (
-              <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground shadow-sm">
+              <span className="absolute top-1 -right-0.5 bg-[#d92672] text-white text-[10px] font-black h-4 w-4 sm:h-4.5 sm:w-4.5 rounded-full flex items-center justify-center shadow-xs">
                 {totalItems}
               </span>
             )}
           </button>
 
-          {/* Mobile Hamburger Menu Toggle Button */}
+          {/* 3-Dots More Options Menu (Clickable on Mobile & Desktop) */}
+          <div ref={moreMenuRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+              className={`min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                moreMenuOpen
+                  ? "bg-[#7c2d8a] text-white shadow-xs"
+                  : "text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100"
+              }`}
+              title="More Options & Pages"
+              aria-label="More options"
+            >
+              <MoreVertical className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+            </button>
+
+            {/* 3-Dots Dropdown Menu */}
+            {moreMenuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-pink-100 bg-white p-2.5 shadow-2xl z-50 text-xs animate-in fade-in zoom-in-95">
+                <div className="px-3 py-2 border-b border-pink-50 flex items-center justify-between">
+                  <span className="font-bold text-stone-900 uppercase tracking-wider text-[10px] text-[#7c2d8a]">
+                    Quick Navigation
+                  </span>
+                  <span className="text-[10px] text-stone-400">Anu Arts</span>
+                </div>
+
+                <div className="py-1.5 space-y-1">
+                  {navLinks.map((item) => {
+                    const Icon = item.icon
+                    const isCurrent = pathname === item.href
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setMoreMenuOpen(false)}
+                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                          isCurrent
+                            ? "bg-purple-100 text-[#7c2d8a] font-bold"
+                            : "text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Icon className="h-3.5 w-3.5 text-[#7c2d8a]" />
+                          <span>{item.label} Page</span>
+                        </div>
+                        <ChevronRight className="h-3 w-3 text-stone-400" />
+                      </Link>
+                    )
+                  })}
+                </div>
+
+                <div className="pt-1.5 border-t border-pink-50 space-y-1">
+                  <Link
+                    href="/wishlist"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-stone-700 hover:bg-pink-50 hover:text-pink-600"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Heart className="h-3.5 w-3.5 text-pink-500" />
+                      <span>My Wishlist ({totalWishlist})</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/track-order"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a]"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <PackageCheck className="h-3.5 w-3.5 text-purple-600" />
+                      <span>Track Orders &amp; Shipments</span>
+                    </div>
+                  </Link>
+
+                  <a
+                    href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%20Studio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
+                      <span>WhatsApp Live Help</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* User Account Dropdown / Redirect */}
+          <div ref={dropdownRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className={`min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                userMenuOpen
+                  ? "bg-[#7c2d8a] text-white shadow-xs"
+                  : "text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100"
+              }`}
+              title="My Account"
+              aria-label="Account"
+            >
+              <User className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+            </button>
+
+            {/* Account Dropdown Menu */}
+            {userMenuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-pink-100 bg-white p-2 shadow-2xl z-50 text-xs animate-in fade-in zoom-in-95">
+                {user ? (
+                  <>
+                    <div className="px-3 py-2 border-b border-pink-50">
+                      <p className="font-bold text-stone-900 text-sm">
+                        {user.displayName || "Artist Account"}
+                      </p>
+                      <p className="text-[10px] text-stone-500 truncate">{user.email}</p>
+                    </div>
+                    <div className="py-1 space-y-0.5">
+                      <Link
+                        href="/profile"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
+                      >
+                        <User className="h-3.5 w-3.5 text-[#7c2d8a]" />
+                        <span>My Profile &amp; Orders</span>
+                      </Link>
+                      <Link
+                        href="/track-order"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
+                      >
+                        <PackageCheck className="h-3.5 w-3.5 text-stone-500" />
+                        <span>Track Shipments</span>
+                      </Link>
+                      <Link
+                        href="/admin"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-purple-700 font-bold"
+                      >
+                        <Shield className="h-3.5 w-3.5 text-purple-700" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    </div>
+                    <div className="pt-1 border-t border-pink-50">
+                      <button
+                        onClick={() => {
+                          logout()
+                          setUserMenuOpen(false)
+                        }}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-rose-50 text-rose-600 font-bold text-left cursor-pointer"
+                      >
+                        <LogIn className="h-3.5 w-3.5 text-rose-600" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="px-3 py-2 border-b border-pink-50">
+                      <p className="font-bold text-stone-900">Artist Portal</p>
+                      <p className="text-[10px] text-stone-500">Sign in to manage orders &amp; bookings</p>
+                    </div>
+                    <div className="py-1 space-y-0.5">
+                      <Link
+                        href="/login"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl bg-purple-50 text-[#7c2d8a] font-bold hover:bg-purple-100"
+                      >
+                        <LogIn className="h-3.5 w-3.5 text-[#7c2d8a]" />
+                        <span>Sign In</span>
+                      </Link>
+                      <Link
+                        href="/register"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
+                      >
+                        <UserPlus className="h-3.5 w-3.5 text-stone-500" />
+                        <span>Create Account</span>
+                      </Link>
+                      <Link
+                        href="/track-order"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
+                      >
+                        <PackageCheck className="h-3.5 w-3.5 text-stone-500" />
+                        <span>Track Order</span>
+                      </Link>
+                      <Link
+                        href="/admin"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-bold border-t border-pink-50"
+                      >
+                        <Shield className="h-3.5 w-3.5 text-stone-700" />
+                        <span>Admin Console</span>
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* "Book a Class ★" Primary Action Button (Desktop) */}
           <button
             type="button"
-            aria-label="Toggle Mobile Navigation Menu"
-            aria-expanded={mobileOpen}
-            onClick={() => {
-              setMobileOpen((prev) => !prev)
-              setUserMenuOpen(false)
-              setSearchOpen(false)
-              setShopDropdownOpen(false)
-            }}
-            className="flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-all lg:hidden cursor-pointer touch-manipulation z-50 ml-1"
+            onClick={onOpenBookClass || (() => router.push("/workshops"))}
+            className="hidden sm:inline-flex items-center gap-1.5 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs md:text-[13px] font-bold px-4 py-2 md:px-5 md:py-2.5 rounded-full shadow-md hover:shadow-purple-400/30 hover:scale-[1.02] transition-all cursor-pointer"
           >
-            {mobileOpen ? (
-              <>
-                <X className="h-5 w-5 text-primary" />
-                <span>Close</span>
-              </>
-            ) : (
-              <>
-                <Menu className="h-5 w-5" />
-                <span>Menu</span>
-              </>
-            )}
+            <span>Book a Class</span>
+            <Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />
+          </button>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="min-w-[40px] min-h-[40px] flex items-center justify-center text-stone-800 hover:text-[#7c2d8a] lg:hidden cursor-pointer rounded-full hover:bg-purple-50 active:bg-purple-100"
+            aria-label="Toggle Menu"
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
+      {/* 3. Mobile Navigation Header Bar (Shows all website pages horizontally in mobile view) */}
+      <div className="lg:hidden border-t border-pink-100/70 bg-[#fffaff] px-2 py-1.5 overflow-x-auto no-scrollbar scrollbar-none flex items-center gap-1.5">
+        {navLinks.map((link) => {
+          const isActive =
+            link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)
+          const Icon = link.icon
+
+          return (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+                isActive
+                  ? "bg-[#7c2d8a] text-white shadow-xs"
+                  : "bg-white/80 text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a] border border-pink-100/80 shadow-2xs"
+              }`}
+            >
+              <Icon className={`h-3 w-3 ${isActive ? "text-amber-300" : "text-[#7c2d8a]"}`} />
+              <span>{link.label}</span>
+            </Link>
+          )
+        })}
+      </div>
+
       {/* Expandable Search Input Bar */}
       {searchOpen && (
-        <div className="border-t border-border/60 bg-card px-4 py-3 shadow-inner z-50">
-          <form onSubmit={handleSearchSubmit} className="mx-auto flex max-w-2xl items-center gap-2">
+        <div className="border-t border-pink-100 bg-white/95 px-4 py-3 shadow-sm animate-in fade-in slide-in-from-top-2">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="mx-auto max-w-2xl relative flex items-center"
+          >
             <input
               type="text"
-              placeholder="Search art supplies, sketchbooks, paints, craft tools..."
+              placeholder="Search acrylic paints, resin kits, lippan supplies, workshops..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 rounded-full border border-border bg-background px-4 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
               autoFocus
+              className="w-full rounded-full border border-pink-200 bg-[#fffaff] py-2.5 pl-4 pr-12 text-xs sm:text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200"
             />
             <button
               type="submit"
-              className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition-opacity hover:opacity-90 cursor-pointer shrink-0"
+              className="absolute right-1.5 p-2 rounded-full bg-[#7c2d8a] text-white hover:bg-purple-800 transition-colors cursor-pointer"
             >
-              Search
+              <Search className="h-3.5 w-3.5" />
             </button>
           </form>
+          <div className="mx-auto max-w-2xl mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-stone-500">
+            <span className="font-semibold text-stone-700">Popular:</span>
+            {["Acrylic Paints", "Resin Kit", "Lippan Mirrors", "Watercolors", "DIY Kits", "Workshops"].map(
+              (term) => (
+                <button
+                  key={term}
+                  type="button"
+                  onClick={() => {
+                    router.push(`/search?q=${encodeURIComponent(term)}`)
+                    setSearchOpen(false)
+                  }}
+                  className="bg-purple-50 hover:bg-purple-100 text-[#7c2d8a] px-2.5 py-0.5 rounded-full font-medium transition-colors cursor-pointer"
+                >
+                  {term}
+                </button>
+              )
+            )}
+          </div>
         </div>
       )}
 
-      {/* Full Mobile Navigation Overlay Drawer */}
+      {/* Mobile Navigation Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-[56px] bottom-0 z-50 bg-cream/98 backdrop-blur-md border-t border-border/80 shadow-2xl overflow-y-auto lg:hidden animate-in slide-in-from-top-2 duration-200 pb-20">
-          <div className="p-4 space-y-5 max-w-md mx-auto">
-            
-            {/* Search Bar inside Drawer */}
-            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 bg-card p-1.5 rounded-xl border border-border/80 shadow-sm">
+        <div className="fixed inset-x-0 top-[115px] bottom-0 z-50 bg-white/98 backdrop-blur-md border-t border-pink-100 shadow-2xl overflow-y-auto p-4 lg:hidden">
+          <div className="space-y-4 pb-20">
+            {/* Search Input for Mobile */}
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <input
                 type="text"
-                placeholder="Search products, kits, supplies..."
+                placeholder="Search art supplies, DIY kits, workshops..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 rounded-lg bg-background px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
+                className="w-full rounded-full border border-pink-200 bg-purple-50/40 py-2.5 pl-4 pr-10 text-xs text-stone-800 focus:outline-none focus:border-[#7c2d8a]"
               />
               <button
                 type="submit"
-                className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground cursor-pointer shrink-0"
+                className="absolute right-1.5 p-2 rounded-full bg-[#7c2d8a] text-white cursor-pointer"
               >
-                Search
+                <Search className="h-3.5 w-3.5" />
               </button>
             </form>
 
-            {/* Header Title */}
-            <div className="flex items-center justify-between border-b border-primary/20 pb-2">
-              <span className="text-xs font-black uppercase tracking-wider text-primary flex items-center gap-1.5">
-                <Compass className="h-4 w-4 text-primary" />
-                All Available Pages &amp; Sections
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                Scroll to view
-              </span>
-            </div>
+            {/* Mobile Book Class CTA */}
+            <button
+              onClick={() => {
+                setMobileOpen(false)
+                if (onOpenBookClass) onOpenBookClass()
+                else router.push("/workshops")
+              }}
+              className="w-full flex items-center justify-center gap-2 bg-[#7c2d8a] text-white py-3 rounded-full text-xs font-bold shadow-md cursor-pointer"
+            >
+              <span>Book a Creative Class</span>
+              <Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />
+            </button>
 
-            {/* 1. Main Navigation */}
-            <div className="space-y-1.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
-                Main Pages
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/")}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-bold text-left transition-colors cursor-pointer ${
-                    pathname === "/" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/70 text-foreground hover:border-primary"
-                  }`}
-                >
-                  <span>Home</span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-60" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/shop")}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-bold text-left transition-colors cursor-pointer ${
-                    pathname === "/shop" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/70 text-foreground hover:border-primary"
-                  }`}
-                >
-                  <span>Shop All</span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-60" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/shop/diy-kits")}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-bold text-left transition-colors cursor-pointer ${
-                    pathname === "/shop/diy-kits" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/70 text-foreground hover:border-primary"
-                  }`}
-                >
-                  <span>DIY Kits</span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-60" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/collections")}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-bold text-left transition-colors cursor-pointer ${
-                    pathname === "/collections" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/70 text-foreground hover:border-primary"
-                  }`}
-                >
-                  <span>Collections</span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-60" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/blog")}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-bold text-left transition-colors cursor-pointer ${
-                    pathname === "/blog" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/70 text-foreground hover:border-primary"
-                  }`}
-                >
-                  <span>Blog</span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-60" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/about")}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-bold text-left transition-colors cursor-pointer ${
-                    pathname === "/about" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/70 text-foreground hover:border-primary"
-                  }`}
-                >
-                  <span>About Us</span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-60" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/contact")}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-bold text-left transition-colors cursor-pointer col-span-2 ${
-                    pathname === "/contact" ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/70 text-foreground hover:border-primary"
-                  }`}
-                >
-                  <span>Contact Us</span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-60" />
-                </button>
+            {/* Nav Links with Redirection */}
+            <div className="space-y-1 border-y border-pink-100 py-3">
+              <div className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a] px-3 pb-1">
+                Explore Website Pages
               </div>
+              {navLinks.map((link) => {
+                const Icon = link.icon
+                const isCurrent = pathname === link.href
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`w-full px-3 py-2.5 rounded-xl font-bold flex items-center justify-between text-sm transition-all cursor-pointer ${
+                      isCurrent
+                        ? "bg-purple-100 text-[#7c2d8a]"
+                        : "text-stone-800 hover:bg-purple-50 hover:text-[#7c2d8a]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center text-[#7c2d8a]">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <span>{link.label}</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-stone-400" />
+                  </Link>
+                )
+              })}
             </div>
 
-            {/* 2. Shop Categories (From Footer) */}
-            <div className="space-y-1.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
-                Shop Categories
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {shopCategories.map((cat) => {
-                  const IconComp = cat.icon
-                  return (
-                    <button
-                      key={cat.label}
-                      type="button"
-                      onClick={() => handleNavigate(cat.href)}
-                      className="flex items-center gap-2 p-2.5 rounded-xl bg-card border border-border/70 text-xs font-bold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                    >
-                      <IconComp className="h-4 w-4 text-primary shrink-0" />
-                      <span className="truncate">{cat.label}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* 3. Help & Policies (Exact Footer Links) */}
-            <div className="space-y-1.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
-                Help &amp; Policies (Footer)
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/faqs")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span>FAQs</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/shipping-policy")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span className="truncate">Shipping &amp; Delivery</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/refund-policy")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span className="truncate">Returns &amp; Refunds</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/terms-conditions")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span className="truncate">Terms &amp; Conditions</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/privacy-policy")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span className="truncate">Privacy Policy</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/track-order")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span className="truncate">Track Your Order</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-              </div>
-            </div>
-
-            {/* 4. About & Company Links (Exact Footer Links) */}
-            <div className="space-y-1.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
-                Company &amp; Info (Footer)
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/about")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span>Our Story</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/blog")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span>Blog &amp; Articles</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/contact")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span className="truncate">Wholesale Enquiry</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/about")}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border/70 text-xs font-semibold text-foreground hover:border-primary hover:text-primary transition-colors text-left cursor-pointer"
-                >
-                  <span>Careers</span>
-                  <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                </button>
-              </div>
-            </div>
-
-            {/* 5. Account & Shopping */}
-            <div className="space-y-1.5 pt-2 border-t border-border/60">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
-                User Account &amp; Cart
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/profile")}
-                  className="flex items-center gap-2 p-2.5 rounded-xl bg-secondary/80 border border-border/70 text-xs font-bold text-foreground hover:border-primary transition-colors text-left cursor-pointer"
-                >
-                  <User className="h-4 w-4 text-primary shrink-0" />
-                  <span>My Account</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/cart")}
-                  className="flex items-center gap-2 p-2.5 rounded-xl bg-secondary/80 border border-border/70 text-xs font-bold text-foreground hover:border-primary transition-colors text-left cursor-pointer"
-                >
-                  <ShoppingBag className="h-4 w-4 text-primary shrink-0" />
-                  <span>Cart ({totalItems})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/wishlist")}
-                  className="flex items-center gap-2 p-2.5 rounded-xl bg-secondary/80 border border-border/70 text-xs font-bold text-foreground hover:border-primary transition-colors text-left cursor-pointer"
-                >
-                  <Heart className="h-4 w-4 text-primary shrink-0" />
-                  <span>Wishlist ({totalWishlist})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate("/track-order")}
-                  className="flex items-center gap-2 p-2.5 rounded-xl bg-secondary/80 border border-border/70 text-xs font-bold text-foreground hover:border-primary transition-colors text-left cursor-pointer"
-                >
-                  <PackageCheck className="h-4 w-4 text-primary shrink-0" />
-                  <span>Track Order</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Close Drawer CTA Button */}
-            <div className="pt-4 text-center">
-              <button
-                type="button"
+            {/* Account & Quick Actions */}
+            <div className="space-y-2 pt-1">
+              <Link
+                href="/shop"
                 onClick={() => setMobileOpen(false)}
-                className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-opacity cursor-pointer"
+                className="flex items-center justify-center gap-2 w-full bg-purple-50 text-[#7c2d8a] border border-purple-200 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
               >
-                Close Menu
-              </button>
+                <ShoppingBag className="h-4 w-4" />
+                <span>Visit Online Store (1500+ Items)</span>
+              </Link>
+              <Link
+                href="/wishlist"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 w-full border border-pink-200 text-pink-700 bg-pink-50/50 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                <Heart className="h-4 w-4" />
+                <span>My Wishlist ({totalWishlist})</span>
+              </Link>
+              <Link
+                href="/profile"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 w-full border border-pink-200 text-stone-800 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                <User className="h-4 w-4" />
+                <span>My Account &amp; Orders</span>
+              </Link>
+              <Link
+                href="/track-order"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center gap-2 w-full border border-stone-200 text-stone-700 py-2.5 rounded-xl text-xs font-medium cursor-pointer"
+              >
+                <PackageCheck className="h-4 w-4" />
+                <span>Track Order &amp; Shipments</span>
+              </Link>
+              <a
+                href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%20Studio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full bg-emerald-600 text-white py-2.5 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span>Chat on WhatsApp (+91 94253 56009)</span>
+              </a>
             </div>
-
           </div>
         </div>
       )}
     </header>
   )
 }
+

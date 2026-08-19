@@ -1,0 +1,231 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 200" fill="none" className="w-full h-auto">
+  <defs>
+    <!-- Butterfly Gradients -->
+    <linearGradient id="butterflyPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B1FA2" />
+      <stop offset="60%" stop-color="#6A1B9A" />
+      <stop offset="100%" stop-color="#4A148C" />
+    </linearGradient>
+    <linearGradient id="butterflyLilac" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E1BEE7" />
+      <stop offset="100%" stop-color="#BA68C8" />
+    </linearGradient>
+
+    <!-- Eucalyptus Leaf Watercolor Gradients & Filters -->
+    <linearGradient id="eucLeaf1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8DBBA5" />
+      <stop offset="50%" stop-color="#5E967D" />
+      <stop offset="100%" stop-color="#3D6E57" />
+    </linearGradient>
+    <linearGradient id="eucLeaf2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B2D8C6" />
+      <stop offset="60%" stop-color="#7AAFA0" />
+      <stop offset="100%" stop-color="#4A7C6B" />
+    </linearGradient>
+    <linearGradient id="eucLeaf3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#68A288" />
+      <stop offset="100%" stop-color="#2D5843" />
+    </linearGradient>
+    <linearGradient id="eucStem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7E9F8E" />
+      <stop offset="100%" stop-color="#406351" />
+    </linearGradient>
+  </defs>
+
+  <!-- ==================== 1. PURPLE BUTTERFLY (LEFT) ==================== -->
+  <g id="butterfly-logo-mark" transform="translate(12, 10)">
+    <!-- Upper Main Wing (Outer Loop) -->
+    <path
+      d="M 125 108 C 115 80, 105 38, 126 22 C 145 7, 168 18, 168 42 C 168 70, 142 98, 125 108 Z"
+      fill="none"
+      stroke="url(#butterflyPurple)"
+      stroke-width="13"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+    <!-- Upper Wing Inner Petal (Lilac Fill) -->
+    <path
+      d="M 136 94 C 132 82, 129 65, 137 57 C 143 51, 150 56, 149 66 C 148 78, 141 89, 136 94 Z"
+      fill="url(#butterflyLilac)"
+      opacity="0.9"
+    />
+
+    <!-- Left Large Wing (Outer Loop) -->
+    <path
+      d="M 115 110 C 85 108, 22 96, 16 68 C 10 42, 45 35, 78 52 C 106 67, 118 95, 115 110 Z"
+      fill="url(#butterflyPurple)"
+    />
+    <!-- Left Large Wing Inner Cutout Shape -->
+    <path
+      d="M 98 94 C 82 86, 42 70, 36 60 C 32 52, 46 47, 65 55 C 84 64, 98 83, 98 94 Z"
+      fill="#FFFFFF"
+    />
+
+    <!-- Lower Wing (Outer Loop) -->
+    <path
+      d="M 116 118 C 95 125, 68 142, 68 160 C 68 178, 92 184, 106 172 C 122 158, 124 132, 116 118 Z"
+      fill="none"
+      stroke="url(#butterflyPurple)"
+      stroke-width="11"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+    <!-- Lower Wing Inner Petal (Lilac Fill) -->
+    <path
+      d="M 111 128 C 98 136, 86 148, 88 158 C 90 164, 100 163, 106 156 C 112 147, 112 135, 111 128 Z"
+      fill="url(#butterflyLilac)"
+      opacity="0.9"
+    />
+
+    <!-- Butterfly Antennae & Head Dots -->
+    <!-- Top Antenna -->
+    <path
+      d="M 134 98 C 148 94, 165 85, 175 72 C 182 63, 182 52, 172 52 C 165 52, 164 60, 168 64"
+      fill="none"
+      stroke="url(#butterflyPurple)"
+      stroke-width="3.5"
+      stroke-linecap="round"
+    />
+    <circle cx="170" cy="58" r="4.5" fill="#6A1B9A" />
+
+    <!-- Bottom Antenna -->
+    <path
+      d="M 136 106 C 152 108, 172 110, 185 104 C 195 99, 196 90, 188 88 C 182 86, 180 93, 184 96"
+      fill="none"
+      stroke="url(#butterflyPurple)"
+      stroke-width="3.2"
+      stroke-linecap="round"
+    />
+    <circle cx="186" cy="92" r="4" fill="#6A1B9A" />
+
+    <!-- Butterfly Curved Body / Tail & Center Dot -->
+    <circle cx="127" cy="112" r="4.5" fill="#6A1B9A" />
+    <path
+      d="M 124 116 C 118 126, 110 138, 112 148 C 113 154, 118 152, 119 148"
+      fill="none"
+      stroke="url(#butterflyPurple)"
+      stroke-width="4"
+      stroke-linecap="round"
+    />
+    <circle cx="114" cy="151" r="3" fill="#6A1B9A" />
+  </g>
+
+  <!-- ==================== 2. BOTANICAL EUCALYPTUS WATERCOLOR SPRIG ==================== -->
+  <g id="eucalyptus-sprig" transform="translate(330, 8)">
+    <!-- Main Arching Stem -->
+    <path
+      d="M 32 122 C 34 100, 36 70, 48 44 C 54 30, 62 18, 70 8"
+      fill="none"
+      stroke="url(#eucStem)"
+      stroke-width="2.5"
+      stroke-linecap="round"
+    />
+    <!-- Left Branchlet -->
+    <path
+      d="M 40 85 C 26 78, 14 74, 2 72"
+      fill="none"
+      stroke="url(#eucStem)"
+      stroke-width="1.8"
+      stroke-linecap="round"
+    />
+    <!-- Right Branchlet -->
+    <path
+      d="M 46 56 C 58 52, 70 50, 82 52"
+      fill="none"
+      stroke="url(#eucStem)"
+      stroke-width="1.8"
+      stroke-linecap="round"
+    />
+
+    <!-- Eucalyptus Coin Leaves (Layered with realistic watercolor feel) -->
+    <!-- Topmost mini leaves -->
+    <path
+      d="M 68 8 C 72 2, 77 4, 76 10 C 75 16, 68 18, 66 12 Z"
+      fill="url(#eucLeaf2)"
+      opacity="0.85"
+    />
+    <path
+      d="M 63 15 C 68 11, 74 13, 73 19 C 72 24, 64 25, 61 20 Z"
+      fill="url(#eucLeaf1)"
+      opacity="0.9"
+    />
+
+    <!-- Upper Middle Leaves -->
+    <ellipse cx="56" cy="27" rx="7" ry="9" transform="rotate(-25 56 27)" fill="url(#eucLeaf2)" opacity="0.9" />
+    <ellipse cx="68" cy="32" rx="8" ry="10" transform="rotate(20 68 32)" fill="url(#eucLeaf1)" opacity="0.95" />
+    <ellipse cx="50" cy="42" rx="9" ry="11" transform="rotate(-35 50 42)" fill="url(#eucLeaf3)" opacity="0.92" />
+    <ellipse cx="64" cy="46" rx="10" ry="12" transform="rotate(30 64 46)" fill="url(#eucLeaf2)" opacity="0.9" />
+
+    <!-- Central Eucalyptus Cluster -->
+    <ellipse cx="42" cy="58" rx="11" ry="13" transform="rotate(-40 42 58)" fill="url(#eucLeaf1)" opacity="0.95" />
+    <ellipse cx="60" cy="62" rx="12" ry="14" transform="rotate(25 60 62)" fill="url(#eucLeaf3)" opacity="0.9" />
+    <ellipse cx="76" cy="54" rx="9" ry="11" transform="rotate(45 76 54)" fill="url(#eucLeaf2)" opacity="0.85" />
+
+    <!-- Left lower branch leaves -->
+    <path
+      d="M 12 75 C 6 68, 8 58, 18 60 C 26 62, 28 72, 20 78 Z"
+      fill="url(#eucLeaf2)"
+      opacity="0.9"
+    />
+    <path
+      d="M 2 72 C -3 66, 0 57, 8 58 C 15 59, 16 68, 9 73 Z"
+      fill="url(#eucLeaf1)"
+      opacity="0.85"
+    />
+    <ellipse cx="28" cy="74" rx="11" ry="13" transform="rotate(-20 28 74)" fill="url(#eucLeaf3)" opacity="0.92" />
+
+    <!-- Lower cluster leaves -->
+    <ellipse cx="38" cy="78" rx="12" ry="14" transform="rotate(-15 38 78)" fill="url(#eucLeaf1)" opacity="0.95" />
+    <ellipse cx="54" cy="82" rx="13" ry="15" transform="rotate(15 54 82)" fill="url(#eucLeaf2)" opacity="0.9" />
+    <ellipse cx="32" cy="96" rx="13" ry="15" transform="rotate(-30 32 96)" fill="url(#eucLeaf3)" opacity="0.92" />
+    <ellipse cx="48" cy="102" rx="14" ry="16" transform="rotate(20 48 102)" fill="url(#eucLeaf1)" opacity="0.95" />
+
+    <!-- Delicate leaf vein accents -->
+    <path d="M 48 44 Q 54 38 60 30" stroke="#FFFFFF" stroke-width="0.8" opacity="0.5" fill="none" />
+    <path d="M 42 58 Q 48 52 54 48" stroke="#FFFFFF" stroke-width="0.8" opacity="0.5" fill="none" />
+    <path d="M 32 96 Q 38 90 44 86" stroke="#FFFFFF" stroke-width="0.8" opacity="0.4" fill="none" />
+  </g>
+
+  <!-- ==================== 3. CALLIGRAPHIC SCRIPT: "Anu Arts" ==================== -->
+  <g id="anu-arts-wordmark" fill="#111827">
+    <!-- Wordmark rendered via precise vector path matching the custom script calligraphy -->
+    <!-- "Anu" -->
+    <!-- Capital 'A' Swash & Loop -->
+    <path
+      d="M 178 148 C 172 152, 160 156, 150 152 C 140 148, 138 136, 146 128 C 158 116, 182 118, 198 126 C 214 134, 218 152, 206 160 C 196 166, 178 166, 164 158 C 148 148, 144 128, 156 108 C 172 82, 208 58, 240 60 C 254 62, 260 74, 252 88 C 242 106, 222 136, 212 162 C 210 166, 216 168, 220 164 C 228 156, 234 140, 238 126 C 242 112, 245 92, 246 76 C 247 62, 240 54, 228 54 C 198 54, 166 84, 150 114 C 138 138, 140 162, 162 174 C 182 184, 210 182, 228 168 C 238 160, 242 148, 246 136 C 248 146, 256 156, 266 158 C 276 160, 286 154, 292 144 C 298 134, 300 120, 296 112 C 292 104, 282 108, 280 116 C 278 126, 276 138, 270 144 C 266 148, 260 146, 258 140 C 256 130, 260 116, 264 104 C 270 86, 278 72, 286 72 C 292 72, 290 82, 286 94 C 280 114, 272 136, 276 150 C 278 156, 284 158, 290 154 C 300 146, 308 132, 314 118 L 324 148 C 328 156, 336 160, 344 158 C 354 154, 362 142, 368 130 C 374 118, 378 104, 374 98 C 370 92, 362 96, 360 104 C 358 114, 354 126, 348 134 C 344 140, 338 140, 336 134 C 334 124, 338 112, 342 98 C 348 78, 356 64, 364 64 C 370 64, 368 76, 362 90 C 356 108, 348 132, 354 144 C 356 148, 362 148, 368 144 C 378 134, 386 118, 394 102 L 398 124 C 402 142, 414 156, 430 156 C 446 156, 458 142, 468 126 C 474 116, 470 108, 462 108 C 454 108, 448 118, 442 128 C 438 134, 432 136, 428 132 C 422 124, 422 110, 426 94 C 432 72, 442 56, 452 56 C 458 56, 456 68, 450 82 C 442 102, 434 126, 440 140 C 444 146, 452 146, 458 140 C 468 128, 476 112, 484 94 L 476 94 Z"
+    />
+
+    <!-- "Arts" -->
+    <!-- Capital 'A' of Arts -->
+    <path
+      d="M 436 132 C 428 146, 412 162, 394 162 C 382 162, 376 152, 382 138 C 392 116, 418 84, 446 62 C 464 48, 482 46, 492 56 C 500 64, 498 78, 488 94 C 476 114, 452 140, 436 158 C 426 170, 412 178, 396 178 C 374 178, 360 162, 366 138 C 374 108, 400 76, 428 54 C 448 38, 472 32, 490 40 C 508 48, 514 68, 502 92 C 490 116, 466 144, 448 162 C 442 168, 448 172, 454 168 C 466 158, 478 144, 488 128 C 494 118, 492 110, 484 110 C 476 110, 470 120, 462 132 L 458 142 Z"
+    />
+    <!-- 'r' -->
+    <path
+      d="M 496 142 C 494 148, 490 154, 484 154 C 478 154, 474 148, 476 138 C 480 122, 488 104, 496 90 C 500 82, 506 78, 514 80 C 522 82, 528 90, 524 98 C 520 106, 512 112, 506 114 C 508 112, 514 108, 520 106 C 528 104, 536 108, 538 116 C 540 126, 534 138, 526 146 C 518 154, 508 156, 502 150 C 498 146, 496 138, 498 130 C 502 114, 510 102, 514 102 C 516 102, 514 108, 510 116 C 504 128, 498 142, 496 150 Z"
+    />
+    <!-- 't' -->
+    <path
+      d="M 528 148 C 524 154, 518 156, 512 154 C 506 150, 508 138, 514 122 C 522 100, 534 68, 542 52 C 546 44, 554 44, 554 52 C 554 60, 548 76, 542 94 L 560 90 C 564 88, 568 92, 566 96 C 564 100, 558 104, 552 106 L 536 110 C 528 130, 522 144, 528 148 Z"
+    />
+    <!-- 's' -->
+    <path
+      d="M 552 142 C 548 148, 542 154, 534 154 C 526 154, 524 146, 528 136 C 534 120, 546 102, 558 92 C 566 84, 576 82, 582 88 C 588 94, 586 106, 578 118 C 568 132, 550 148, 536 154 C 532 156, 534 162, 540 160 C 554 154, 572 138, 584 122 C 594 108, 598 94, 590 84 C 580 72, 564 74, 550 86 C 536 98, 524 120, 518 138 C 512 158, 522 168, 538 166 C 550 164, 562 154, 570 142 L 552 142 Z"
+    />
+  </g>
+
+  <!-- ==================== 4. TRADEMARK (TM) ==================== -->
+  <g id="trademark-tm" transform="translate(562, 70)">
+    <text
+      x="0"
+      y="0"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="16"
+      font-weight="900"
+      fill="#111827"
+      letter-spacing="0.5"
+    >
+      TM
+    </text>
+  </g>
+</svg>

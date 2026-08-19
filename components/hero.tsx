@@ -1,115 +1,127 @@
 "use client"
 
-import { useState } from "react"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight, ShoppingBag, Palette, Users, GraduationCap } from "lucide-react"
 
-const CLOUDINARY_MOBILE_VIDEO = "https://res.cloudinary.com/dtrvyelcg/video/upload/v1784972309/Animation_of_rays_emerging_from_202607251445_infb4s.mp4"
-const CLOUDINARY_MOBILE = "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784924133/ChatGPT_Image_Jul_25_2026_01_45_19_AM_nsizt2.png"
-const CLOUDINARY_DESKTOP = "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784845911/ChatGPT_Image_Jul_24_2026_04_01_21_AM_lymb7u.png"
+interface HeroProps {
+  onExploreWorkshops?: () => void
+  onVisitStore?: () => void
+}
 
-export function Hero() {
-  const [mobileImgSrc, setMobileImgSrc] = useState(CLOUDINARY_MOBILE)
-  const [desktopImgSrc, setDesktopImgSrc] = useState(CLOUDINARY_DESKTOP)
-  const [mobileFailed, setMobileFailed] = useState(false)
-  const [desktopFailed, setDesktopFailed] = useState(false)
-
-  const handleMobileError = () => {
-    if (!mobileFailed) {
-      setMobileFailed(true)
-      setMobileImgSrc("/images/hero-mobile.png")
-    }
-  }
-
-  const handleDesktopError = () => {
-    if (!desktopFailed) {
-      setDesktopFailed(true)
-      setDesktopImgSrc("/images/hero-desktop.png")
+export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" })
     }
   }
 
   return (
-    <section className="relative overflow-hidden bg-cream">
-      {/* Full-bleed hero background (Mobile Video vs Desktop Image) */}
-      <div className="absolute inset-0">
-        {/* Mobile background video */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster={mobileImgSrc}
-          className="h-full w-full object-cover object-center opacity-100 sm:hidden"
-        >
-          <source src={CLOUDINARY_MOBILE_VIDEO} type="video/mp4" />
-          {/* Fallback image if video is not supported */}
-          <img
-            src={mobileImgSrc}
-            onError={handleMobileError}
-            alt="Anu Arts Mobile Hero Banner"
-            className="h-full w-full object-cover object-center"
-          />
-        </video>
-        {/* Desktop background image */}
+    <section className="relative overflow-hidden bg-[#fffaff] text-stone-900 pt-6 pb-12 sm:py-14 lg:py-16">
+      
+      {/* 1. Hero Wallpaper Background Provided by User - 79% Opacity */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Mobile Background Image */}
         <img
-          src={desktopImgSrc}
-          onError={handleDesktopError}
-          alt="Anu Arts Hero Banner - Art, Craft & DIY Supplies"
-          className="hidden h-full w-full object-cover object-center opacity-100 sm:block"
-          referrerPolicy="no-referrer"
-          decoding="async"
+          src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787169984/ChatGPT_Image_Aug_20_2026_01_30_21_AM_zj2nzx.png"
+          alt="Hero Wallpaper Mobile Background"
+          className="block sm:hidden w-full h-full object-cover object-center opacity-[0.79]"
+        />
+        {/* Desktop / Tablet Background Image */}
+        <img
+          src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787168731/ChatGPT_Image_Aug_20_2026_01_14_57_AM_rpgvwn.png"
+          alt="Hero Wallpaper Background"
+          className="hidden sm:block w-full h-full object-cover object-center opacity-[0.79]"
         />
       </div>
 
-      <div className="relative mx-auto grid min-h-[420px] max-w-7xl items-center gap-8 -mt-[25px] sm:mt-0 md:-mt-[47px] -ml-[9px] sm:ml-0 md:ml-[77px] pt-[55px] pb-14 sm:py-14 md:py-20 px-4 md:px-6 md:min-h-[520px] lg:min-h-[560px] lg:grid-cols-2">
-        {/* Copy shifted left with drop shadow for legibility over full bright background */}
-        <div className="relative z-10 max-w-xl py-2 pl-0 sm:pl-2">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-cream/95 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-primary shadow-md">
-            <Sparkles className="h-3.5 w-3.5" />
-            Art &middot; Craft &middot; DIY
-          </span>
-          <h1 className="font-serif text-[42px] leading-[46.4px] font-bold text-left text-[#000000] text-balance md:text-6xl lg:text-7xl md:font-black md:leading-[1.05] md:text-foreground drop-shadow-[0_2px_10px_rgba(255,255,255,0.9)]">
-            Every <span className="italic text-[#ff0414]">Masterpiece</span> Starts With Imagination.
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
+        <div className="max-w-2xl flex flex-col items-start text-left space-y-6 sm:space-y-7">
+          
+          {/* Tagline / Eyebrow with Purple-to-Yellow-Orange gradient accent */}
+          <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a] bg-white/80 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-pink-200/80 shadow-2xs">
+            <span className="bg-gradient-to-r from-[#7c2d8a] via-[#d92672] to-[#f59e0b] bg-clip-text text-transparent">
+              CREATE. LEARN. INSPIRE.
+            </span>
+            <span className="w-8 h-[2.5px] bg-gradient-to-r from-[#7c2d8a] via-[#d92672] via-pink-400 to-[#f59e0b] rounded-full" />
+          </div>
+
+          {/* Main Headline (Exact Layout & Typography) */}
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[60px] font-black text-stone-900 leading-[1.12] tracking-tight drop-shadow-xs">
+            Where Your
+            <br />
+            Ideas{" "}
+            <span className="font-script text-[#fb8404] font-bold italic text-5xl sm:text-6xl lg:text-[76px] tracking-normal inline-block ml-1">
+              Come to Life.
+            </span>
           </h1>
-          <p
-            className="mt-6 max-w-md leading-relaxed text-[#f2e9c8] font-bold text-left italic md:not-italic md:text-foreground md:font-semibold md:font-sans drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)] md:drop-shadow-[0_1px_8px_rgba(255,255,255,0.9)] no-underline"
-            style={{ fontFamily: 'var(--font-mobile-tnr, "Times New Roman", Times, serif)' }}
-          >
-            Browse through an extensive collection of crafting tools, DIY kits, and seasonal items.
+
+          {/* Subheading / Description */}
+          <p className="text-black text-sm sm:text-base max-w-xl font-medium leading-relaxed drop-shadow-xs">
+            Anu Arts is your one-stop destination for art and craft materials,
+            creative workshops and endless inspiration.
           </p>
 
-          <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <a
-              href="/shop"
-              className="group inline-flex items-center gap-3 rounded-md bg-primary px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-primary-foreground shadow-[4px_4px_0_rgba(0,0,0,0.15)] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(0,0,0,0.18)]"
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-3.5 pt-1 w-full sm:w-auto">
+            {/* Primary Button */}
+            <button
+              type="button"
+              onClick={onExploreWorkshops || (() => scrollToSection("workshops-section"))}
+              className="inline-flex items-center justify-center gap-2 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs sm:text-sm font-bold px-6 sm:px-7 py-3 rounded-full shadow-lg shadow-purple-900/15 hover:shadow-purple-900/25 hover:scale-[1.02] transition-all cursor-pointer group"
             >
-              Shop Now
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
-            <a
-              href="/collections"
-              className="text-sm font-bold sm:font-semibold uppercase tracking-wide text-[#ff0000] sm:text-foreground underline decoration-primary decoration-2 underline-offset-4 transition-colors hover:text-primary"
-            >
-              Explore Collections
-            </a>
-          </div>
-        </div>
+              <span>Explore Workshops</span>
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
 
-        {/* Creative floating note over the artwork */}
-        <div className="relative hidden lg:block">
-          <div className="absolute bottom-0 right-2 rotate-[-5deg]">
-            {/* washi tape accents */}
-            <span className="absolute -left-3 -top-3 h-6 w-16 rotate-[-12deg] bg-primary/70 shadow-sm" aria-hidden="true" />
-            <span className="absolute -right-3 -top-2 h-6 w-14 rotate-[10deg] bg-foreground/20 shadow-sm" aria-hidden="true" />
-            <div className="bg-cream-dark px-6 py-4 shadow-[6px_6px_0_rgba(0,0,0,0.15)]">
-              <p className="font-serif text-2xl italic leading-tight text-foreground">
-                Focus
-                <br />
-                Create
-                <br />
-                Inspire
-              </p>
-            </div>
+            {/* Secondary Button */}
+            <button
+              type="button"
+              onClick={onVisitStore || (() => scrollToSection("shop-section"))}
+              className="inline-flex items-center justify-center gap-2 bg-white/90 hover:bg-white text-stone-800 border border-amber-200/90 hover:border-amber-300 text-xs sm:text-sm font-bold px-5 sm:px-6 py-3 rounded-full hover:scale-[1.02] transition-all cursor-pointer shadow-xs"
+            >
+              <span>Visit Our Store</span>
+              <ShoppingBag className="h-4 w-4 text-[#d92672]" />
+            </button>
           </div>
+
+          {/* 3 Value Pillars / Feature Badges - Free-standing without glass box */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-[43px] border-t border-pink-200/60 w-full">
+            
+            {/* 1. Quality Materials (Purple) */}
+            <div className="flex items-start gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-purple-100/90 text-[#7c2d8a] flex items-center justify-center shrink-0 shadow-2xs border border-purple-200/50">
+                <Palette className="h-4 w-4" />
+              </div>
+              <div>
+                <h2 className="text-xs font-bold text-stone-900">Quality Materials</h2>
+                <p className="text-[11px] text-stone-600 font-medium">Premium art &amp; craft supplies</p>
+              </div>
+            </div>
+
+            {/* 2. Creative Workshops (Pink / Rose) */}
+            <div className="flex items-start gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-pink-100/90 text-[#d92672] flex items-center justify-center shrink-0 shadow-2xs border border-pink-200/50">
+                <Users className="h-4 w-4" />
+              </div>
+              <div>
+                <h2 className="text-xs font-bold text-stone-900">Creative Workshops</h2>
+                <p className="text-[11px] text-stone-600 font-medium">For all age groups</p>
+              </div>
+            </div>
+
+            {/* 3. Learn & Grow (Warm Yellow-Orange / Gold Accent) */}
+            <div className="flex items-start gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700 flex items-center justify-center shrink-0 shadow-2xs border border-amber-200/60">
+                <GraduationCap className="h-4 w-4" />
+              </div>
+              <div>
+                <h2 className="text-xs font-bold text-stone-900">Learn &amp; Grow</h2>
+                <p className="text-[11px] text-stone-600 font-medium">Explore. Create. Inspire.</p>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
     </section>

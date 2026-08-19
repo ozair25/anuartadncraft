@@ -144,6 +144,11 @@ export const saveBlog = (blog: Blog): Blog => {
   return blog
 }
 
+export const deleteBlog = (id: string): void => {
+  const list = getBlogs().filter((b) => b.id !== id)
+  setItem(KEYS.BLOGS, list)
+}
+
 // Coupons
 export const getCoupons = (): Coupon[] => getItem<Coupon[]>(KEYS.COUPONS, INITIAL_COUPONS)
 

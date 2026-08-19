@@ -10,14 +10,9 @@ export function RibbonLabel({
   return (
     <span
       className={cn(
-        "inline-block bg-primary px-4 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground",
-        "shadow-[3px_3px_0_rgba(0,0,0,0.12)]",
+        "inline-block rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 px-4 py-1 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white shadow-xs",
         className,
       )}
-      style={{
-        clipPath:
-          "polygon(4% 0, 96% 0, 100% 50%, 96% 100%, 4% 100%, 0 50%)",
-      }}
     >
       {children}
     </span>

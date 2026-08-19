@@ -208,10 +208,10 @@ export default function ShopPage() {
                       </div>
                       <button
                         onClick={() => addItem(p)}
-                        className="mt-2 flex items-center justify-center gap-2 rounded bg-primary py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                        className="mt-2 flex items-center justify-center gap-2 rounded-full bg-[#7c2d8a] py-2 min-h-[40px] text-xs font-bold text-white transition-all hover:bg-[#682274] active:scale-95 cursor-pointer shadow-xs"
                       >
-                        <ShoppingBag className="h-3.5 w-3.5" />
-                        Add to Cart
+                        <ShoppingBag className="h-4 w-4" />
+                        <span>Add to Cart</span>
                       </button>
                     </div>
                   </article>
