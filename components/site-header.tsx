@@ -62,6 +62,8 @@ export function SiteHeader({
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
+  const [isScrolled, setIsScrolled] = useState(false)
+
   const { totalItems } = useCart()
   const { totalWishlist } = useWishlist()
   const { user, logout } = useAuth()
@@ -71,6 +73,20 @@ export function SiteHeader({
   const headerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const moreMenuRef = useRef<HTMLDivElement>(null)
+
+  // Track scroll for smooth sticky header styling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+    handleScroll()
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   // Close menus on route change
   useEffect(() => {
@@ -115,7 +131,11 @@ export function SiteHeader({
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-50 bg-[#fffaff]/95 backdrop-blur-md border-b border-pink-100/80 shadow-xs text-stone-900 transition-all"
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/95 backdrop-blur-md border-b border-pink-200/90 shadow-md text-stone-900"
+          : "bg-[#fffaff]/90 backdrop-blur-sm border-b border-pink-100/70 shadow-2xs text-stone-900"
+      }`}
     >
       {/* 1. Top Announcement Bar */}
       <div className="bg-gradient-to-r from-purple-900 via-[#7c2d8a] via-[#d92672] via-pink-500 to-amber-500 text-white px-4 py-1.5 text-center text-xs font-semibold tracking-wide flex items-center justify-between md:justify-center gap-3 shadow-2xs">
@@ -261,74 +281,78 @@ export function SiteHeader({
 
             {/* 3-Dots Dropdown Menu */}
             {moreMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-pink-100 bg-white p-2.5 shadow-2xl z-50 text-xs animate-in fade-in zoom-in-95">
-                <div className="px-3 py-2 border-b border-pink-50 flex items-center justify-between">
-                  <span className="font-bold text-stone-900 uppercase tracking-wider text-[10px] text-[#7c2d8a]">
-                    Quick Navigation
+              <div className="absolute right-0 top-full mt-2 w-64 sm:w-72 rounded-2xl border border-pink-200/90 bg-white/98 backdrop-blur-md p-3 shadow-2xl z-50 text-xs animate-in fade-in zoom-in-95">
+                {/* Header with ✕ and Explore Anu Arts */}
+                <div className="flex items-center justify-between px-2 pb-2.5 mb-1 border-b border-pink-100/80">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setMoreMenuOpen(false)}
+                      className="p-1 rounded-full hover:bg-purple-100 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
+                      aria-label="Close menu"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                    <span className="font-serif font-black text-stone-900 text-sm tracking-tight">
+                      Explore Anu Arts
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold text-[#7c2d8a] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                    Menu
                   </span>
-                  <span className="text-[10px] text-stone-400">Anu Arts</span>
                 </div>
 
-                <div className="py-1.5 space-y-1">
-                  {navLinks.map((item) => {
+                {/* Main Pages Navigation */}
+                <div className="py-1 space-y-1">
+                  {[
+                    { label: "Home", href: "/", icon: Home },
+                    { label: "About Us", href: "/about", icon: Info },
+                    { label: "Art Classes", href: "/workshops", icon: Palette },
+                    { label: "Workshops", href: "/workshops", icon: Sparkles },
+                    { label: "Gallery", href: "/gallery", icon: ImageIcon },
+                    { label: "Shop", href: "/shop", icon: ShoppingBag },
+                    { label: "Events", href: "/events", icon: Calendar },
+                    { label: "Contact Us", href: "/contact", icon: Phone },
+                  ].map((item) => {
                     const Icon = item.icon
-                    const isCurrent = pathname === item.href
+                    const isCurrent =
+                      item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
                     return (
                       <Link
                         key={item.label}
                         href={item.href}
                         onClick={() => setMoreMenuOpen(false)}
-                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                           isCurrent
-                            ? "bg-purple-100 text-[#7c2d8a] font-bold"
+                            ? "bg-purple-100/90 text-[#7c2d8a] font-bold shadow-2xs"
                             : "text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a]"
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <Icon className="h-3.5 w-3.5 text-[#7c2d8a]" />
-                          <span>{item.label} Page</span>
+                          <Icon className="h-4 w-4 text-[#7c2d8a]" />
+                          <span>{item.label}</span>
                         </div>
-                        <ChevronRight className="h-3 w-3 text-stone-400" />
+                        <ChevronRight className="h-3.5 w-3.5 text-stone-400" />
                       </Link>
                     )
                   })}
-                </div>
 
-                <div className="pt-1.5 border-t border-pink-50 space-y-1">
-                  <Link
-                    href="/wishlist"
-                    onClick={() => setMoreMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-stone-700 hover:bg-pink-50 hover:text-pink-600"
+                  {/* Book a Class CTA */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMoreMenuOpen(false)
+                      if (onOpenBookClass) onOpenBookClass()
+                      else router.push("/workshops")
+                    }}
+                    className="flex items-center justify-between w-full px-3 py-2 mt-1 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#7c2d8a] to-[#d92672] shadow-xs hover:opacity-95 transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Heart className="h-3.5 w-3.5 text-pink-500" />
-                      <span>My Wishlist ({totalWishlist})</span>
+                      <Star className="h-4 w-4 fill-amber-300 text-amber-300" />
+                      <span>Book a Class</span>
                     </div>
-                  </Link>
-
-                  <Link
-                    href="/track-order"
-                    onClick={() => setMoreMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a]"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <PackageCheck className="h-3.5 w-3.5 text-purple-600" />
-                      <span>Track Orders &amp; Shipments</span>
-                    </div>
-                  </Link>
-
-                  <a
-                    href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%20Studio"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMoreMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
-                      <span>WhatsApp Live Help</span>
-                    </div>
-                  </a>
+                    <ChevronRight className="h-3.5 w-3.5 text-white/80" />
+                  </button>
                 </div>
               </div>
             )}
@@ -466,30 +490,6 @@ export function SiteHeader({
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
-      </div>
-
-      {/* 3. Mobile Navigation Header Bar (Shows all website pages horizontally in mobile view) */}
-      <div className="lg:hidden border-t border-pink-100/70 bg-[#fffaff] px-2 py-1.5 overflow-x-auto no-scrollbar scrollbar-none flex items-center gap-1.5">
-        {navLinks.map((link) => {
-          const isActive =
-            link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)
-          const Icon = link.icon
-
-          return (
-            <Link
-              key={link.label}
-              href={link.href}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
-                isActive
-                  ? "bg-[#7c2d8a] text-white shadow-xs"
-                  : "bg-white/80 text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a] border border-pink-100/80 shadow-2xs"
-              }`}
-            >
-              <Icon className={`h-3 w-3 ${isActive ? "text-amber-300" : "text-[#7c2d8a]"}`} />
-              <span>{link.label}</span>
-            </Link>
-          )
-        })}
       </div>
 
       {/* Expandable Search Input Bar */}

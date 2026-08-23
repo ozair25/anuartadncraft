@@ -16,26 +16,26 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#fffaff] text-stone-900 pt-6 pb-12 sm:py-14 lg:py-16">
+    <section className="relative overflow-hidden -mt-[80px] ml-0 pt-[20px] pr-[5px] pb-16 sm:pb-24 lg:pb-32 min-h-[600px] sm:min-h-[680px] md:min-h-[740px] lg:min-h-[820px] flex flex-col justify-between text-stone-900">
       
-      {/* 1. Hero Wallpaper Background Provided by User - 79% Opacity */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Mobile Background Image */}
+      {/* 1. Hero Wallpaper Background - Full Complete Artwork (Lower Butterfly Visible & Uncropped) */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
+        {/* Mobile Background Image - Positioned to preserve full butterfly artwork */}
         <img
-          src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787169984/ChatGPT_Image_Aug_20_2026_01_30_21_AM_zj2nzx.png"
+          src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787510776/ChatGPT_Image_Aug_24_2026_12_15_53_AM_wnv7yt.png"
           alt="Hero Wallpaper Mobile Background"
-          className="block sm:hidden w-full h-full object-cover object-center opacity-[0.79]"
+          className="block sm:hidden w-full h-full object-cover object-bottom opacity-90"
         />
-        {/* Desktop / Tablet Background Image */}
+        {/* Desktop / Tablet Background Image - Positioned to display complete artwork as original */}
         <img
-          src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787168731/ChatGPT_Image_Aug_20_2026_01_14_57_AM_rpgvwn.png"
+          src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787510688/ChatGPT_Image_Aug_24_2026_12_14_23_AM_v94ea4.png"
           alt="Hero Wallpaper Background"
-          className="hidden sm:block w-full h-full object-cover object-center opacity-[0.79]"
+          className="hidden sm:block w-full h-full object-cover object-center lg:object-[80%_0%] opacity-95"
         />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
-        <div className="max-w-2xl flex flex-col items-start text-left space-y-6 sm:space-y-7">
+        <div className="max-w-2xl flex flex-col items-start text-left space-y-6 sm:space-y-7 lg:-translate-x-[10%] xl:-translate-x-[12%]">
           
           {/* Tagline / Eyebrow with Purple-to-Yellow-Orange gradient accent */}
           <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a] bg-white/80 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-pink-200/80 shadow-2xs">
@@ -46,11 +46,11 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
           </div>
 
           {/* Main Headline (Exact Layout & Typography) */}
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[60px] font-black text-stone-900 leading-[1.12] tracking-tight drop-shadow-xs">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[60px] font-black text-stone-900 leading-[1.12] tracking-tight drop-shadow-xs ml-0 mt-[51px] sm:mt-[83px]">
             Where Your
             <br />
             Ideas{" "}
-            <span className="font-script text-[#fb8404] font-bold italic text-5xl sm:text-6xl lg:text-[76px] tracking-normal inline-block ml-1">
+            <span className="font-script text-red-600 font-bold italic text-5xl sm:text-6xl lg:text-[76px] tracking-normal inline-block ml-1">
               Come to Life.
             </span>
           </h1>
@@ -85,7 +85,7 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
           </div>
 
           {/* 3 Value Pillars / Feature Badges - Free-standing without glass box */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-[43px] border-t border-pink-200/60 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-[43px] -ml-[2px] -mt-[27px] border-t border-pink-200/60 w-full">
             
             {/* 1. Quality Materials (Purple) */}
             <div className="flex items-start gap-2.5">
