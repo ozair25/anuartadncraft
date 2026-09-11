@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
+import { useShopifyProducts } from "@/lib/shopify/hooks"
 import { Product } from "@/types/ecommerce"
 import { BookClassModal } from "@/components/book-class-modal"
 import {
@@ -36,6 +37,7 @@ import {
 interface AnuArtsTemplateProps {
   onOpenCart?: () => void
   onOpenBookClass?: (category?: string) => void
+  initialProducts?: Product[]
 }
 
 // 1. Five Core Workshop Cards - Infused with Purple, Pink, and the Lower-Right Yellow-Orange / Amber Hues
@@ -235,7 +237,11 @@ const storeProducts: Product[] = [
   },
 ]
 
-export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
+export function AnuArtsTemplate({
+  onOpenCart,
+  onOpenBookClass,
+  initialProducts = [],
+}: AnuArtsTemplateProps) {
   const [isBookModalOpen, setIsBookModalOpen] = useState(false)
   const [selectedCategoryForModal, setSelectedCategoryForModal] = useState("Painting")
   const [selectedStoreCategory, setSelectedStoreCategory] = useState("All")
@@ -252,11 +258,13 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
     setIsBookModalOpen(true)
   }
 
-  const handleAddToCart = (product: Product) => {
-    addToCart(product, 1)
-    setAddedToast(`Added ${product.name} to cart!`)
-    setTimeout(() => setAddedToast(null), 3000)
-    if (onOpenCart) onOpenCart()
+  const handleAddToCart = async (product: Product) => {
+    const success = await addToCart(product, 1)
+    if (success) {
+      setAddedToast(`Added ${product.name} to cart!`)
+      setTimeout(() => setAddedToast(null), 3000)
+      if (onOpenCart) onOpenCart()
+    }
   }
 
   const nextTestimonial = () => {
@@ -267,22 +275,92 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
     setTestimonialIdx((prev) => (prev === 0 ? testimonials.length - 3 : prev - 1))
   }
 
+  const {
+    products: shopifyProducts,
+    loading: shopifyLoading,
+    error: shopifyError,
+  } = useShopifyProducts({ initialProducts })
+  
+  // Real live Shopify products - prioritizing fetched/initial Shopify products
+  const activeProducts =
+    shopifyProducts.length > 0
+      ? shopifyProducts
+      : initialProducts.length > 0
+      ? initialProducts
+      : !shopifyLoading && !shopifyError
+      ? storeProducts
+      : []
+
   const storeFilterCategories = [
     "All",
     "DIY Kits",
+    "Art Supplies",
     "Paints",
-    "Resin",
-    "Canvas",
-    "Calligraphy",
-    "MDF",
+    "Stencils",
   ]
 
-  const filteredStoreProducts =
-    selectedStoreCategory === "All"
-      ? storeProducts
-      : storeProducts.filter(
-          (p) => p.category.toLowerCase() === selectedStoreCategory.toLowerCase()
+  const filteredStoreProducts = useMemo(() => {
+    if (selectedStoreCategory === "All") {
+      return activeProducts.slice(0, 6)
+    }
+
+    return activeProducts
+      .filter((p) => {
+        const catLower = (p.category || "").toLowerCase()
+        const colLower = (p.collection || "").toLowerCase()
+        const nameLower = (p.name || "").toLowerCase()
+        const tagsLower = (p.tags || []).map((t) => t.toLowerCase())
+
+        if (selectedStoreCategory === "DIY Kits") {
+          return (
+            catLower.includes("diy") ||
+            catLower.includes("kit") ||
+            colLower.includes("diy") ||
+            colLower.includes("kit") ||
+            tagsLower.some((t) => t.includes("diy") || t.includes("kit")) ||
+            nameLower.includes("diy") ||
+            nameLower.includes("kit")
+          )
+        }
+
+        if (selectedStoreCategory === "Art Supplies") {
+          return (
+            catLower.includes("art supplies") ||
+            colLower.includes("art-supplies") ||
+            (!catLower.includes("stencil") &&
+              !catLower.includes("paint") &&
+              !colLower.includes("stencil") &&
+              !colLower.includes("paint") &&
+              (catLower === "art supplies" || colLower === ""))
+          )
+        }
+
+        if (selectedStoreCategory === "Paints") {
+          return (
+            catLower.includes("paint") ||
+            colLower.includes("paint") ||
+            tagsLower.some((t) => t.includes("paint")) ||
+            nameLower.includes("paint")
+          )
+        }
+
+        if (selectedStoreCategory === "Stencils") {
+          return (
+            catLower.includes("stencil") ||
+            colLower.includes("stencil") ||
+            tagsLower.some((t) => t.includes("stencil")) ||
+            nameLower.includes("stencil")
+          )
+        }
+
+        return (
+          catLower.includes(selectedStoreCategory.toLowerCase()) ||
+          colLower.includes(selectedStoreCategory.toLowerCase()) ||
+          tagsLower.some((t) => t.includes(selectedStoreCategory.toLowerCase()))
         )
+      })
+      .slice(0, 6)
+  }, [activeProducts, selectedStoreCategory])
 
   return (
     <div className="space-y-16 sm:space-y-24 pb-16">
@@ -300,6 +378,22 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
       {/* ========================================================= */}
       <section id="shop-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6">
         
+        {/* Diagnostic Banner if Shopify API encounters an error */}
+        {shopifyError && activeProducts.length === 0 && (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs shadow-xs">
+            <div className="font-bold flex items-center gap-2 mb-1 text-amber-800">
+              <span className="text-sm">⚠️</span>
+              <span>Shopify Storefront API Diagnostic Notice:</span>
+            </div>
+            <p className="font-mono text-[11px] bg-white/70 p-2 rounded-lg border border-amber-200/60 mt-1">
+              {shopifyError}
+            </p>
+            <p className="mt-1.5 text-[11px] text-amber-700">
+              Connected store: <span className="font-bold">e08d97-2b.myshopify.com</span> (API 2026-04)
+            </p>
+          </div>
+        )}
+
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 pb-4 border-b border-pink-100/80">
           <div>
@@ -310,13 +404,13 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
               Featured Art Supplies &amp; DIY Kits
             </h2>
           </div>
-          <button
-            onClick={() => router.push("/shop")}
+          <Link
+            href="/shop"
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#7c2d8a] hover:text-[#5c1c68] bg-white hover:bg-purple-50 px-4 py-2 rounded-full border border-purple-200/80 shadow-2xs hover:shadow-xs transition-all cursor-pointer self-start md:self-auto"
           >
-            <span>View All 1500+ Items</span>
+            <span>View All 100 Products</span>
             <ArrowRight className="h-3.5 w-3.5" />
-          </button>
+          </Link>
         </div>
 
         {/* Category Filter Pills for All Product Categories */}
@@ -337,10 +431,39 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
           ))}
         </div>
 
+        {/* Loading Skeleton */}
+        {shopifyLoading && activeProducts.length === 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+            {[...Array(6)].map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-3xl border border-pink-100/60 overflow-hidden p-4 space-y-4 animate-pulse"
+              >
+                <div className="aspect-[4/3] bg-purple-50/60 rounded-2xl" />
+                <div className="space-y-2">
+                  <div className="h-4 bg-purple-100/50 rounded-full w-3/4" />
+                  <div className="h-3 bg-purple-50 rounded-full w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Product Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
           {filteredStoreProducts.map((prod) => {
             const inWish = isInWishlist(prod.id)
+            const cleanDescription =
+              prod.shortDescription ||
+              prod.description?.replace(/<[^>]*>/g, "").trim() ||
+              "Handcrafted quality art and craft supplies from Anu Arts & Craft Studio."
+            const categoryBadge =
+              prod.category && prod.category !== "Home Page"
+                ? prod.category
+                : prod.collection && prod.collection !== "frontpage"
+                ? prod.collection.replace(/-/g, " ")
+                : "Art & Craft"
+
             return (
               <div
                 key={prod.id}
@@ -348,13 +471,26 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
               >
                 {/* Product Image */}
                 <div className="relative aspect-[4/3] bg-pink-50/50 overflow-hidden">
-                  <img
-                    src={prod.image}
-                    alt={prod.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 bg-[#7c2d8a] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    {prod.category}
+                  <Link href={`/product/${prod.slug || prod.id}`}>
+                    <img
+                      src={
+                        prod.thumbnail ||
+                        prod.image ||
+                        (prod.images && prod.images[0]) ||
+                        "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&auto=format&fit=crop"
+                      }
+                      alt={prod.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null
+                        e.currentTarget.src =
+                          "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&auto=format&fit=crop"
+                      }}
+                    />
+                  </Link>
+                  <div className="absolute top-3 left-3 bg-[#7c2d8a] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider pointer-events-none">
+                    {categoryBadge}
                   </div>
                   <button
                     type="button"
@@ -374,14 +510,16 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
                         <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
                       ))}
                       <span className="text-[11px] text-stone-500 font-medium ml-1">
-                        ({prod.reviewCount})
+                        ({prod.reviewsCount || (prod as { reviewCount?: number }).reviewCount || 24})
                       </span>
                     </div>
-                    <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-[#7c2d8a] transition-colors">
-                      {prod.name}
-                    </h3>
+                    <Link href={`/product/${prod.slug || prod.id}`}>
+                      <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-[#7c2d8a] transition-colors">
+                        {prod.name}
+                      </h3>
+                    </Link>
                     <p className="text-xs text-stone-500 mt-1 line-clamp-2">
-                      {prod.description}
+                      {cleanDescription}
                     </p>
                   </div>
 
@@ -410,6 +548,20 @@ export function AnuArtsTemplate({ onOpenCart }: AnuArtsTemplateProps) {
               </div>
             )
           })}
+        </div>
+
+        {/* Option to View All 100 Products and redirect to Shop Page */}
+        <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center text-center gap-3">
+          <Link
+            href="/shop"
+            className="inline-flex items-center justify-center gap-2.5 bg-[#7c2d8a] hover:bg-[#682274] active:scale-[0.98] text-white text-sm sm:text-base font-bold px-8 sm:px-10 py-3.5 rounded-full shadow-md hover:shadow-lg shadow-purple-900/15 hover:shadow-purple-900/25 transition-all cursor-pointer group"
+          >
+            <span>View All 100 Products</span>
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+          <p className="text-xs text-stone-500 font-medium">
+            Explore our complete collection of handmade kits, paints, stencils &amp; supplies
+          </p>
         </div>
 
       </section>

@@ -48,9 +48,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`light ${jost.variable} ${playfair.variable} ${alexBrush.variable} overflow-x-clip w-full`}
+      className={`light ${jost.variable} ${playfair.variable} ${alexBrush.variable} w-full`}
     >
-      <body className="bg-[#fffaff] font-sans text-[16px] leading-[1.5] text-[#1c1917] antialiased overflow-x-clip w-full max-w-full selection:bg-pink-200 selection:text-purple-900">
+      <body className="bg-[#fffaff] font-sans text-[16px] leading-[1.5] text-[#1c1917] antialiased w-full max-w-full selection:bg-pink-200 selection:text-purple-900">
         <Providers>{children}</Providers>
       </body>
     </html>

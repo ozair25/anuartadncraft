@@ -1,12 +1,13 @@
 "use client"
 
-import { use } from "react"
+import { use, useMemo } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
-import { INITIAL_PRODUCTS, INITIAL_COLLECTIONS } from "@/lib/data/mock-db"
+import { INITIAL_COLLECTIONS } from "@/lib/data/mock-db"
+import { useShopifyProducts, useShopifyCollections } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { Heart, ShoppingBag, Star, ArrowLeft } from "lucide-react"
@@ -18,14 +19,30 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ slu
 
   const { addItem } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
+  const { products: allProducts } = useShopifyProducts({ collection: collectionSlug })
+  const { collections } = useShopifyCollections()
 
-  const collection = INITIAL_COLLECTIONS.find(
-    (c) => c.slug.toLowerCase() === collectionSlug.toLowerCase() || c.id === collectionSlug
-  )
+  const collection =
+    collections.find(
+      (c) =>
+        c.slug.toLowerCase() === collectionSlug.toLowerCase() ||
+        c.id === collectionSlug
+    ) ||
+    INITIAL_COLLECTIONS.find(
+      (c) =>
+        c.slug.toLowerCase() === collectionSlug.toLowerCase() ||
+        c.id === collectionSlug
+    )
 
-  const products = INITIAL_PRODUCTS.filter(
-    (p) => p.collection?.toLowerCase() === collectionSlug.toLowerCase()
-  )
+  const products = useMemo(() => {
+    const directMatches = allProducts.filter(
+      (p) =>
+        p.collection?.toLowerCase() === collectionSlug.toLowerCase() ||
+        p.category?.toLowerCase().replace(/[^a-z0-9]+/g, "-") ===
+          collectionSlug.toLowerCase()
+    )
+    return directMatches.length > 0 ? directMatches : allProducts
+  }, [allProducts, collectionSlug])
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">

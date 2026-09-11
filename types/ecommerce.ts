@@ -1,3 +1,14 @@
+export interface ProductVariant {
+  id: string
+  title: string
+  price: number
+  originalPrice?: number
+  available: boolean
+  sku?: string
+  quantityAvailable?: number
+  selectedOptions?: Array<{ name: string; value: string }>
+}
+
 export interface Product {
   id: string
   name: string
@@ -10,6 +21,7 @@ export interface Product {
   discount?: string
   images: string[]
   thumbnail: string
+  image?: string
   stock: number
   category: string
   collection?: string
@@ -27,6 +39,8 @@ export interface Product {
   createdAt: string
   updatedAt: string
   specs?: Record<string, string>
+  variantId?: string
+  variants?: ProductVariant[]
 }
 
 export interface Category {
@@ -52,6 +66,8 @@ export interface CartItem {
   product: Product
   quantity: number
   selectedOptions?: Record<string, string>
+  lineId?: string
+  variantId?: string
 }
 
 export interface Address {

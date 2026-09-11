@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { createPortal } from "react-dom"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
@@ -19,14 +20,18 @@ import {
   PackageCheck,
   LogIn,
   UserPlus,
-  MoreVertical,
   Home,
   Info,
   Palette,
   Image as ImageIcon,
   Calendar,
   Phone,
-  Compass,
+  BookOpen,
+  HelpCircle,
+  Layers,
+  FileText,
+  Clock,
+  MapPin,
 } from "lucide-react"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
@@ -57,6 +62,7 @@ export function SiteHeader({
   onOpenNightMarket,
 }: SiteHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [moreMenuOpen, setMoreMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -64,7 +70,7 @@ export function SiteHeader({
 
   const [isScrolled, setIsScrolled] = useState(false)
 
-  const { totalItems } = useCart()
+  const { totalItems, openCart } = useCart()
   const { totalWishlist } = useWishlist()
   const { user, logout } = useAuth()
   const router = useRouter()
@@ -73,6 +79,11 @@ export function SiteHeader({
   const headerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const moreMenuRef = useRef<HTMLDivElement>(null)
+
+  // Track hydration mount for react portal
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Track scroll for smooth sticky header styling
   useEffect(() => {
@@ -87,6 +98,18 @@ export function SiteHeader({
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  // Lock background scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [mobileOpen])
 
   // Close menus on route change
   useEffect(() => {
@@ -124,7 +147,7 @@ export function SiteHeader({
     if (onOpenCart) {
       onOpenCart()
     } else {
-      router.push("/cart")
+      openCart()
     }
   }
 
@@ -191,303 +214,44 @@ export function SiteHeader({
           })}
         </nav>
 
-        {/* Right Section: Socials + Search + Cart + Account + 3-Dots + Menu */}
+        {/* Right Section: Cart Button & Mobile Menu Button */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-          {/* Social: Instagram (Desktop/Tablet) */}
-          <a
-            href="https://instagram.com/ANUARTANDCRAFTSTUDIO"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-full items-center justify-center text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 transition-colors"
-            title="Follow us on Instagram (@ANUARTANDCRAFTSTUDIO)"
-            aria-label="Instagram"
-          >
-            <Camera className="h-4 w-4" />
-          </a>
-
-          {/* Social: WhatsApp (Desktop/Tablet) */}
-          <a
-            href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%20Studio%2C%20I%20would%20like%20to%20inquire%20about%20workshops%20and%20art%20supplies!"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-full items-center justify-center text-stone-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
-            title="Chat on WhatsApp (+91 94253 56009)"
-            aria-label="WhatsApp"
-          >
-            <MessageCircle className="h-4 w-4 text-emerald-600" />
-          </a>
-
-          {/* Search Trigger Icon (Functional on Mobile & Desktop) */}
-          <button
-            type="button"
-            onClick={() => setSearchOpen(!searchOpen)}
-            className={`min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-              searchOpen
-                ? "bg-[#7c2d8a] text-white shadow-xs"
-                : "text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100"
-            }`}
-            title="Search Products & Workshops"
-            aria-label="Search"
-          >
-            <Search className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
-          </button>
-
-          {/* Wishlist Icon */}
-          <Link
-            href="/wishlist"
-            className="relative hidden md:flex min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full items-center justify-center text-stone-700 hover:text-pink-600 hover:bg-pink-50 transition-colors"
-            title="Wishlist"
-            aria-label="Wishlist"
-          >
-            <Heart className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
-            {totalWishlist > 0 && (
-              <span className="absolute 1.5 top-1.5 -right-0.5 bg-pink-600 text-white text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center shadow-xs">
-                {totalWishlist}
-              </span>
-            )}
-          </Link>
-
-          {/* Cart Icon / Clickable on Mobile & Desktop */}
+          {/* Cart Button with Count Badge */}
           <button
             type="button"
             onClick={handleCartClick}
-            className="relative min-w-[42px] min-h-[42px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100 transition-all cursor-pointer"
-            title="Shopping Cart"
-            aria-label="Cart"
+            className="relative min-w-[40px] min-h-[40px] flex items-center justify-center text-stone-700 hover:text-[#7c2d8a] cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors shadow-2xs touch-manipulation"
+            aria-label={`Shopping cart with ${totalItems} items`}
+            title="View Shopping Cart"
           >
-            <ShoppingBag className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+            <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 text-[#7c2d8a]" />
             {totalItems > 0 && (
-              <span className="absolute top-1 -right-0.5 bg-[#d92672] text-white text-[10px] font-black h-4 w-4 sm:h-4.5 sm:w-4.5 rounded-full flex items-center justify-center shadow-xs">
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-[#d92672] text-[10px] font-bold text-white shadow-xs">
                 {totalItems}
               </span>
             )}
           </button>
 
-          {/* 3-Dots More Options Menu (Clickable on Mobile & Desktop) */}
-          <div ref={moreMenuRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setMoreMenuOpen(!moreMenuOpen)}
-              className={`min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                moreMenuOpen
-                  ? "bg-[#7c2d8a] text-white shadow-xs"
-                  : "text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100"
-              }`}
-              title="More Options & Pages"
-              aria-label="More options"
-            >
-              <MoreVertical className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
-            </button>
-
-            {/* 3-Dots Dropdown Menu */}
-            {moreMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-64 sm:w-72 rounded-2xl border border-pink-200/90 bg-white/98 backdrop-blur-md p-3 shadow-2xl z-50 text-xs animate-in fade-in zoom-in-95">
-                {/* Header with ✕ and Explore Anu Arts */}
-                <div className="flex items-center justify-between px-2 pb-2.5 mb-1 border-b border-pink-100/80">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setMoreMenuOpen(false)}
-                      className="p-1 rounded-full hover:bg-purple-100 text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
-                      aria-label="Close menu"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <span className="font-serif font-black text-stone-900 text-sm tracking-tight">
-                      Explore Anu Arts
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-bold text-[#7c2d8a] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
-                    Menu
-                  </span>
-                </div>
-
-                {/* Main Pages Navigation */}
-                <div className="py-1 space-y-1">
-                  {[
-                    { label: "Home", href: "/", icon: Home },
-                    { label: "About Us", href: "/about", icon: Info },
-                    { label: "Art Classes", href: "/workshops", icon: Palette },
-                    { label: "Workshops", href: "/workshops", icon: Sparkles },
-                    { label: "Gallery", href: "/gallery", icon: ImageIcon },
-                    { label: "Shop", href: "/shop", icon: ShoppingBag },
-                    { label: "Events", href: "/events", icon: Calendar },
-                    { label: "Contact Us", href: "/contact", icon: Phone },
-                  ].map((item) => {
-                    const Icon = item.icon
-                    const isCurrent =
-                      item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
-                    return (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        onClick={() => setMoreMenuOpen(false)}
-                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                          isCurrent
-                            ? "bg-purple-100/90 text-[#7c2d8a] font-bold shadow-2xs"
-                            : "text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a]"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Icon className="h-4 w-4 text-[#7c2d8a]" />
-                          <span>{item.label}</span>
-                        </div>
-                        <ChevronRight className="h-3.5 w-3.5 text-stone-400" />
-                      </Link>
-                    )
-                  })}
-
-                  {/* Book a Class CTA */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMoreMenuOpen(false)
-                      if (onOpenBookClass) onOpenBookClass()
-                      else router.push("/workshops")
-                    }}
-                    className="flex items-center justify-between w-full px-3 py-2 mt-1 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#7c2d8a] to-[#d92672] shadow-xs hover:opacity-95 transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Star className="h-4 w-4 fill-amber-300 text-amber-300" />
-                      <span>Book a Class</span>
-                    </div>
-                    <ChevronRight className="h-3.5 w-3.5 text-white/80" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* User Account Dropdown / Redirect */}
-          <div ref={dropdownRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className={`min-w-[40px] min-h-[40px] sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                userMenuOpen
-                  ? "bg-[#7c2d8a] text-white shadow-xs"
-                  : "text-stone-700 hover:text-[#7c2d8a] hover:bg-purple-50 active:bg-purple-100"
-              }`}
-              title="My Account"
-              aria-label="Account"
-            >
-              <User className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
-            </button>
-
-            {/* Account Dropdown Menu */}
-            {userMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-pink-100 bg-white p-2 shadow-2xl z-50 text-xs animate-in fade-in zoom-in-95">
-                {user ? (
-                  <>
-                    <div className="px-3 py-2 border-b border-pink-50">
-                      <p className="font-bold text-stone-900 text-sm">
-                        {user.displayName || "Artist Account"}
-                      </p>
-                      <p className="text-[10px] text-stone-500 truncate">{user.email}</p>
-                    </div>
-                    <div className="py-1 space-y-0.5">
-                      <Link
-                        href="/profile"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
-                      >
-                        <User className="h-3.5 w-3.5 text-[#7c2d8a]" />
-                        <span>My Profile &amp; Orders</span>
-                      </Link>
-                      <Link
-                        href="/track-order"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
-                      >
-                        <PackageCheck className="h-3.5 w-3.5 text-stone-500" />
-                        <span>Track Shipments</span>
-                      </Link>
-                      <Link
-                        href="/admin"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-purple-700 font-bold"
-                      >
-                        <Shield className="h-3.5 w-3.5 text-purple-700" />
-                        <span>Admin Dashboard</span>
-                      </Link>
-                    </div>
-                    <div className="pt-1 border-t border-pink-50">
-                      <button
-                        onClick={() => {
-                          logout()
-                          setUserMenuOpen(false)
-                        }}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-rose-50 text-rose-600 font-bold text-left cursor-pointer"
-                      >
-                        <LogIn className="h-3.5 w-3.5 text-rose-600" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="px-3 py-2 border-b border-pink-50">
-                      <p className="font-bold text-stone-900">Artist Portal</p>
-                      <p className="text-[10px] text-stone-500">Sign in to manage orders &amp; bookings</p>
-                    </div>
-                    <div className="py-1 space-y-0.5">
-                      <Link
-                        href="/login"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl bg-purple-50 text-[#7c2d8a] font-bold hover:bg-purple-100"
-                      >
-                        <LogIn className="h-3.5 w-3.5 text-[#7c2d8a]" />
-                        <span>Sign In</span>
-                      </Link>
-                      <Link
-                        href="/register"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
-                      >
-                        <UserPlus className="h-3.5 w-3.5 text-stone-500" />
-                        <span>Create Account</span>
-                      </Link>
-                      <Link
-                        href="/track-order"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-medium"
-                      >
-                        <PackageCheck className="h-3.5 w-3.5 text-stone-500" />
-                        <span>Track Order</span>
-                      </Link>
-                      <Link
-                        href="/admin"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl hover:bg-purple-50 text-stone-700 font-bold border-t border-pink-50"
-                      >
-                        <Shield className="h-3.5 w-3.5 text-stone-700" />
-                        <span>Admin Console</span>
-                      </Link>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* "Book a Class ★" Primary Action Button (Desktop) */}
+          {/* Primary Mobile Navigation Toggle Button */}
           <button
             type="button"
-            onClick={onOpenBookClass || (() => router.push("/workshops"))}
-            className="hidden sm:inline-flex items-center gap-1.5 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs md:text-[13px] font-bold px-4 py-2 md:px-5 md:py-2.5 rounded-full shadow-md hover:shadow-purple-400/30 hover:scale-[1.02] transition-all cursor-pointer"
+            id="mobile-hamburger-btn"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setMobileOpen((prev) => !prev)
+            }}
+            className="relative z-50 min-w-[44px] min-h-[44px] flex items-center justify-center text-stone-900 hover:text-[#7c2d8a] lg:hidden cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 active:bg-purple-200 border border-purple-200 transition-colors shadow-2xs touch-manipulation"
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-modal"
+            title={mobileOpen ? "Close Menu" : "Open Menu"}
           >
-            <span>Book a Class</span>
-            <Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />
-          </button>
-
-          {/* Mobile Menu Toggle Button */}
-          <button
-            type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="min-w-[40px] min-h-[40px] flex items-center justify-center text-stone-800 hover:text-[#7c2d8a] lg:hidden cursor-pointer rounded-full hover:bg-purple-50 active:bg-purple-100"
-            aria-label="Toggle Menu"
-          >
-            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileOpen ? (
+              <X className="h-6 w-6 text-[#7c2d8a]" />
+            ) : (
+              <Menu className="h-6 w-6 text-[#7c2d8a]" />
+            )}
           </button>
         </div>
       </div>
@@ -535,118 +299,335 @@ export function SiteHeader({
         </div>
       )}
 
-      {/* Mobile Navigation Drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-x-0 top-[115px] bottom-0 z-50 bg-white/98 backdrop-blur-md border-t border-pink-100 shadow-2xl overflow-y-auto p-4 lg:hidden">
-          <div className="space-y-4 pb-20">
-            {/* Search Input for Mobile */}
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-              <input
-                type="text"
-                placeholder="Search art supplies, DIY kits, workshops..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-pink-200 bg-purple-50/40 py-2.5 pl-4 pr-10 text-xs text-stone-800 focus:outline-none focus:border-[#7c2d8a]"
-              />
-              <button
-                type="submit"
-                className="absolute right-1.5 p-2 rounded-full bg-[#7c2d8a] text-white cursor-pointer"
-              >
-                <Search className="h-3.5 w-3.5" />
-              </button>
-            </form>
-
-            {/* Mobile Book Class CTA */}
-            <button
-              onClick={() => {
-                setMobileOpen(false)
-                if (onOpenBookClass) onOpenBookClass()
-                else router.push("/workshops")
+      {/* Mobile Navigation Drawer Modal rendered via Portal to escape Header's backdrop-filter/stacking context */}
+      {mounted &&
+        mobileOpen &&
+        createPortal(
+          <div
+            id="mobile-nav-modal"
+            className="fixed inset-0 z-[999999] lg:hidden"
+            style={{
+              position: "fixed",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              zIndex: 999999,
+              display: "flex",
+              justifyContent: "flex-end",
+              backgroundColor: "rgba(15, 10, 20, 0.75)",
+            }}
+            onClick={() => setMobileOpen(false)}
+          >
+            {/* Drawer Sidebar Container */}
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "380px",
+                height: "100%",
+                backgroundColor: "#fffaff",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+                boxShadow: "-4px 0 25px rgba(0,0,0,0.25)",
               }}
-              className="w-full flex items-center justify-center gap-2 bg-[#7c2d8a] text-white py-3 rounded-full text-xs font-bold shadow-md cursor-pointer"
+              className="text-stone-900"
+              onClick={(e) => e.stopPropagation()}
             >
-              <span>Book a Creative Class</span>
-              <Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />
-            </button>
-
-            {/* Nav Links with Redirection */}
-            <div className="space-y-1 border-y border-pink-100 py-3">
-              <div className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a] px-3 pb-1">
-                Explore Website Pages
+              {/* 1. Header with Logo and Close X Button */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-pink-100 bg-white/95 backdrop-blur-md shrink-0 shadow-2xs">
+                <div className="flex items-center gap-2">
+                  <BrandLogo size="md" showTagline={false} />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(false)}
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-purple-50 hover:bg-purple-100 active:bg-purple-200 text-[#7c2d8a] transition-colors cursor-pointer border border-purple-100 touch-manipulation"
+                  aria-label="Close navigation menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              {navLinks.map((link) => {
-                const Icon = link.icon
-                const isCurrent = pathname === link.href
-                return (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={`w-full px-3 py-2.5 rounded-xl font-bold flex items-center justify-between text-sm transition-all cursor-pointer ${
-                      isCurrent
-                        ? "bg-purple-100 text-[#7c2d8a]"
-                        : "text-stone-800 hover:bg-purple-50 hover:text-[#7c2d8a]"
-                    }`}
+
+              {/* 2. Scrollable Menu Body */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 pb-20 overscroll-contain">
+                {/* Search Bar */}
+                <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Search art supplies, DIY kits, workshops..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full rounded-xl border border-pink-200 bg-white py-2.5 pl-3.5 pr-11 text-xs sm:text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200 shadow-2xs"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-1.5 p-2 rounded-lg bg-[#7c2d8a] text-white hover:bg-purple-800 transition-colors cursor-pointer"
+                    aria-label="Search"
+                  >
+                    <Search className="h-3.5 w-3.5" />
+                  </button>
+                </form>
+
+                {/* Primary Call to Action: Book a Class */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false)
+                    if (onOpenBookClass) onOpenBookClass()
+                    else router.push("/workshops")
+                  }}
+                  className="w-full min-h-[48px] flex items-center justify-between bg-gradient-to-r from-[#7c2d8a] via-[#a82580] to-[#d92672] text-white px-4 py-3 rounded-2xl text-sm font-bold shadow-md hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer touch-manipulation"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-full bg-white/20">
+                      <Star className="h-4 w-4 fill-amber-300 text-amber-300" />
+                    </div>
+                    <span>Book a Creative Workshop</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-white/80" />
+                </button>
+
+                {/* Main Navigation Pages */}
+                <div className="space-y-1 bg-white rounded-2xl p-2.5 border border-pink-100 shadow-2xs">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a] px-3 py-1.5">
+                    Explore Pages
+                  </div>
+                  {[
+                    { label: "Home", href: "/", icon: Home },
+                    { label: "About Us", href: "/about", icon: Info },
+                    { label: "Workshops & Classes", href: "/workshops", icon: Palette },
+                    { label: "Art Gallery", href: "/gallery", icon: ImageIcon },
+                    { label: "Shop / Craft Supplies", href: "/shop", icon: ShoppingBag },
+                    { label: "Curated Collections", href: "/collections", icon: Layers },
+                    { label: "Events & Exhibitions", href: "/events", icon: Calendar },
+                    { label: "Blog & Art Tutorials", href: "/blog", icon: BookOpen },
+                    { label: "Frequently Asked Questions", href: "/faqs", icon: HelpCircle },
+                    { label: "Contact Us", href: "/contact", icon: Phone },
+                  ].map((item) => {
+                    const Icon = item.icon
+                    const isCurrent =
+                      item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation ${
+                          isCurrent
+                            ? "bg-purple-100/90 text-[#7c2d8a] shadow-2xs"
+                            : "text-stone-800 hover:bg-purple-50/80 hover:text-[#7c2d8a]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                              isCurrent
+                                ? "bg-white text-[#7c2d8a] shadow-2xs"
+                                : "bg-purple-50 text-[#7c2d8a]"
+                            }`}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </div>
+                          <span>{item.label}</span>
+                        </div>
+                        <ChevronRight
+                          className={`h-4 w-4 ${
+                            isCurrent ? "text-[#7c2d8a]" : "text-stone-400"
+                          }`}
+                        />
+                      </Link>
+                    )
+                  })}
+                </div>
+
+                {/* Shopping & Order Tools */}
+                <div className="space-y-1.5 bg-purple-50/50 rounded-2xl p-2.5 border border-purple-100">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a] px-3 py-1">
+                    Shopping &amp; Orders
+                  </div>
+
+                  {/* Cart with Live Count */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false)
+                      handleCartClick()
+                    }}
+                    className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm bg-white border border-pink-100 text-stone-800 hover:bg-purple-50 transition-all cursor-pointer shadow-2xs touch-manipulation"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center text-[#7c2d8a]">
-                        <Icon className="h-4 w-4" />
+                      <div className="w-8 h-8 rounded-lg bg-pink-50 text-[#d92672] flex items-center justify-center">
+                        <ShoppingBag className="h-4 w-4" />
                       </div>
-                      <span>{link.label}</span>
+                      <span>Shopping Cart</span>
+                    </div>
+                    <span className="bg-[#d92672] text-white text-[11px] font-black px-2 py-0.5 rounded-full shadow-2xs">
+                      {totalItems} items
+                    </span>
+                  </button>
+
+                  {/* Wishlist with Live Count */}
+                  <Link
+                    href="/wishlist"
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm bg-white border border-pink-100 text-stone-800 hover:bg-purple-50 transition-all cursor-pointer shadow-2xs touch-manipulation"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center">
+                        <Heart className="h-4 w-4" />
+                      </div>
+                      <span>My Wishlist</span>
+                    </div>
+                    <span className="bg-pink-100 text-pink-700 text-[11px] font-black px-2 py-0.5 rounded-full border border-pink-200">
+                      {totalWishlist} saved
+                    </span>
+                  </Link>
+
+                  {/* Track Order */}
+                  <Link
+                    href="/track-order"
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm bg-white border border-purple-100 text-stone-800 hover:bg-purple-50 transition-all cursor-pointer shadow-2xs touch-manipulation"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#7c2d8a] flex items-center justify-center">
+                        <PackageCheck className="h-4 w-4" />
+                      </div>
+                      <span>Track Order &amp; Shipments</span>
                     </div>
                     <ChevronRight className="h-4 w-4 text-stone-400" />
                   </Link>
-                )
-              })}
-            </div>
+                </div>
 
-            {/* Account & Quick Actions */}
-            <div className="space-y-2 pt-1">
-              <Link
-                href="/shop"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full bg-purple-50 text-[#7c2d8a] border border-purple-200 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
-              >
-                <ShoppingBag className="h-4 w-4" />
-                <span>Visit Online Store (1500+ Items)</span>
-              </Link>
-              <Link
-                href="/wishlist"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full border border-pink-200 text-pink-700 bg-pink-50/50 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
-              >
-                <Heart className="h-4 w-4" />
-                <span>My Wishlist ({totalWishlist})</span>
-              </Link>
-              <Link
-                href="/profile"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full border border-pink-200 text-stone-800 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
-              >
-                <User className="h-4 w-4" />
-                <span>My Account &amp; Orders</span>
-              </Link>
-              <Link
-                href="/track-order"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center gap-2 w-full border border-stone-200 text-stone-700 py-2.5 rounded-xl text-xs font-medium cursor-pointer"
-              >
-                <PackageCheck className="h-4 w-4" />
-                <span>Track Order &amp; Shipments</span>
-              </Link>
-              <a
-                href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%20Studio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full bg-emerald-600 text-white py-2.5 rounded-xl text-xs font-bold cursor-pointer"
-              >
-                <MessageCircle className="h-4 w-4" />
-                <span>Chat on WhatsApp (+91 94253 56009)</span>
-              </a>
+                {/* Artist & Account Portal */}
+                <div className="space-y-1.5 bg-white rounded-2xl p-2.5 border border-pink-100 shadow-2xs">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a] px-3 py-1">
+                    Artist &amp; Account Portal
+                  </div>
+                  {user ? (
+                    <>
+                      <Link
+                        href="/profile"
+                        onClick={() => setMobileOpen(false)}
+                        className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm bg-stone-50/70 border border-pink-100 text-stone-800 hover:bg-purple-50 transition-all cursor-pointer touch-manipulation"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-purple-50 text-[#7c2d8a] flex items-center justify-center">
+                            <User className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="leading-tight">{user.displayName || "My Profile"}</p>
+                            <p className="text-[10px] text-stone-500 font-normal truncate">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-stone-400" />
+                      </Link>
+
+                      <Link
+                        href="/admin"
+                        onClick={() => setMobileOpen(false)}
+                        className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm bg-purple-50/50 border border-purple-200 text-purple-800 hover:bg-purple-100 transition-all cursor-pointer touch-manipulation"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
+                            <Shield className="h-4 w-4" />
+                          </div>
+                          <span>Admin Dashboard</span>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-purple-400" />
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          logout()
+                          setMobileOpen(false)
+                        }}
+                        className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all cursor-pointer mt-1 touch-manipulation"
+                      >
+                        <LogIn className="h-3.5 w-3.5" />
+                        <span>Sign Out of Account</span>
+                      </button>
+                    </>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <Link
+                        href="/login"
+                        onClick={() => setMobileOpen(false)}
+                        className="min-h-[44px] flex items-center justify-center gap-2 bg-[#7c2d8a] text-white py-2.5 px-3 rounded-xl text-xs font-bold shadow-xs hover:bg-[#682274] transition-all cursor-pointer touch-manipulation"
+                      >
+                        <LogIn className="h-3.5 w-3.5" />
+                        <span>Sign In</span>
+                      </Link>
+                      <Link
+                        href="/register"
+                        onClick={() => setMobileOpen(false)}
+                        className="min-h-[44px] flex items-center justify-center gap-2 bg-white text-stone-800 border border-pink-200 py-2.5 px-3 rounded-xl text-xs font-bold hover:bg-purple-50 transition-all cursor-pointer touch-manipulation"
+                      >
+                        <UserPlus className="h-3.5 w-3.5 text-[#7c2d8a]" />
+                        <span>Register</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* Direct WhatsApp Support */}
+                <div className="pt-1">
+                  <a
+                    href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%20Studio%2C%20I%20would%20like%20to%20inquire%20about%20workshops%20and%20art%20supplies!"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-h-[48px] flex items-center justify-center gap-2.5 w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white py-3 px-4 rounded-2xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer touch-manipulation"
+                  >
+                    <MessageCircle className="h-4 w-4 fill-white text-emerald-600" />
+                    <span>Chat on WhatsApp (+91 94253 56009)</span>
+                  </a>
+                </div>
+
+                {/* Policy & Legal Links */}
+                <div className="pt-2 border-t border-pink-100 text-center">
+                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11px] text-stone-500 font-medium">
+                    <Link
+                      href="/shipping-policy"
+                      onClick={() => setMobileOpen(false)}
+                      className="hover:text-[#7c2d8a] underline underline-offset-2"
+                    >
+                      Shipping Policy
+                    </Link>
+                    <Link
+                      href="/refund-policy"
+                      onClick={() => setMobileOpen(false)}
+                      className="hover:text-[#7c2d8a] underline underline-offset-2"
+                    >
+                      Refund Policy
+                    </Link>
+                    <Link
+                      href="/privacy-policy"
+                      onClick={() => setMobileOpen(false)}
+                      className="hover:text-[#7c2d8a] underline underline-offset-2"
+                    >
+                      Privacy Policy
+                    </Link>
+                    <Link
+                      href="/terms-conditions"
+                      onClick={() => setMobileOpen(false)}
+                      className="hover:text-[#7c2d8a] underline underline-offset-2"
+                    >
+                      Terms &amp; Conditions
+                    </Link>
+                  </div>
+                  <p className="text-[10px] text-stone-400 mt-2">
+                    © {new Date().getFullYear()} Anu Art &amp; Craft Studio, Jabalpur.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </header>
   )
 }

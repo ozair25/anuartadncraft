@@ -21,6 +21,8 @@ export default function CartPage() {
     discountAmount,
     applyCoupon,
     removeCoupon,
+    checkoutUrl,
+    redirectToCheckout,
   } = useCart()
 
   const [couponInput, setCouponInput] = useState("")
@@ -213,12 +215,13 @@ export default function CartPage() {
                   <span className="font-serif text-2xl font-black text-primary">₹{totalPrice + shippingFee}</span>
                 </div>
 
-                <Link
-                  href="/checkout"
-                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-3 text-xs font-bold text-primary-foreground shadow transition-opacity hover:opacity-90"
+                <button
+                  type="button"
+                  onClick={redirectToCheckout}
+                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-3 text-xs font-bold text-primary-foreground shadow transition-opacity hover:opacity-90 cursor-pointer"
                 >
                   Proceed To Checkout <ArrowRight className="h-4 w-4" />
-                </Link>
+                </button>
               </div>
             </div>
           )}

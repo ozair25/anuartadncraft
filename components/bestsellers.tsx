@@ -5,6 +5,7 @@ import { Heart, Star, ArrowRight, ShoppingBag } from "lucide-react"
 import { RibbonLabel } from "@/components/ribbon-label"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
+import { useShopifyProducts } from "@/lib/shopify/hooks"
 import { INITIAL_PRODUCTS } from "@/lib/data/mock-db"
 
 function Stars() {
@@ -20,6 +21,20 @@ function Stars() {
 export function Bestsellers() {
   const { addItem } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
+  const { products: allProducts } = useShopifyProducts()
+
+  const bestsellerProducts = (() => {
+    const tagged = allProducts.filter(
+      (p) =>
+        p.isBestSeller ||
+        p.tags.some((t) => t.toLowerCase().includes("bestseller") || t.toLowerCase() === "hot")
+    )
+    if (tagged.length >= 3) return tagged.slice(0, 10)
+    return allProducts.slice(0, 10)
+  })()
+
+  const displayProducts =
+    bestsellerProducts.length > 0 ? bestsellerProducts : INITIAL_PRODUCTS
 
   return (
     <section className="bg-cream py-14 md:py-20">
@@ -43,7 +58,7 @@ export function Bestsellers() {
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {INITIAL_PRODUCTS.map((p) => {
+          {displayProducts.map((p) => {
             const inWishlist = isInWishlist(p.id)
             return (
               <article

@@ -5,7 +5,7 @@ import { Product } from "@/types/ecommerce"
 
 interface WishlistContextType {
   wishlistIds: string[]
-  toggleWishlist: (productId: string) => void
+  toggleWishlist: (productIdOrProduct: string | { id: string }) => void
   isInWishlist: (productId: string) => boolean
   clearWishlist: () => void
   totalWishlist: number
@@ -37,9 +37,10 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     }
   }, [wishlistIds, mounted])
 
-  const toggleWishlist = (productId: string) => {
+  const toggleWishlist = (productIdOrProduct: string | { id: string }) => {
+    const id = typeof productIdOrProduct === "string" ? productIdOrProduct : productIdOrProduct.id
     setWishlistIds((prev) =>
-      prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     )
   }
 

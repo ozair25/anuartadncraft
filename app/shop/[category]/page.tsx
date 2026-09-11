@@ -1,31 +1,42 @@
 "use client"
 
-import { use } from "react"
+import { use, useMemo } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
-import { INITIAL_PRODUCTS, INITIAL_CATEGORIES } from "@/lib/data/mock-db"
+import { INITIAL_CATEGORIES } from "@/lib/data/mock-db"
+import { useShopifyProducts } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { Heart, ShoppingBag, Star, ArrowLeft } from "lucide-react"
+import { CartDrawer } from "@/components/cart-drawer"
 
 export default function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const router = useRouter()
   const resolvedParams = use(params)
   const categorySlug = resolvedParams.category
 
-  const { addItem } = useCart()
+  const { addItem, isCartOpen, closeCart, isLoadingCart } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
+  const { products: allProducts } = useShopifyProducts()
 
   const category = INITIAL_CATEGORIES.find(
     (c) => c.slug.toLowerCase() === categorySlug.toLowerCase() || c.id === categorySlug
   )
 
-  const products = INITIAL_PRODUCTS.filter(
-    (p) => p.category.toLowerCase() === categorySlug.toLowerCase()
-  )
+  const products = useMemo(() => {
+    return allProducts.filter((p) => {
+      const pCat = p.category.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+      const catSlug = categorySlug.toLowerCase()
+      return (
+        pCat === catSlug ||
+        p.category.toLowerCase() === catSlug ||
+        p.tags.some((t) => t.toLowerCase() === catSlug)
+      )
+    })
+  }, [allProducts, categorySlug])
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -115,8 +126,9 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         <span className="text-[11px] text-muted-foreground">({p.reviewsCount})</span>
                       </div>
                       <button
+                        disabled={isLoadingCart}
                         onClick={() => addItem(p)}
-                        className="mt-2 flex items-center justify-center gap-2 rounded bg-primary py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                        className="mt-2 flex items-center justify-center gap-2 rounded bg-primary py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-70 cursor-pointer"
                       >
                         <ShoppingBag className="h-3.5 w-3.5" />
                         Add to Cart
@@ -130,6 +142,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
         </div>
       </main>
       <SiteFooter />
+      <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
     </div>
   )
 }

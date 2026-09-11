@@ -14,7 +14,7 @@ import { ShieldCheck, ArrowRight, CreditCard, Wallet, Truck, ArrowLeft } from "l
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, totalPrice, discountAmount, clearCart } = useCart()
+  const { items, totalPrice, discountAmount, clearCart, checkoutUrl } = useCart()
   const { user } = useAuth()
 
   const defaultAddr = user?.addresses[0]
@@ -38,6 +38,10 @@ export default function CheckoutPage() {
 
   const handleSubmitOrder = (e: React.FormEvent) => {
     e.preventDefault()
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl
+      return
+    }
     setSubmitting(true)
 
     const orderNumber = "ANU-" + Math.floor(100000 + Math.random() * 900000)

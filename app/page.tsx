@@ -1,45 +1,17 @@
-"use client"
+import { getAllProducts } from "@/lib/shopify/products"
+import { HomePageClient } from "@/components/home-page-client"
+import { Product } from "@/types/ecommerce"
 
-import { useState } from "react"
-import { SiteHeader } from "@/components/site-header"
-import { Hero } from "@/components/hero"
-import { AnuArtsTemplate } from "@/components/anu-arts-template"
-import { SiteFooter } from "@/components/site-footer"
-import { CartDrawer } from "@/components/cart-drawer"
-import { BookClassModal } from "@/components/book-class-modal"
+export const dynamic = "force-dynamic"
 
-export default function Page() {
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [isBookClassOpen, setIsBookClassOpen] = useState(false)
+export default async function Page() {
+  let products: Product[] = []
+  try {
+    products = await getAllProducts()
+  } catch (err) {
+    console.error("Homepage server products fetch error:", err)
+  }
 
-  return (
-    <div className="min-h-screen bg-[#fffaff] text-[#1c1917] font-sans antialiased selection:bg-pink-200 selection:text-purple-900">
-      <SiteHeader
-        onOpenCart={() => setIsCartOpen(true)}
-        onOpenBookClass={() => setIsBookClassOpen(true)}
-      />
-      <main>
-        <Hero
-          onExploreWorkshops={() => {
-            const el = document.getElementById("workshops-section")
-            if (el) el.scrollIntoView({ behavior: "smooth" })
-          }}
-          onVisitStore={() => {
-            const el = document.getElementById("shop-section")
-            if (el) el.scrollIntoView({ behavior: "smooth" })
-          }}
-        />
-        <AnuArtsTemplate
-          onOpenCart={() => setIsCartOpen(true)}
-          onOpenBookClass={(cat) => setIsBookClassOpen(true)}
-        />
-      </main>
-      <SiteFooter />
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <BookClassModal
-        isOpen={isBookClassOpen}
-        onClose={() => setIsBookClassOpen(false)}
-      />
-    </div>
-  )
+  return <HomePageClient initialProducts={products} />
 }
+

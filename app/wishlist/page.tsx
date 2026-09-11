@@ -6,14 +6,17 @@ import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { useCart } from "@/lib/context/cart-context"
+import { useShopifyProducts } from "@/lib/shopify/hooks"
 import { INITIAL_PRODUCTS } from "@/lib/data/mock-db"
 import { Heart, ShoppingBag, Trash2, ArrowRight } from "lucide-react"
 
 export default function WishlistPage() {
   const { wishlistIds, toggleWishlist, clearWishlist } = useWishlist()
   const { addItem } = useCart()
+  const { products: allProducts } = useShopifyProducts()
 
-  const wishlistProducts = INITIAL_PRODUCTS.filter((p) => wishlistIds.includes(p.id))
+  const productPool = allProducts.length > 0 ? allProducts : INITIAL_PRODUCTS
+  const wishlistProducts = productPool.filter((p) => wishlistIds.includes(p.id) || wishlistIds.includes(p.slug))
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">

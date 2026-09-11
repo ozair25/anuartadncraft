@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
 import { INITIAL_PRODUCTS } from "@/lib/data/mock-db"
+import { useShopifyProducts } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { Heart, ShoppingBag, Star, Search } from "lucide-react"
@@ -17,9 +18,13 @@ function SearchResultsContent() {
 
   const { addItem } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
+  const { products: shopifyResults, loading } = useShopifyProducts({ query })
 
   const results = useMemo(() => {
     if (!query.trim()) return []
+    if (shopifyResults && shopifyResults.length > 0) {
+      return shopifyResults
+    }
     const q = query.toLowerCase()
     return INITIAL_PRODUCTS.filter(
       (p) =>
@@ -29,7 +34,7 @@ function SearchResultsContent() {
         p.brand.toLowerCase().includes(q) ||
         p.tags.some((t) => t.toLowerCase().includes(q))
     )
-  }, [query])
+  }, [query, shopifyResults])
 
   return (
     <div className="mx-auto max-w-7xl px-4 md:px-6 py-10">

@@ -3,8 +3,9 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { RibbonLabel } from "@/components/ribbon-label"
+import { useShopifyCollections } from "@/lib/shopify/hooks"
 
-const collections = [
+const DEFAULT_COLLECTIONS = [
   { title: "Acrylic Painting Essentials", slug: "acrylic-painting-essentials", img: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784974074/download_20_eq14mc.jpg" },
   { title: "DIY Craft Kits For All Ages", slug: "diy-craft-kits-for-all-ages", img: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784974233/184K_views_2_3K_reactions___Ideas_con_botellas_recicladas_%EF%B8%8F____fblifestyle___Arte_Sano_Creativo___Facebook_pryqci.jpg" },
   { title: "Art Journal Essentials", slug: "art-journal-essentials", img: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784974074/download_22_raxeud.jpg" },
@@ -12,6 +13,16 @@ const collections = [
 ]
 
 export function CuratedCollections() {
+  const { collections: shopifyCollections } = useShopifyCollections()
+
+  const collections =
+    shopifyCollections && shopifyCollections.length >= 2
+      ? shopifyCollections.slice(0, 4).map((c, i) => ({
+          title: c.name,
+          slug: c.slug,
+          img: c.image || DEFAULT_COLLECTIONS[i % DEFAULT_COLLECTIONS.length].img,
+        }))
+      : DEFAULT_COLLECTIONS
   return (
     <section className="bg-cream-dark/40 py-14 md:py-20">
       <div className="mx-auto max-w-7xl px-4 md:px-6">

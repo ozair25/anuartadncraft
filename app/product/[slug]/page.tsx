@@ -7,35 +7,131 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
 import { INITIAL_PRODUCTS } from "@/lib/data/mock-db"
+import { useShopifyProduct, useShopifyProducts } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { Heart, ShoppingBag, Star, ShieldCheck, Truck, RotateCcw, ArrowLeft, Check } from "lucide-react"
+import { CartDrawer } from "@/components/cart-drawer"
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter()
   const resolvedParams = use(params)
   const productSlug = resolvedParams.slug
 
-  const product = INITIAL_PRODUCTS.find(
-    (p) => p.slug.toLowerCase() === productSlug.toLowerCase() || p.id === productSlug
-  ) || INITIAL_PRODUCTS[0]
+  const { product: shopifyProduct, loading: isProductLoading, error: productError } = useShopifyProduct(productSlug)
+  const { products: allProducts } = useShopifyProducts()
 
-  const [selectedImage, setSelectedImage] = useState<string>(product.images[0] || product.thumbnail)
+  const product =
+    shopifyProduct ||
+    INITIAL_PRODUCTS.find(
+      (p) => p.slug.toLowerCase() === productSlug.toLowerCase() || p.id === productSlug
+    )
+
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState<number>(0)
+  const [selectedImage, setSelectedImage] = useState<string>("")
   const [quantity, setQuantity] = useState<number>(1)
   const [activeTab, setActiveTab] = useState<"description" | "specs" | "reviews">("description")
   const [added, setAdded] = useState(false)
 
-  const { addItem } = useCart()
+  const { addItem, checkoutUrl, isCartOpen, closeCart, isLoadingCart, redirectToCheckout } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
-  const inWishlist = isInWishlist(product.id)
+  const inWishlist = product ? isInWishlist(product.id) : false
 
-  const handleAddToCart = () => {
-    addItem(product, quantity)
-    setAdded(true)
-    setTimeout(() => setAdded(false), 2000)
+  const activeImage =
+    selectedImage ||
+    product?.images?.[0] ||
+    product?.thumbnail ||
+    product?.image ||
+    ""
+
+  const activeVariant =
+    product?.variants && product.variants.length > selectedVariantIndex
+      ? product.variants[selectedVariantIndex]
+      : undefined
+
+  const currentPrice = activeVariant ? activeVariant.price : (product?.price || 0)
+  const currentOriginalPrice = activeVariant
+    ? activeVariant.originalPrice
+    : product?.originalPrice
+
+  const handleAddToCart = async () => {
+    if (!product) return
+    const productToAdd = {
+      ...product,
+      price: currentPrice,
+      originalPrice: currentOriginalPrice,
+      variantId: activeVariant?.id || product.variantId || product.id,
+    }
+    const success = await addItem(productToAdd, quantity)
+    if (success) {
+      setAdded(true)
+      setTimeout(() => setAdded(false), 2000)
+    }
   }
 
-  const relatedProducts = INITIAL_PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4)
+  const handleBuyNow = async () => {
+    if (!product) return
+    const productToAdd = {
+      ...product,
+      price: currentPrice,
+      originalPrice: currentOriginalPrice,
+      variantId: activeVariant?.id || product.variantId || product.id,
+    }
+    const success = await addItem(productToAdd, quantity)
+    if (success) {
+      redirectToCheckout()
+    }
+  }
+
+  const relatedProducts = allProducts.filter((p) => p.id !== product?.id).slice(0, 4)
+
+  if (isProductLoading && !product) {
+    return (
+      <div className="min-h-screen bg-cream flex flex-col">
+        <SiteHeader />
+        <main className="flex-1 py-10">
+          <div className="mx-auto max-w-7xl px-4 md:px-6 animate-pulse space-y-6">
+            <div className="h-6 bg-muted/60 rounded w-24" />
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+              <div className="aspect-square bg-muted/50 rounded-2xl" />
+              <div className="space-y-4">
+                <div className="h-8 bg-muted/70 rounded w-3/4" />
+                <div className="h-6 bg-muted/50 rounded w-1/3" />
+                <div className="h-24 bg-muted/40 rounded w-full" />
+              </div>
+            </div>
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-cream flex flex-col">
+        <SiteHeader />
+        <main className="flex-1 py-20 text-center">
+          <div className="max-w-md mx-auto p-6 bg-card rounded-2xl border border-border">
+            <h2 className="font-serif text-2xl font-bold">Product Not Found</h2>
+            <p className="mt-2 text-xs text-muted-foreground">
+              We couldn&apos;t find the product you are looking for.
+            </p>
+            {productError && (
+              <p className="mt-2 text-xs font-mono text-amber-600">{productError}</p>
+            )}
+            <Link
+              href="/shop"
+              className="mt-6 inline-block bg-primary text-primary-foreground text-xs font-bold px-6 py-2.5 rounded-full"
+            >
+              Browse All Supplies
+            </Link>
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -69,7 +165,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             <div className="flex flex-col gap-4">
               <div className="relative aspect-square overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                 <img
-                  src={selectedImage || "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=800&auto=format&fit=crop"}
+                  src={activeImage || "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=800&auto=format&fit=crop"}
                   alt={product.name}
                   className="h-full w-full object-cover"
                   referrerPolicy="no-referrer"
@@ -132,9 +228,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
               {/* Pricing */}
               <div className="mt-6 flex items-baseline gap-3">
-                <span className="font-serif text-3xl font-black text-primary">₹{product.price}</span>
-                {product.originalPrice && (
-                  <span className="text-base text-muted-foreground line-through">₹{product.originalPrice}</span>
+                <span className="font-serif text-3xl font-black text-primary">₹{currentPrice}</span>
+                {currentOriginalPrice && (
+                  <span className="text-base text-muted-foreground line-through">₹{currentOriginalPrice}</span>
                 )}
                 {product.discount && (
                   <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
@@ -142,6 +238,29 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   </span>
                 )}
               </div>
+
+              {/* Variant Selector if available */}
+              {product.variants && product.variants.length > 1 && (
+                <div className="mt-6">
+                  <span className="text-xs font-bold text-foreground">Select Option:</span>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {product.variants.map((v, vIdx) => (
+                      <button
+                        key={v.id || vIdx}
+                        type="button"
+                        onClick={() => setSelectedVariantIndex(vIdx)}
+                        className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                          selectedVariantIndex === vIdx
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-card text-foreground hover:bg-secondary"
+                        }`}
+                      >
+                        {v.title} - ₹{v.price}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
                 {product.shortDescription}
@@ -166,13 +285,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 </div>
 
                 <button
+                  disabled={isLoadingCart}
                   onClick={handleAddToCart}
-                  className="flex-1 min-w-[200px] flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-xs font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90"
+                  className="flex-1 min-w-[200px] flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-xs font-bold text-primary-foreground shadow-md transition-opacity hover:opacity-90 disabled:opacity-70 cursor-pointer"
                 >
                   {added ? (
                     <>
                       <Check className="h-4 w-4" /> Added to Cart!
                     </>
+                  ) : isLoadingCart ? (
+                    <span>Adding to Cart...</span>
                   ) : (
                     <>
                       <ShoppingBag className="h-4 w-4" /> Add To Cart
@@ -180,13 +302,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   )}
                 </button>
 
-                <Link
-                  href="/checkout"
-                  onClick={handleAddToCart}
-                  className="rounded-lg border-2 border-primary bg-card px-6 py-3 text-xs font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                <button
+                  type="button"
+                  disabled={isLoadingCart}
+                  onClick={handleBuyNow}
+                  className="rounded-lg border-2 border-primary bg-card px-6 py-3 text-xs font-bold text-primary hover:bg-primary hover:text-primary-foreground transition-colors disabled:opacity-70 cursor-pointer"
                 >
                   Buy Now
-                </Link>
+                </button>
               </div>
 
               {/* Value Badges */}
@@ -318,6 +441,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         </div>
       </main>
       <SiteFooter />
+      <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
     </div>
   )
 }
