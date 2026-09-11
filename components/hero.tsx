@@ -22,7 +22,7 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
         <img
           src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787510776/ChatGPT_Image_Aug_24_2026_12_15_53_AM_wnv7yt.png"
           alt="Hero Wallpaper Mobile Background"
-          className="block sm:hidden w-full h-full object-cover object-bottom opacity-100"
+          className="block sm:hidden w-full h-full object-cover object-bottom opacity-85"
         />
 
         {/* Desktop / Tablet Background Image - Positioned to display complete artwork as original */}
@@ -37,7 +37,7 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
         <div className="max-w-2xl flex flex-col items-start text-left space-y-6 sm:space-y-7 lg:-translate-x-[10%] xl:-translate-x-[12%]">
           
           {/* Tagline / Eyebrow with Purple-to-Yellow-Orange gradient accent */}
-          <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a] bg-white/90 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-pink-200/90 shadow-xs">
+          <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a] bg-white/95 sm:bg-white/90 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-pink-300/90 sm:border-pink-200/90 shadow-xs">
             <span className="bg-gradient-to-r from-[#7c2d8a] via-[#d92672] to-[#f59e0b] bg-clip-text text-transparent">
               CREATE. LEARN. INSPIRE.
             </span>
@@ -45,17 +45,17 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
           </div>
 
           {/* Main Headline (Exact Layout & Typography with high-contrast text shadow for mobile) */}
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[60px] font-black text-stone-950 leading-[1.12] tracking-tight [text-shadow:0_2px_16px_rgba(255,255,255,1),0_1px_4px_rgba(255,255,255,0.9)] ml-0 mt-[51px] sm:mt-[83px]">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-[60px] font-black text-black sm:text-stone-950 leading-[1.12] tracking-tight [text-shadow:0_0_14px_rgba(255,255,255,1),0_1px_4px_rgba(255,255,255,1)] sm:[text-shadow:0_2px_16px_rgba(255,255,255,1),0_1px_4px_rgba(255,255,255,0.9)] ml-0 mt-[51px] sm:mt-[83px]">
             Where Your
             <br />
             Ideas{" "}
-            <span className="font-script text-red-600 font-bold italic text-5xl sm:text-6xl lg:text-[76px] tracking-normal inline-block ml-1 [text-shadow:0_2px_16px_rgba(255,255,255,1),0_1px_5px_rgba(255,255,255,0.9)]">
+            <span className="font-script text-red-700 sm:text-red-600 font-extrabold sm:font-bold italic text-5xl sm:text-6xl lg:text-[76px] tracking-normal inline-block ml-1 [text-shadow:0_0_14px_rgba(255,255,255,1),0_1px_5px_rgba(255,255,255,1)] sm:[text-shadow:0_2px_16px_rgba(255,255,255,1),0_1px_5px_rgba(255,255,255,0.9)]">
               Come to Life.
             </span>
           </h1>
 
           {/* Subheading / Description */}
-          <p className="text-stone-950 text-sm sm:text-base max-w-xl font-medium sm:font-normal leading-relaxed [text-shadow:0_1px_12px_rgba(255,255,255,0.95)]">
+          <p className="text-black sm:text-stone-950 text-sm sm:text-base max-w-xl font-semibold sm:font-normal leading-relaxed [text-shadow:0_0_12px_rgba(255,255,255,1),0_1px_3px_rgba(255,255,255,1)] sm:[text-shadow:0_1px_12px_rgba(255,255,255,0.95)]">
             Anu Arts is your one-stop destination for art and craft materials,
             creative workshops and endless inspiration.
           </p>
@@ -92,8 +92,8 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
                 <Palette className="h-4 w-4" />
               </div>
               <div>
-                <h2 className="text-xs font-bold text-stone-950 [text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Quality Materials</h2>
-                <p className="text-[11px] text-stone-800 font-semibold sm:font-medium [text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Premium art &amp; craft supplies</p>
+                <h2 className="text-xs font-black sm:font-bold text-black sm:text-stone-950 [text-shadow:0_0_8px_rgba(255,255,255,1)] sm:[text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Quality Materials</h2>
+                <p className="text-[11px] text-stone-900 sm:text-stone-800 font-bold sm:font-medium [text-shadow:0_0_8px_rgba(255,255,255,1)] sm:[text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Premium art &amp; craft supplies</p>
               </div>
             </div>
 
@@ -103,8 +103,8 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
                 <Users className="h-4 w-4" />
               </div>
               <div>
-                <h2 className="text-xs font-bold text-stone-950 [text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Creative Workshops</h2>
-                <p className="text-[11px] text-stone-800 font-semibold sm:font-medium [text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">For all age groups</p>
+                <h2 className="text-xs font-black sm:font-bold text-black sm:text-stone-950 [text-shadow:0_0_8px_rgba(255,255,255,1)] sm:[text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Creative Workshops</h2>
+                <p className="text-[11px] text-stone-900 sm:text-stone-800 font-bold sm:font-medium [text-shadow:0_0_8px_rgba(255,255,255,1)] sm:[text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">For all age groups</p>
               </div>
             </div>
 
@@ -114,8 +114,8 @@ export function Hero({ onExploreWorkshops, onVisitStore }: HeroProps) {
                 <GraduationCap className="h-4 w-4" />
               </div>
               <div>
-                <h2 className="text-xs font-bold text-stone-950 [text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Learn &amp; Grow</h2>
-                <p className="text-[11px] text-stone-800 font-semibold sm:font-medium [text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Explore. Create. Inspire.</p>
+                <h2 className="text-xs font-black sm:font-bold text-black sm:text-stone-950 [text-shadow:0_0_8px_rgba(255,255,255,1)] sm:[text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Learn &amp; Grow</h2>
+                <p className="text-[11px] text-stone-900 sm:text-stone-800 font-bold sm:font-medium [text-shadow:0_0_8px_rgba(255,255,255,1)] sm:[text-shadow:0_1px_8px_rgba(255,255,255,0.9)]">Explore. Create. Inspire.</p>
               </div>
             </div>
 
