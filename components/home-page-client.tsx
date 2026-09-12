@@ -34,6 +34,9 @@ export function HomePageClient({ initialProducts = [] }: HomePageClientProps) {
           onVisitStore={() => {
             router.push("/shop")
           }}
+          onContact={() => {
+            router.push("/contact")
+          }}
         />
         <AnuArtsTemplate
           initialProducts={initialProducts}
