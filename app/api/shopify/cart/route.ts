@@ -12,6 +12,19 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { action, cartId, lines, lineIds } = body
 
+    // Temporary diagnostic logging (Requirement 10)
+    if (action === "create" || action === "add") {
+      console.log("[Shopify Cart API Diagnostic]", {
+        action,
+        cartId: cartId || "(new cart)",
+        lines: lines?.map((l: { merchandiseId: string; quantity: number; productId?: string }) => ({
+          productId: l.productId || "N/A",
+          selectedShopifyVariantId: l.merchandiseId,
+          quantity: l.quantity,
+        })),
+      })
+    }
+
     switch (action) {
       case "create": {
         const result = await createShopifyCart(lines)

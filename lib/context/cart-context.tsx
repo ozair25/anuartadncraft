@@ -37,35 +37,113 @@ const SHOPIFY_CART_ID_KEY = "anu_arts_shopify_cart_id"
 const SHOPIFY_CHECKOUT_URL_KEY = "anu_arts_shopify_checkout_url"
 
 /**
+ * Helper to ensure a variant ID is formatted as a full Shopify ProductVariant GID.
+ */
+function formatShopifyVariantGid(id: string | number): string {
+  const str = String(id).trim()
+  if (str.startsWith("gid://shopify/ProductVariant/")) {
+    return str
+  }
+  // If numeric ID e.g. 43885824344108
+  if (/^\d+$/.test(str)) {
+    return `gid://shopify/ProductVariant/${str}`
+  }
+  // If contains ProductVariant without full gid
+  if (str.includes("ProductVariant/")) {
+    const num = str.split("ProductVariant/").pop()
+    if (num && /^\d+$/.test(num)) {
+      return `gid://shopify/ProductVariant/${num}`
+    }
+  }
+  return str
+}
+
+/**
+ * Checks if an ID represents a valid Shopify ProductVariant GID.
+ * Strictly guards AGAINST sending a Product ID (gid://shopify/Product/...).
+ */
+function isShopifyVariantGid(id: string | undefined | null): boolean {
+  if (!id) return false
+  const str = String(id).trim()
+  // Must NOT be a pure Product GID
+  if (str.includes("gid://shopify/Product/") && !str.includes("ProductVariant")) {
+    return false
+  }
+  return str.includes("gid://shopify/ProductVariant/") || /^\d{10,}$/.test(str)
+}
+
+/**
  * Resolves the genuine Shopify ProductVariant GID.
  * Strictly guarantees a Product ID is never sent.
+ * 
+ * Rules:
+ * 1. For a product with multiple variants:
+ *    - If selectedOptions match a variant, use that variant's GID.
+ *    - If product.variantId matches one of the variants, use that variant's GID.
+ *    - Fallback to the first available variant.
+ * 2. For a product with one variant:
+ *    - Automatically use that variant's actual Shopify ProductVariant GID.
+ * 3. If product.variantId is already a valid ProductVariant GID, use it.
+ * 4. Never return a Product ID (gid://shopify/Product/...).
  */
-function resolveShopifyVariantId(product: Product, selectedOptions?: Record<string, string>): string | null {
-  // 1. If product has variants, match selectedOptions or take first variant
-  if (product.variants && product.variants.length > 0) {
+export function resolveShopifyVariantId(
+  product: Product,
+  selectedOptions?: Record<string, string>
+): string | null {
+  if (!product) return null
+
+  const variants = product.variants || []
+
+  // Case 1: Multiple variants
+  if (variants.length > 1) {
+    // 1a. Match selectedOptions if provided
     if (selectedOptions && Object.keys(selectedOptions).length > 0) {
-      const match = product.variants.find((v) => {
+      const match = variants.find((v) => {
         if (!v.selectedOptions || v.selectedOptions.length === 0) return false
         return v.selectedOptions.every((opt) => selectedOptions[opt.name] === opt.value)
       })
-      if (match?.id && match.id.includes("ProductVariant")) {
-        return match.id
+      if (match?.id && isShopifyVariantGid(match.id)) {
+        return formatShopifyVariantGid(match.id)
       }
     }
-    const firstVariant = product.variants.find((v) => v.id && v.id.includes("ProductVariant"))
-    if (firstVariant?.id) {
-      return firstVariant.id
+
+    // 1b. If product.variantId was set to a specific variant (e.g. from activeVariant)
+    if (product.variantId && isShopifyVariantGid(product.variantId)) {
+      const matchingVariant = variants.find((v) => v.id === product.variantId)
+      if (matchingVariant) {
+        return formatShopifyVariantGid(matchingVariant.id)
+      }
+      return formatShopifyVariantGid(product.variantId)
+    }
+
+    // 1c. Fallback to first available variant
+    const firstAvailable = variants.find((v) => v.available !== false && isShopifyVariantGid(v.id))
+    if (firstAvailable?.id) {
+      return formatShopifyVariantGid(firstAvailable.id)
+    }
+
+    const first = variants[0]
+    if (first?.id && isShopifyVariantGid(first.id)) {
+      return formatShopifyVariantGid(first.id)
     }
   }
 
-  // 2. Check product.variantId
-  if (product.variantId && product.variantId.includes("gid://shopify/ProductVariant/")) {
-    return product.variantId
+  // Case 2: Product with one variant
+  if (variants.length === 1) {
+    const single = variants[0]
+    if (single?.id && isShopifyVariantGid(single.id)) {
+      return formatShopifyVariantGid(single.id)
+    }
   }
 
-  // 3. Fallback only if product.id itself is a variant GID
-  if (product.id && product.id.includes("gid://shopify/ProductVariant/")) {
-    return product.id
+  // Case 3: Direct variantId property on product
+  if (product.variantId && isShopifyVariantGid(product.variantId)) {
+    return formatShopifyVariantGid(product.variantId)
+  }
+
+  // Case 4: Product ID itself is a variant GID (not a Product GID)
+  if (product.id && isShopifyVariantGid(product.id)) {
+    return formatShopifyVariantGid(product.id)
   }
 
   return null
@@ -228,6 +306,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCartError(null)
 
     const variantId = resolveShopifyVariantId(product, selectedOptions)
+
+    // Temporary diagnostic logging (Requirement 10)
+    console.log("[Shopify Cart AddItem Diagnostic]", {
+      shopifyProductId: product.id,
+      selectedShopifyVariantId: variantId,
+      quantity: Math.max(1, quantity),
+      cartId: shopifyCartId || "(new cart)",
+    })
+
     if (!variantId) {
       const err = `Cannot add "${product.name}" to cart: Missing Shopify ProductVariant ID. The Shopify Cart API requires a ProductVariant ID, not a Product ID.`
       console.error("[Shopify Cart Error]:", err, { product })
@@ -247,6 +334,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             {
               merchandiseId: variantId,
               quantity: Math.max(1, quantity),
+              productId: product.id,
             },
           ],
         }),

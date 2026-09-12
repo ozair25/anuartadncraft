@@ -174,6 +174,16 @@ const storeProducts: Product[] = [
     category: "DIY Kits",
     description: "Complete Lippan art kit with mirrors, modeling clay, MDF round board & acrylic paints.",
     inStock: true,
+    variantId: "gid://shopify/ProductVariant/43659782914092",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43659782914092",
+        title: "Default Title",
+        price: 699,
+        originalPrice: 899,
+        available: true,
+      },
+    ],
   },
   {
     id: "prod-2",
@@ -186,6 +196,16 @@ const storeProducts: Product[] = [
     category: "Paints",
     description: "High pigment load watercolor pans with water brush pen and mixing palette.",
     inStock: true,
+    variantId: "gid://shopify/ProductVariant/43659902287916",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43659902287916",
+        title: "Default Title",
+        price: 849,
+        originalPrice: 1099,
+        available: true,
+      },
+    ],
   },
   {
     id: "prod-3",
@@ -198,6 +218,16 @@ const storeProducts: Product[] = [
     category: "Resin",
     description: "Non-yellowing, bubble-free glossy epoxy resin ideal for ocean art & coasters.",
     inStock: true,
+    variantId: "gid://shopify/ProductVariant/43885824344108",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43885824344108",
+        title: "Default Title",
+        price: 549,
+        originalPrice: 699,
+        available: true,
+      },
+    ],
   },
   {
     id: "prod-4",
@@ -210,6 +240,16 @@ const storeProducts: Product[] = [
     category: "Canvas",
     description: "Triple-primed acid-free cotton canvas boards ready for acrylic and oil painting.",
     inStock: true,
+    variantId: "gid://shopify/ProductVariant/43660089131052",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43660089131052",
+        title: "Default Title",
+        price: 399,
+        originalPrice: 520,
+        available: true,
+      },
+    ],
   },
   {
     id: "prod-5",
@@ -222,6 +262,16 @@ const storeProducts: Product[] = [
     category: "Calligraphy",
     description: "Flexible nylon brush nib and fine tip pens for modern calligraphy and journaling.",
     inStock: true,
+    variantId: "gid://shopify/ProductVariant/43660199559212",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43660199559212",
+        title: "Default Title",
+        price: 499,
+        originalPrice: 650,
+        available: true,
+      },
+    ],
   },
   {
     id: "prod-6",
@@ -234,6 +284,16 @@ const storeProducts: Product[] = [
     category: "MDF",
     description: "Smooth 3.5mm thick MDF bases ready for decoupage, paint, and glitter work.",
     inStock: true,
+    variantId: "gid://shopify/ProductVariant/43660200247340",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43660200247340",
+        title: "Default Title",
+        price: 329,
+        originalPrice: 450,
+        available: true,
+      },
+    ],
   },
 ]
 

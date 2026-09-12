@@ -56,13 +56,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
   const handleAddToCart = async () => {
     if (!product) return
-    const productToAdd = {
+
+    // Requirement 6 & 7: For product with multiple variants use selected variant; for 1 variant use that variant
+    const selectedVariantGid = activeVariant?.id || product.variantId
+    const productToAdd: Product = {
       ...product,
       price: currentPrice,
       originalPrice: currentOriginalPrice,
-      variantId: activeVariant?.id || product.variantId || product.id,
+      ...(selectedVariantGid ? { variantId: selectedVariantGid } : {}),
     }
-    const success = await addItem(productToAdd, quantity)
+
+    const selectedOptionsMap: Record<string, string> = {}
+    if (activeVariant?.selectedOptions) {
+      for (const opt of activeVariant.selectedOptions) {
+        selectedOptionsMap[opt.name] = opt.value
+      }
+    }
+
+    const success = await addItem(productToAdd, quantity, selectedOptionsMap)
     if (success) {
       setAdded(true)
       setTimeout(() => setAdded(false), 2000)
@@ -71,13 +82,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
   const handleBuyNow = async () => {
     if (!product) return
-    const productToAdd = {
+
+    const selectedVariantGid = activeVariant?.id || product.variantId
+    const productToAdd: Product = {
       ...product,
       price: currentPrice,
       originalPrice: currentOriginalPrice,
-      variantId: activeVariant?.id || product.variantId || product.id,
+      ...(selectedVariantGid ? { variantId: selectedVariantGid } : {}),
     }
-    const success = await addItem(productToAdd, quantity)
+
+    const selectedOptionsMap: Record<string, string> = {}
+    if (activeVariant?.selectedOptions) {
+      for (const opt of activeVariant.selectedOptions) {
+        selectedOptionsMap[opt.name] = opt.value
+      }
+    }
+
+    const success = await addItem(productToAdd, quantity, selectedOptionsMap)
     if (success) {
       redirectToCheckout()
     }

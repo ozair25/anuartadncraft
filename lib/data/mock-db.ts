@@ -114,6 +114,18 @@ export const INITIAL_PRODUCTS: Product[] = [
     isFeatured: true,
     isBestSeller: true,
     isNewArrival: false,
+    variantId: "gid://shopify/ProductVariant/43659782914092",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43659782914092",
+        title: "Default Title",
+        price: 349,
+        originalPrice: 420,
+        available: true,
+        sku: "CAM-ACR-12",
+        selectedOptions: [{ name: "Title", value: "Default Title" }],
+      },
+    ],
     seoTitle: "Buy Camel Acrylic Colour Set 12 Shades Online - Anu Arts",
     seoDescription: "Shop authentic Camel 12 shades acrylic paint set at best prices with express delivery across India.",
     altText: "Camel Acrylic Colour Set 12 Shades Box",
@@ -152,6 +164,18 @@ export const INITIAL_PRODUCTS: Product[] = [
     isFeatured: true,
     isBestSeller: true,
     isNewArrival: false,
+    variantId: "gid://shopify/ProductVariant/43659902287916",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43659902287916",
+        title: "Default Title",
+        price: 499,
+        originalPrice: 599,
+        available: true,
+        sku: "BRU-SKT-A4",
+        selectedOptions: [{ name: "Title", value: "Default Title" }],
+      },
+    ],
     seoTitle: "Brustro A4 Hardbound Sketchbook 160 GSM - Anu Arts",
     seoDescription: "Buy Brustro A4 hardbound artist sketchbook online. Heavy acid-free papers ideal for graphite & charcoal.",
     altText: "Brustro Hardbound Artists Sketchbook A4",
@@ -189,6 +213,18 @@ export const INITIAL_PRODUCTS: Product[] = [
     isFeatured: true,
     isBestSeller: true,
     isNewArrival: false,
+    variantId: "gid://shopify/ProductVariant/43885824344108",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43885824344108",
+        title: "Default Title",
+        price: 180,
+        originalPrice: 210,
+        available: true,
+        sku: "FEV-FAB-6",
+        selectedOptions: [{ name: "Title", value: "Default Title" }],
+      },
+    ],
     seoTitle: "Fevicryl Fabric Colours 6 Shades Set - Anu Arts",
     seoDescription: "Washproof fabric paints for clothes, canvas bags and cushion covers.",
     altText: "Fevicryl Fabric Colours Kit",
@@ -224,6 +260,18 @@ export const INITIAL_PRODUCTS: Product[] = [
     isFeatured: false,
     isBestSeller: true,
     isNewArrival: false,
+    variantId: "gid://shopify/ProductVariant/43660089131052",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43660089131052",
+        title: "Default Title",
+        price: 599,
+        originalPrice: 699,
+        available: true,
+        sku: "CAM-PAS-50",
+        selectedOptions: [{ name: "Title", value: "Default Title" }],
+      },
+    ],
     createdAt: "2026-02-01T10:00:00Z",
     updatedAt: "2026-07-21T12:00:00Z"
   },
@@ -251,6 +299,18 @@ export const INITIAL_PRODUCTS: Product[] = [
     isFeatured: false,
     isBestSeller: true,
     isNewArrival: false,
+    variantId: "gid://shopify/ProductVariant/43660199559212",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43660199559212",
+        title: "Default Title",
+        price: 450,
+        originalPrice: 550,
+        available: true,
+        sku: "CRF-TL-7",
+        selectedOptions: [{ name: "Title", value: "Default Title" }],
+      },
+    ],
     createdAt: "2026-02-05T10:00:00Z",
     updatedAt: "2026-07-18T12:00:00Z"
   },
@@ -278,6 +338,18 @@ export const INITIAL_PRODUCTS: Product[] = [
     isFeatured: true,
     isBestSeller: false,
     isNewArrival: true,
+    variantId: "gid://shopify/ProductVariant/43660200247340",
+    variants: [
+      {
+        id: "gid://shopify/ProductVariant/43660200247340",
+        title: "Default Title",
+        price: 899,
+        originalPrice: 1199,
+        available: true,
+        sku: "RES-KIT-BEG",
+        selectedOptions: [{ name: "Title", value: "Default Title" }],
+      },
+    ],
     createdAt: "2026-03-01T10:00:00Z",
     updatedAt: "2026-07-22T12:00:00Z"
   }
