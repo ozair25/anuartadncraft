@@ -334,7 +334,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             {
               merchandiseId: variantId,
               quantity: Math.max(1, quantity),
-              productId: product.id,
             },
           ],
         }),

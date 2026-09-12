@@ -80,6 +80,29 @@ export interface ShopifyCartOperationResult {
 }
 
 /**
+ * Sanitizes line items to match the strict Shopify CartLineInput GraphQL schema
+ * (only merchandiseId, quantity, and optionally attributes).
+ */
+function cleanCartLines(
+  lines?: Array<{ merchandiseId: string; quantity: number; [key: string]: unknown }>
+): Array<{ merchandiseId: string; quantity: number }> {
+  if (!lines || lines.length === 0) return []
+  return lines.map((line) => ({
+    merchandiseId: line.merchandiseId,
+    quantity: line.quantity,
+  }))
+}
+
+function cleanUpdateLines(
+  lines: Array<{ id: string; quantity: number; [key: string]: unknown }>
+): Array<{ id: string; quantity: number }> {
+  return lines.map((line) => ({
+    id: line.id,
+    quantity: line.quantity,
+  }))
+}
+
+/**
  * Validates line items to ensure they contain Shopify VARIANT IDs, NOT Product IDs.
  */
 function validateCartLines(lines?: Array<{ merchandiseId: string; quantity: number }>): string | null {
@@ -113,6 +136,7 @@ export async function createShopifyCart(
   }
 
   try {
+    const sanitizedLines = cleanCartLines(lines)
     const response = await shopifyFetch<{
       cartCreate: {
         cart: ShopifyCart | null
@@ -121,7 +145,7 @@ export async function createShopifyCart(
     }>({
       query: CREATE_CART_MUTATION,
       variables: {
-        input: lines && lines.length > 0 ? { lines } : {},
+        input: sanitizedLines.length > 0 ? { lines: sanitizedLines } : {},
       },
     })
 
@@ -169,6 +193,7 @@ export async function addLinesToShopifyCart(
   }
 
   try {
+    const sanitizedLines = cleanCartLines(lines)
     const response = await shopifyFetch<{
       cartLinesAdd: {
         cart: ShopifyCart | null
@@ -178,7 +203,7 @@ export async function addLinesToShopifyCart(
       query: ADD_LINES_TO_CART_MUTATION,
       variables: {
         cartId,
-        lines,
+        lines: sanitizedLines,
       },
     })
 
@@ -220,6 +245,7 @@ export async function updateShopifyCartLines(
   }
 
   try {
+    const sanitizedLines = cleanUpdateLines(lines)
     const response = await shopifyFetch<{
       cartLinesUpdate: {
         cart: ShopifyCart | null
@@ -229,7 +255,7 @@ export async function updateShopifyCartLines(
       query: UPDATE_CART_LINES_MUTATION,
       variables: {
         cartId,
-        lines,
+        lines: sanitizedLines,
       },
     })
 
