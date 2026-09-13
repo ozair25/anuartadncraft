@@ -4,10 +4,12 @@ import Link from "next/link"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
-import { INITIAL_COLLECTIONS } from "@/lib/data/mock-db"
+import { useShopifyCollections } from "@/lib/shopify/hooks"
 import { ArrowRight } from "lucide-react"
 
 export default function CollectionsPage() {
+  const { collections, loading } = useShopifyCollections()
+
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />
@@ -24,7 +26,15 @@ export default function CollectionsPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {INITIAL_COLLECTIONS.map((col) => (
+            {loading && collections.length === 0 ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="animate-pulse rounded-xl border border-border/60 bg-card p-4 space-y-4">
+                  <div className="aspect-[3/4] bg-muted/60 rounded-lg" />
+                  <div className="h-4 bg-muted/70 rounded w-3/4" />
+                  <div className="h-3 bg-muted/50 rounded w-1/2" />
+                </div>
+              ))
+            ) : collections.map((col) => (
               <Link key={col.id} href={`/collections/${col.slug}`}>
                 <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border/60 bg-card shadow-[4px_4px_0_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
                   <div className="aspect-[3/4] overflow-hidden">

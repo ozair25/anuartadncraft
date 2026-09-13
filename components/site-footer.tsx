@@ -155,34 +155,38 @@ export function SiteFooter() {
                 <MessageCircle className="h-4 w-4" />
               </a>
             </div>
-
-            <div className="pt-2">
-              <Link
-                href="/admin"
-                className="text-[11px] font-bold text-purple-700 hover:underline"
-              >
-                🔐 Studio Admin Dashboard
-              </Link>
-            </div>
           </div>
 
         </div>
 
-        {/* Bottom Attribution Bar */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500 font-medium">
-          <div className="flex items-center gap-4">
-            <Link href="/privacy-policy" className="hover:text-[#7c2d8a]">
-              Privacy Policy
+        {/* Shopify Standard Policy Bar - Exactly matching store legal policies */}
+        <div className="mt-10 border-t border-stone-200/90 pt-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 sm:gap-x-8 gap-y-2 text-xs sm:text-sm font-medium text-stone-700">
+            <Link href="/refund-policy" className="hover:text-[#7c2d8a] transition-colors underline-offset-4 hover:underline">
+              Refund policy
             </Link>
-            <span>•</span>
-            <Link href="/terms-conditions" className="hover:text-[#7c2d8a]">
-              Terms of Service
+            <span className="text-stone-300 hidden sm:inline">•</span>
+            <Link href="/shipping-policy" className="hover:text-[#7c2d8a] transition-colors underline-offset-4 hover:underline">
+              Shipping policy
             </Link>
-            <span>•</span>
-            <Link href="/shipping-policy" className="hover:text-[#7c2d8a]">
-              Shipping Policy
+            <span className="text-stone-300 hidden sm:inline">•</span>
+            <Link href="/contact-information" className="hover:text-[#7c2d8a] transition-colors underline-offset-4 hover:underline">
+              Contact information
+            </Link>
+            <span className="text-stone-300 hidden sm:inline">•</span>
+            <Link href="/terms-of-service" className="hover:text-[#7c2d8a] transition-colors underline-offset-4 hover:underline">
+              Terms of service
+            </Link>
+            <span className="text-stone-300 hidden sm:inline">•</span>
+            <Link href="/privacy-policy" className="hover:text-[#7c2d8a] transition-colors underline-offset-4 hover:underline">
+              Privacy policy
             </Link>
           </div>
+        </div>
+
+        {/* Bottom Attribution Bar */}
+        <div className="pt-5 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500 font-medium">
+          <p>© {new Date().getFullYear()} Anu Art &amp; Craft Studio, Indore. All rights reserved.</p>
 
           <div className="flex items-center gap-1 text-stone-700 font-semibold">
             <span>Designed with</span>

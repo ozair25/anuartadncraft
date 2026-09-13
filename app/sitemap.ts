@@ -1,10 +1,18 @@
 import { MetadataRoute } from 'next'
-import { INITIAL_PRODUCTS, INITIAL_CATEGORIES } from '@/lib/data/mock-db'
+import { getAllProducts } from '@/lib/shopify/products'
+import { INITIAL_CATEGORIES } from '@/lib/data/mock-db'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://anuarts.com'
 
-  const productUrls = INITIAL_PRODUCTS.map((p) => ({
+  let products: Array<{ slug: string }> = []
+  try {
+    products = await getAllProducts()
+  } catch (error) {
+    console.error("Failed to fetch products for sitemap:", error)
+  }
+
+  const productUrls = products.map((p) => ({
     url: `${baseUrl}/product/${p.slug}`,
     lastModified: new Date(),
   }))

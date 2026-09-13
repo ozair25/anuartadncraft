@@ -1,5 +1,4 @@
 import { Product, Collection } from "@/types/ecommerce"
-import { INITIAL_PRODUCTS, INITIAL_COLLECTIONS } from "@/lib/data/mock-db"
 import { shopifyFetch, getShopifyConfig } from "./client"
 import {
   GET_ALL_PRODUCTS_QUERY,
@@ -16,7 +15,7 @@ import {
 
 /**
  * Fetch all products from Shopify Storefront API.
- * If Shopify is configured, returns real products or throws descriptive error.
+ * Shopify is the single source of truth for product catalog data.
  */
 export async function getAllProducts(options?: {
   query?: string
@@ -25,9 +24,9 @@ export async function getAllProducts(options?: {
   const config = getShopifyConfig()
   if (!config.isConfigured) {
     if (process.env.NODE_ENV !== "production") {
-      console.warn("Shopify access token is not configured. Falling back to initial catalogue.")
+      console.warn("Shopify access token is not configured. Returning empty product list.")
     }
-    return INITIAL_PRODUCTS
+    return []
   }
 
   const response = await shopifyFetch<{
@@ -62,39 +61,34 @@ export async function getAllProducts(options?: {
 
 /**
  * Fetch a single product by handle/slug from Shopify.
- * Falls back to INITIAL_PRODUCTS lookup if Shopify is not configured or fails.
  */
 export async function getProductByHandle(handle: string): Promise<Product | undefined> {
   const config = getShopifyConfig()
 
-  if (config.isConfigured) {
-    const response = await shopifyFetch<{
-      product: ShopifyProductNode | null
-    }>({
-      query: GET_PRODUCT_BY_HANDLE_QUERY,
-      variables: { handle },
-      revalidate: 60,
-    })
-
-    if (response.errors && response.errors.length > 0) {
-      const errorMsg = response.errors.map((e) => e.message).join("; ")
-      console.error(`Shopify getProductByHandle error for '${handle}':`, errorMsg)
-      throw new Error(`Shopify API Error: ${errorMsg}`)
-    }
-
-    if (response.data?.product) {
-      return normalizeShopifyProduct(response.data.product)
-    }
-
-    // Product not found in Shopify
+  if (!config.isConfigured) {
     return undefined
   }
 
-  // Fallback to local mock data ONLY if Shopify is NOT configured
-  const fallbackProduct = INITIAL_PRODUCTS.find(
-    (p) => p.slug === handle || p.id === handle
-  )
-  return fallbackProduct
+  const response = await shopifyFetch<{
+    product: ShopifyProductNode | null
+  }>({
+    query: GET_PRODUCT_BY_HANDLE_QUERY,
+    variables: { handle },
+    revalidate: 60,
+  })
+
+  if (response.errors && response.errors.length > 0) {
+    const errorMsg = response.errors.map((e) => e.message).join("; ")
+    console.error(`Shopify getProductByHandle error for '${handle}':`, errorMsg)
+    throw new Error(`Shopify API Error: ${errorMsg}`)
+  }
+
+  if (response.data?.product) {
+    return normalizeShopifyProduct(response.data.product)
+  }
+
+  // Product not found in Shopify
+  return undefined
 }
 
 /**
@@ -106,46 +100,40 @@ export async function getProductsByCollection(
 ): Promise<Product[]> {
   const config = getShopifyConfig()
 
-  if (config.isConfigured) {
-    const response = await shopifyFetch<{
-      collection: {
-        products: {
-          edges: Array<{
-            node: ShopifyProductNode
-          }>
-        }
-      } | null
-    }>({
-      query: GET_COLLECTION_PRODUCTS_QUERY,
-      variables: {
-        handle: collectionHandle,
-        first,
-      },
-      revalidate: 60,
-    })
-
-    if (response.errors && response.errors.length > 0) {
-      const errorMsg = response.errors.map((e) => e.message).join("; ")
-      console.error(`Shopify getProductsByCollection error for '${collectionHandle}':`, errorMsg)
-      throw new Error(`Shopify API Error: ${errorMsg}`)
-    }
-
-    if (response.data?.collection?.products?.edges) {
-      return response.data.collection.products.edges.map((e) =>
-        normalizeShopifyProduct(e.node)
-      )
-    }
-
+  if (!config.isConfigured) {
     return []
   }
 
-  // Fallback matching ONLY when unconfigured
-  const matching = INITIAL_PRODUCTS.filter(
-    (p) =>
-      p.collection === collectionHandle ||
-      p.category.toLowerCase().replace(/[^a-z0-9]+/g, "-") === collectionHandle.toLowerCase()
-  )
-  return matching.length > 0 ? matching : INITIAL_PRODUCTS
+  const response = await shopifyFetch<{
+    collection: {
+      products: {
+        edges: Array<{
+          node: ShopifyProductNode
+        }>
+      }
+    } | null
+  }>({
+    query: GET_COLLECTION_PRODUCTS_QUERY,
+    variables: {
+      handle: collectionHandle,
+      first,
+    },
+    revalidate: 60,
+  })
+
+  if (response.errors && response.errors.length > 0) {
+    const errorMsg = response.errors.map((e) => e.message).join("; ")
+    console.error(`Shopify getProductsByCollection error for '${collectionHandle}':`, errorMsg)
+    throw new Error(`Shopify API Error: ${errorMsg}`)
+  }
+
+  if (response.data?.collection?.products?.edges) {
+    return response.data.collection.products.edges.map((e) =>
+      normalizeShopifyProduct(e.node)
+    )
+  }
+
+  return []
 }
 
 /**
@@ -154,32 +142,34 @@ export async function getProductsByCollection(
 export async function getCollections(first = 20): Promise<Collection[]> {
   const config = getShopifyConfig()
 
-  if (config.isConfigured) {
-    try {
-      const response = await shopifyFetch<{
-        collections: {
-          edges: Array<{
-            node: ShopifyCollectionNode
-          }>
-        }
-      }>({
-        query: GET_COLLECTIONS_QUERY,
-        variables: { first },
-        revalidate: 300,
-      })
-
-      if (
-        response.data?.collections?.edges &&
-        response.data.collections.edges.length > 0
-      ) {
-        return response.data.collections.edges.map((e) =>
-          normalizeShopifyCollection(e.node)
-        )
-      }
-    } catch (error) {
-      console.error("Failed to fetch collections from Shopify:", error)
-    }
+  if (!config.isConfigured) {
+    return []
   }
 
-  return INITIAL_COLLECTIONS
+  try {
+    const response = await shopifyFetch<{
+      collections: {
+        edges: Array<{
+          node: ShopifyCollectionNode
+        }>
+      }
+    }>({
+      query: GET_COLLECTIONS_QUERY,
+      variables: { first },
+      revalidate: 300,
+    })
+
+    if (
+      response.data?.collections?.edges &&
+      response.data.collections.edges.length > 0
+    ) {
+      return response.data.collections.edges.map((e) =>
+        normalizeShopifyCollection(e.node)
+      )
+    }
+  } catch (error) {
+    console.error("Failed to fetch collections from Shopify:", error)
+  }
+
+  return []
 }

@@ -16,7 +16,6 @@ import {
   MessageCircle,
   Sparkles,
   ChevronRight,
-  Shield,
   PackageCheck,
   LogIn,
   UserPlus,
@@ -526,20 +525,6 @@ export function SiteHeader({
                         <ChevronRight className="h-4 w-4 text-stone-400" />
                       </Link>
 
-                      <Link
-                        href="/admin"
-                        onClick={() => setMobileOpen(false)}
-                        className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm bg-purple-50/50 border border-purple-200 text-purple-800 hover:bg-purple-100 transition-all cursor-pointer touch-manipulation"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
-                            <Shield className="h-4 w-4" />
-                          </div>
-                          <span>Admin Dashboard</span>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-purple-400" />
-                      </Link>
-
                       <button
                         type="button"
                         onClick={() => {
@@ -589,14 +574,7 @@ export function SiteHeader({
 
                 {/* Policy & Legal Links */}
                 <div className="pt-2 border-t border-pink-100 text-center">
-                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11px] text-stone-500 font-medium">
-                    <Link
-                      href="/shipping-policy"
-                      onClick={() => setMobileOpen(false)}
-                      className="hover:text-[#7c2d8a] underline underline-offset-2"
-                    >
-                      Shipping Policy
-                    </Link>
+                  <div className="flex flex-wrap items-center justify-center gap-x-3.5 gap-y-1.5 text-[11px] text-stone-500 font-medium">
                     <Link
                       href="/refund-policy"
                       onClick={() => setMobileOpen(false)}
@@ -605,22 +583,36 @@ export function SiteHeader({
                       Refund Policy
                     </Link>
                     <Link
+                      href="/shipping-policy"
+                      onClick={() => setMobileOpen(false)}
+                      className="hover:text-[#7c2d8a] underline underline-offset-2"
+                    >
+                      Shipping Policy
+                    </Link>
+                    <Link
+                      href="/contact-information"
+                      onClick={() => setMobileOpen(false)}
+                      className="hover:text-[#7c2d8a] underline underline-offset-2"
+                    >
+                      Contact Information
+                    </Link>
+                    <Link
+                      href="/terms-of-service"
+                      onClick={() => setMobileOpen(false)}
+                      className="hover:text-[#7c2d8a] underline underline-offset-2"
+                    >
+                      Terms of Service
+                    </Link>
+                    <Link
                       href="/privacy-policy"
                       onClick={() => setMobileOpen(false)}
                       className="hover:text-[#7c2d8a] underline underline-offset-2"
                     >
                       Privacy Policy
                     </Link>
-                    <Link
-                      href="/terms-conditions"
-                      onClick={() => setMobileOpen(false)}
-                      className="hover:text-[#7c2d8a] underline underline-offset-2"
-                    >
-                      Terms &amp; Conditions
-                    </Link>
                   </div>
                   <p className="text-[10px] text-stone-400 mt-2">
-                    © {new Date().getFullYear()} Anu Art &amp; Craft Studio, Jabalpur.
+                    © {new Date().getFullYear()} Anu Art &amp; Craft Studio, Indore. All rights reserved.
                   </p>
                 </div>
               </div>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { Product, Collection } from "@/types/ecommerce"
-import { INITIAL_PRODUCTS, INITIAL_COLLECTIONS } from "@/lib/data/mock-db"
 
 export function useShopifyProducts(options?: {
   collection?: string

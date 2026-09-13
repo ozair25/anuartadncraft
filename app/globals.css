@@ -172,3 +172,34 @@
 .watercolor-card-glow {
   box-shadow: 0 10px 30px -5px rgba(124, 45, 138, 0.08), 0 4px 14px -2px rgba(245, 158, 11, 0.08);
 }
+
+/* Polished metallic shiny dark royal gold with subtle luminous glint */
+.text-shiny-royal-gold {
+  background-image: linear-gradient(
+    110deg,
+    #532a02 0%,
+    #8f5707 18%,
+    #d49925 34%,
+    #fff6be 50%,
+    #d49925 66%,
+    #8f5707 82%,
+    #532a02 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: shiny-gold-sweep 5s ease-in-out infinite;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.95)) drop-shadow(0 2px 4px rgba(50, 24, 0, 0.38));
+}
+
+@keyframes shiny-gold-sweep {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}

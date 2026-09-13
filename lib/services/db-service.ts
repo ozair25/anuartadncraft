@@ -1,9 +1,8 @@
-import { Product, Category, Collection, Order, Blog, Coupon, ContactEnquiry, NewsletterSubscriber, Review } from "@/types/ecommerce"
-import { INITIAL_PRODUCTS, INITIAL_CATEGORIES, INITIAL_COLLECTIONS, INITIAL_BLOGS, INITIAL_COUPONS } from "@/lib/data/mock-db"
+import { Category, Collection, Order, Blog, Coupon, ContactEnquiry, NewsletterSubscriber } from "@/types/ecommerce"
+import { INITIAL_CATEGORIES, INITIAL_COLLECTIONS, INITIAL_BLOGS, INITIAL_COUPONS } from "@/lib/data/mock-db"
 
-// LocalStorage Keys
+// LocalStorage Keys for non-commerce & content features
 const KEYS = {
-  PRODUCTS: "anu_arts_products",
   CATEGORIES: "anu_arts_categories",
   COLLECTIONS: "anu_arts_collections",
   ORDERS: "anu_arts_orders",
@@ -34,69 +33,13 @@ function setItem<T>(key: string, value: T): void {
   }
 }
 
-// Products API
-export const getProducts = (): Product[] => getItem<Product[]>(KEYS.PRODUCTS, INITIAL_PRODUCTS)
-
-export const getProductBySlug = (slug: string): Product | undefined => {
-  const products = getProducts()
-  return products.find((p) => p.slug === slug || p.id === slug)
-}
-
-export const saveProduct = (product: Product): Product => {
-  const products = getProducts()
-  const index = products.findIndex((p) => p.id === product.id)
-  if (index >= 0) {
-    products[index] = { ...product, updatedAt: new Date().toISOString() }
-  } else {
-    products.unshift({ ...product, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() })
-  }
-  setItem(KEYS.PRODUCTS, products)
-  return product
-}
-
-export const addProduct = saveProduct
-
-export const deleteProduct = (id: string): void => {
-  const products = getProducts().filter((p) => p.id !== id)
-  setItem(KEYS.PRODUCTS, products)
-}
-
-// Categories
+// Categories (Metadata & Navigation)
 export const getCategories = (): Category[] => getItem<Category[]>(KEYS.CATEGORIES, INITIAL_CATEGORIES)
 
-export const saveCategory = (category: Category): Category => {
-  const categories = getCategories()
-  const idx = categories.findIndex((c) => c.id === category.id)
-  if (idx >= 0) {
-    categories[idx] = category
-  } else {
-    categories.push(category)
-  }
-  setItem(KEYS.CATEGORIES, categories)
-  return category
-}
-
-export const deleteCategory = (id: string): void => {
-  const categories = getCategories().filter((c) => c.id !== id)
-  setItem(KEYS.CATEGORIES, categories)
-}
-
-// Collections
+// Collections (Themes & Navigation)
 export const getCollections = (): Collection[] => getItem<Collection[]>(KEYS.COLLECTIONS, INITIAL_COLLECTIONS)
 
-export const saveCollection = (col: Collection): Collection => {
-  const cols = getCollections()
-  const idx = cols.findIndex((c) => c.id === col.id)
-  if (idx >= 0) {
-    cols[idx] = col
-  } else {
-    cols.push(col)
-  }
-  setItem(KEYS.COLLECTIONS, cols)
-  return col
-}
-
-// Orders
+// Orders (Read-only helpers for Profile & Order Tracking)
 export const getOrders = (): Order[] => getItem<Order[]>(KEYS.ORDERS, [])
 
 export const getOrderById = (orderIdOrNumber: string): Order | undefined => {
@@ -104,25 +47,6 @@ export const getOrderById = (orderIdOrNumber: string): Order | undefined => {
   return orders.find(
     (o) => o.id.toLowerCase() === orderIdOrNumber.toLowerCase() || o.orderNumber.toLowerCase() === orderIdOrNumber.toLowerCase()
   )
-}
-
-export const createOrder = (order: Order): Order => {
-  const orders = getOrders()
-  orders.unshift(order)
-  setItem(KEYS.ORDERS, orders)
-  return order
-}
-
-export const updateOrderStatus = (orderId: string, status: Order['status'], trackingNumber?: string): Order | undefined => {
-  const orders = getOrders()
-  const idx = orders.findIndex((o) => o.id === orderId)
-  if (idx >= 0) {
-    orders[idx].status = status
-    if (trackingNumber) orders[idx].trackingNumber = trackingNumber
-    setItem(KEYS.ORDERS, orders)
-    return orders[idx]
-  }
-  return undefined
 }
 
 // Blogs

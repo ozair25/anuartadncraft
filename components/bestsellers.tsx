@@ -6,7 +6,6 @@ import { RibbonLabel } from "@/components/ribbon-label"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { useShopifyProducts } from "@/lib/shopify/hooks"
-import { INITIAL_PRODUCTS } from "@/lib/data/mock-db"
 
 function Stars() {
   return (
@@ -21,7 +20,7 @@ function Stars() {
 export function Bestsellers() {
   const { addItem } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
-  const { products: allProducts } = useShopifyProducts()
+  const { products: allProducts, loading } = useShopifyProducts()
 
   const bestsellerProducts = (() => {
     const tagged = allProducts.filter(
@@ -33,8 +32,11 @@ export function Bestsellers() {
     return allProducts.slice(0, 10)
   })()
 
-  const displayProducts =
-    bestsellerProducts.length > 0 ? bestsellerProducts : INITIAL_PRODUCTS
+  const displayProducts = bestsellerProducts
+
+  if (!loading && displayProducts.length === 0) {
+    return null
+  }
 
   return (
     <section className="bg-cream py-14 md:py-20">
@@ -58,7 +60,15 @@ export function Bestsellers() {
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {displayProducts.map((p) => {
+          {loading && displayProducts.length === 0
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="animate-pulse rounded-lg border border-border/60 bg-card p-3 space-y-3">
+                  <div className="aspect-square bg-muted/60 rounded-md" />
+                  <div className="h-3 bg-muted/70 rounded w-3/4" />
+                  <div className="h-3 bg-muted/50 rounded w-1/2" />
+                </div>
+              ))
+            : displayProducts.map((p) => {
             const inWishlist = isInWishlist(p.id)
             return (
               <article

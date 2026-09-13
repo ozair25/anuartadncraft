@@ -56,8 +56,11 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
             </span>
           </h1>
 
-          {/* Subheading / Description - 25% larger on desktop (16px -> 20px) & bolder in desktop view */}
-          <p className="text-black sm:text-stone-950 text-sm sm:text-[20px] max-w-xl sm:max-w-2xl lg:max-w-3xl font-semibold sm:font-semibold leading-relaxed sm:leading-[1.55] [text-shadow:0_1px_3px_rgba(0,0,0,0.3)] sm:[text-shadow:none]">
+          {/* Subheading / Description - White Only */}
+          <p
+            id="hero-subheading-description"
+            className="text-white text-sm sm:text-[20px] max-w-xl sm:max-w-2xl lg:max-w-3xl font-semibold leading-relaxed sm:leading-[1.55] [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]"
+          >
             Anu Arts is your one-stop destination for art and craft materials,
             creative workshops and endless inspiration.
           </p>
@@ -94,7 +97,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
                 <Palette className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <h2 className="text-xs sm:text-[15px] font-black sm:font-extrabold text-black sm:text-stone-950 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] sm:[text-shadow:none] sm:leading-tight">Quality Materials</h2>
+                <h2 id="hero-pillar-quality-materials" className="text-xs sm:text-[15px] font-black sm:font-extrabold text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] sm:leading-tight">Quality Materials</h2>
                 <p className="text-[11px] sm:text-[13.5px] text-stone-900 sm:text-stone-800 font-bold sm:font-semibold [text-shadow:0_1px_2px_rgba(0,0,0,0.25)] sm:[text-shadow:none] sm:leading-snug sm:mt-0.5">Premium art &amp; craft supplies</p>
               </div>
             </div>
@@ -105,7 +108,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
                 <Users className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <h2 className="text-xs sm:text-[15px] font-black sm:font-extrabold text-black sm:text-stone-950 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] sm:[text-shadow:none] sm:leading-tight">Creative Workshops</h2>
+                <h2 id="hero-pillar-creative-workshops" className="text-xs sm:text-[15px] font-black sm:font-extrabold text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] sm:leading-tight">Creative Workshops</h2>
                 <p className="text-[11px] sm:text-[13.5px] text-stone-900 sm:text-stone-800 font-bold sm:font-semibold [text-shadow:0_1px_2px_rgba(0,0,0,0.25)] sm:[text-shadow:none] sm:leading-snug sm:mt-0.5">For all age groups</p>
               </div>
             </div>
@@ -116,7 +119,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
                 <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <h2 className="text-xs sm:text-[15px] font-black sm:font-extrabold text-black sm:text-stone-950 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] sm:[text-shadow:none] sm:leading-tight">Learn &amp; Grow</h2>
+                <h2 id="hero-pillar-learn-and-grow" className="text-xs sm:text-[15px] font-black sm:font-extrabold text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] sm:leading-tight">Learn &amp; Grow</h2>
                 <p className="text-[11px] sm:text-[13.5px] text-stone-900 sm:text-stone-800 font-bold sm:font-semibold [text-shadow:0_1px_2px_rgba(0,0,0,0.25)] sm:[text-shadow:none] sm:leading-snug sm:mt-0.5">Explore. Create. Inspire.</p>
               </div>
             </div>

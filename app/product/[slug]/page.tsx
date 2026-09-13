@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
-import { INITIAL_PRODUCTS } from "@/lib/data/mock-db"
 import { useShopifyProduct, useShopifyProducts } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
@@ -21,11 +20,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const { product: shopifyProduct, loading: isProductLoading, error: productError } = useShopifyProduct(productSlug)
   const { products: allProducts } = useShopifyProducts()
 
-  const product =
-    shopifyProduct ||
-    INITIAL_PRODUCTS.find(
-      (p) => p.slug.toLowerCase() === productSlug.toLowerCase() || p.id === productSlug
-    )
+  const product = shopifyProduct
 
   const [selectedVariantIndex, setSelectedVariantIndex] = useState<number>(0)
   const [selectedImage, setSelectedImage] = useState<string>("")

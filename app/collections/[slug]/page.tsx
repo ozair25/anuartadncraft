@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
-import { INITIAL_COLLECTIONS } from "@/lib/data/mock-db"
 import { useShopifyProducts, useShopifyCollections } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
@@ -22,17 +21,11 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ slu
   const { products: allProducts } = useShopifyProducts({ collection: collectionSlug })
   const { collections } = useShopifyCollections()
 
-  const collection =
-    collections.find(
-      (c) =>
-        c.slug.toLowerCase() === collectionSlug.toLowerCase() ||
-        c.id === collectionSlug
-    ) ||
-    INITIAL_COLLECTIONS.find(
-      (c) =>
-        c.slug.toLowerCase() === collectionSlug.toLowerCase() ||
-        c.id === collectionSlug
-    )
+  const collection = collections.find(
+    (c) =>
+      c.slug.toLowerCase() === collectionSlug.toLowerCase() ||
+      c.id === collectionSlug
+  )
 
   const products = useMemo(() => {
     const directMatches = allProducts.filter(
@@ -68,7 +61,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ slu
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {(products.length > 0 ? products : INITIAL_PRODUCTS).map((p) => {
+            {products.map((p) => {
               const inWishlist = isInWishlist(p.id)
               return (
                 <article

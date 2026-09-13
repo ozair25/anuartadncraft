@@ -116,8 +116,8 @@ export default function ContactPage() {
                   <Mail className="h-5 w-5 text-[#d92672] shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-bold text-stone-900">Email Inquiries</h4>
-                    <a href="mailto:support@anuartstudio.com" className="text-xs text-[#d92672] font-semibold block mt-0.5 hover:underline">
-                      support@anuartstudio.com
+                    <a href="mailto:anuarts.indore@gmail.com" className="text-xs text-[#d92672] font-semibold block mt-0.5 hover:underline break-all">
+                      anuarts.indore@gmail.com
                     </a>
                     <p className="text-[11px] text-stone-500">Response within 24 business hours</p>
                   </div>
@@ -128,11 +128,19 @@ export default function ContactPage() {
                   <div>
                     <h4 className="text-xs font-bold text-stone-900">Studio &amp; Gallery Location</h4>
                     <p className="text-xs text-stone-600 mt-0.5 leading-relaxed">
-                      Anu Arts &amp; Craft Studio, Jabalpur, Madhya Pradesh - 482001, India
+                      30, Chandralok Colony, Khajrana Main Road, Indore, Madhya Pradesh – 452001
                     </p>
-                    <span className="inline-block mt-1 text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
-                      Pan-India Express Shipping
-                    </span>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="inline-block text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
+                        Pan-India Express Shipping
+                      </span>
+                      <a
+                        href="/contact-information"
+                        className="text-[10px] font-bold text-[#7c2d8a] hover:underline"
+                      >
+                        Legal Info &rarr;
+                      </a>
+                    </div>
                   </div>
                 </div>
 
