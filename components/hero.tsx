@@ -23,7 +23,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
           {/* Mobile View Hero Banner (<640px) */}
           <source
             media="(max-width: 639px)"
-            srcSet="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790519719/ChatGPT_Image_Sep_27_2026_08_04_51_PM_zvud1o.png"
+            srcSet="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790521179/ChatGPT_Image_Sep_27_2026_08_29_18_PM_tendlx.png"
           />
           {/* Desktop & Tablet Hero Banner (>=640px) */}
           <source

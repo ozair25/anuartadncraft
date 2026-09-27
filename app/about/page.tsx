@@ -56,14 +56,15 @@ export default function AboutPage() {
         {/* Founder & Studio Story */}
         <section className="py-16 px-4 sm:px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Studio Photo Collage */}
-            <div className="relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white aspect-4/3">
+            {/* Studio Photo */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-full max-w-[460px] rounded-2xl overflow-hidden shadow-lg bg-white">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
                   alt="Anu Arts Studio"
-                  className="h-full w-full object-cover"
+                  className="w-full h-auto block object-contain rounded-2xl"
+                  referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.currentTarget.onerror = null
                     e.currentTarget.src = "/images/anu-studio.jpg"
@@ -71,9 +72,9 @@ export default function AboutPage() {
                 />
               </div>
 
-              {/* Floating Stat Badge */}
-              <div className="absolute -bottom-6 -right-4 sm:right-6 bg-white rounded-2xl p-4 shadow-xl border border-pink-100 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 text-[#7c2d8a] flex items-center justify-center font-serif font-black text-xl">
+              {/* Stat Badge placed cleanly below without overlapping the image */}
+              <div className="mt-4 w-full max-w-[460px] bg-white rounded-2xl p-3.5 sm:p-4 shadow-md border border-pink-100 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-purple-100 text-[#7c2d8a] flex items-center justify-center font-serif font-black text-xl shrink-0">
                   10+
                 </div>
                 <div>

@@ -731,23 +731,17 @@ export function AnuArtsTemplate({
 
           {/* Left: Authentic Studio Reference Image - Preserving Natural Aspect Ratio (6 Cols) */}
           <div className="lg:col-span-6 relative flex items-center justify-center">
-            <div className="relative w-full max-w-md lg:max-w-none rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-purple-50 group">
+            <div className="relative w-full max-w-[460px] rounded-2xl overflow-hidden shadow-lg bg-white">
               <img
                 src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
                 alt="Anu Arts & Craft Studio Environment"
-                className="w-full h-auto max-h-[520px] object-cover object-center block rounded-2xl group-hover:scale-102 transition-transform duration-500"
+                className="w-full h-auto block object-contain rounded-2xl"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   e.currentTarget.onerror = null
                   e.currentTarget.src = "/images/anu-studio.jpg"
                 }}
               />
-              <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-pink-200 shadow-sm flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-[#d92672]" />
-                <span className="text-[11px] font-bold text-stone-800">
-                  {SOCIAL_CONFIG.studio.shortAddress}
-                </span>
-              </div>
             </div>
           </div>
 
