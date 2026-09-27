@@ -8,11 +8,15 @@ import { useWishlist } from "@/lib/context/wishlist-context"
 import { useShopifyProducts } from "@/lib/shopify/hooks"
 import { Product } from "@/types/ecommerce"
 import { BookClassModal } from "@/components/book-class-modal"
+import { SHOP_CATEGORIES } from "@/lib/config/shop-categories"
+import { SOCIAL_CONFIG } from "@/lib/config/social"
 import {
   Palette,
   Scissors,
   Smile,
-  PenTool,
+  Flame,
+  Flower2,
+  CircleDot,
   Gift,
   ArrowRight,
   ChevronLeft,
@@ -34,60 +38,69 @@ import {
   MessageCircle,
 } from "lucide-react"
 
+function InstagramIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  )
+}
+
 interface AnuArtsTemplateProps {
   onOpenCart?: () => void
   onOpenBookClass?: (category?: string) => void
   initialProducts?: Product[]
 }
 
-// 1. Five Core Workshop Cards - Infused with Purple, Pink, and the Lower-Right Yellow-Orange / Amber Hues
-const workshopCategories = [
+// 1. Data-Driven DIY Kit Categories: "DIY Kits for Everyone"
+// Reusable and configurable to easily add or change DIY kit categories
+export const diyKitCategories = [
   {
-    id: "painting",
-    title: "Painting",
-    desc: "Watercolor, Acrylic, Oil Painting & more.",
-    icon: Palette,
-    iconBg: "bg-pink-100/90 text-[#d92672] border border-pink-200/50",
-    badgeBg: "from-pink-500/20 via-pink-400/10 to-transparent",
-    pillBg: "bg-pink-50 text-[#d92672] border-pink-200",
-  },
-  {
-    id: "crafting",
-    title: "Crafting",
-    desc: "Paper Craft, DIY, Mixed Media & more.",
-    icon: Scissors,
-    iconBg: "bg-purple-100/90 text-[#7c2d8a] border border-purple-200/50",
-    badgeBg: "from-purple-500/20 via-purple-400/10 to-transparent",
-    pillBg: "bg-purple-50 text-[#7c2d8a] border-purple-200",
-  },
-  {
-    id: "kids-art",
-    title: "Kids Art",
-    desc: "Fun & Educational Art sessions for kids.",
-    icon: Smile,
-    iconBg: "bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700 border border-amber-200/60",
+    id: "candle-making",
+    title: "Candle Making Kits",
+    desc: "Complete DIY kits with pure soy wax, soothing aromas, cotton wicks & aesthetic jars.",
+    icon: Flame,
+    iconBg: "bg-amber-100 text-amber-700 border border-amber-200/60",
     badgeBg: "from-amber-500/20 via-orange-400/10 to-transparent",
-    pillBg: "bg-amber-50 text-amber-800 border-amber-200",
   },
   {
-    id: "calligraphy",
-    title: "Calligraphy",
-    desc: "Modern Calligraphy, Lettering & more.",
-    icon: PenTool,
-    iconBg: "bg-purple-100/90 text-[#7c2d8a] border border-purple-200/50",
+    id: "resin-art",
+    title: "Resin Art Kits",
+    desc: "Crystal epoxy ocean waves, glossy geode coasters, art trays & preservation materials.",
+    icon: Sparkles,
+    iconBg: "bg-purple-100 text-[#7c2d8a] border border-purple-200/60",
     badgeBg: "from-purple-500/20 via-purple-400/10 to-transparent",
-    pillBg: "bg-purple-50 text-[#7c2d8a] border-purple-200",
   },
   {
-    id: "specialty",
-    title: "Specialty",
-    desc: "Resin Art, Mandala, Lippan & Tanjore.",
-    icon: Gift,
-    iconBg: "bg-gradient-to-br from-orange-100 to-amber-100 text-orange-700 border border-orange-200/60",
-    badgeBg: "from-orange-500/20 via-amber-400/10 to-transparent",
-    pillBg: "bg-orange-50 text-orange-800 border-orange-200",
+    id: "mandala-art",
+    title: "Mandala Art Kits",
+    desc: "Dotting tools, pre-marked MDF boards, vibrant acrylic paints & practice sheets.",
+    icon: CircleDot,
+    iconBg: "bg-pink-100 text-[#d92672] border border-pink-200/60",
+    badgeBg: "from-pink-500/20 via-pink-400/10 to-transparent",
+  },
+  {
+    id: "flower-making",
+    title: "Flower Making Kits",
+    desc: "Fine Italian crepe papers, floral wire, shaping tools & templates for lifelike everlasting blooms.",
+    icon: Flower2,
+    iconBg: "bg-rose-100 text-rose-700 border border-rose-200/60",
+    badgeBg: "from-rose-500/20 via-pink-400/10 to-transparent",
+  },
+  {
+    id: "kids-paint-kits",
+    title: "Kids Paint Kits",
+    desc: "Exciting, non-toxic guided art kits with canvas boards, washable paints & creative brushes.",
+    icon: Smile,
+    iconBg: "bg-gradient-to-br from-amber-100 to-orange-100 text-amber-800 border border-amber-200/60",
+    badgeBg: "from-amber-500/20 via-orange-400/10 to-transparent",
   },
 ]
+
+// Backwards-compatibility alias
+export const workshopCategories = diyKitCategories
 
 // 2. Student Testimonials
 const testimonials = [
@@ -307,7 +320,6 @@ export function AnuArtsTemplate({
   const [selectedStoreCategory, setSelectedStoreCategory] = useState("All")
   const [testimonialIdx, setTestimonialIdx] = useState(0)
   const [addedToast, setAddedToast] = useState<string | null>(null)
-  const [paletteSide, setPaletteSide] = useState<"front" | "back">("front")
 
   const { addToCart } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
@@ -351,18 +363,15 @@ export function AnuArtsTemplate({
       ? storeProducts
       : []
 
-  const storeFilterCategories = [
-    "All",
-    "DIY Kits",
-    "Art Supplies",
-    "Paints",
-    "Stencils",
-  ]
+  const storeFilterCategories = SHOP_CATEGORIES.map((c) => c.label)
 
   const filteredStoreProducts = useMemo(() => {
-    if (selectedStoreCategory === "All") {
+    if (selectedStoreCategory === "All Supplies" || selectedStoreCategory === "All") {
       return activeProducts.slice(0, 6)
     }
+
+    const matchedConfig = SHOP_CATEGORIES.find((c) => c.label === selectedStoreCategory)
+    const keywords = matchedConfig ? matchedConfig.keywords : [selectedStoreCategory.toLowerCase()]
 
     return activeProducts
       .filter((p) => {
@@ -371,52 +380,13 @@ export function AnuArtsTemplate({
         const nameLower = (p.name || "").toLowerCase()
         const tagsLower = (p.tags || []).map((t) => t.toLowerCase())
 
-        if (selectedStoreCategory === "DIY Kits") {
-          return (
-            catLower.includes("diy") ||
-            catLower.includes("kit") ||
-            colLower.includes("diy") ||
-            colLower.includes("kit") ||
-            tagsLower.some((t) => t.includes("diy") || t.includes("kit")) ||
-            nameLower.includes("diy") ||
-            nameLower.includes("kit")
-          )
-        }
-
-        if (selectedStoreCategory === "Art Supplies") {
-          return (
-            catLower.includes("art supplies") ||
-            colLower.includes("art-supplies") ||
-            (!catLower.includes("stencil") &&
-              !catLower.includes("paint") &&
-              !colLower.includes("stencil") &&
-              !colLower.includes("paint") &&
-              (catLower === "art supplies" || colLower === ""))
-          )
-        }
-
-        if (selectedStoreCategory === "Paints") {
-          return (
-            catLower.includes("paint") ||
-            colLower.includes("paint") ||
-            tagsLower.some((t) => t.includes("paint")) ||
-            nameLower.includes("paint")
-          )
-        }
-
-        if (selectedStoreCategory === "Stencils") {
-          return (
-            catLower.includes("stencil") ||
-            colLower.includes("stencil") ||
-            tagsLower.some((t) => t.includes("stencil")) ||
-            nameLower.includes("stencil")
-          )
-        }
-
         return (
-          catLower.includes(selectedStoreCategory.toLowerCase()) ||
-          colLower.includes(selectedStoreCategory.toLowerCase()) ||
-          tagsLower.some((t) => t.includes(selectedStoreCategory.toLowerCase()))
+          keywords.some((kw) =>
+            catLower.includes(kw) ||
+            colLower.includes(kw) ||
+            nameLower.includes(kw) ||
+            tagsLower.some((t) => t.includes(kw))
+          )
         )
       })
       .slice(0, 6)
@@ -434,9 +404,9 @@ export function AnuArtsTemplate({
       )}
 
       {/* ========================================================= */}
-      {/* SECTION 1: Store Catalog (ONLINE ART STORE - DIRECTLY UNDER HERO) */}
+      {/* SECTION 1: Store Catalog (ONLINE ART STORE & DIY KITS)    */}
       {/* ========================================================= */}
-      <section id="shop-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6">
+      <section id="shop-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-4">
         
         {/* Diagnostic Banner if Shopify API encounters an error */}
         {shopifyError && activeProducts.length === 0 && (
@@ -453,6 +423,58 @@ export function AnuArtsTemplate({
             </p>
           </div>
         )}
+
+        {/* Concept Feature Card: "DIY Kits for Everyone" */}
+        <div className="mb-10 rounded-3xl bg-gradient-to-br from-purple-50/90 via-pink-50/50 to-amber-50/70 border border-pink-200/70 p-6 sm:p-8 shadow-xs">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-2.5 max-w-2xl">
+              <div className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#7c2d8a] bg-white/90 px-3 py-1 rounded-full border border-purple-200/60 shadow-2xs">
+                <Gift className="h-3.5 w-3.5 text-[#d92672]" />
+                <span>POPULAR CREATIVE KITS</span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-stone-900">
+                DIY Kits for Everyone
+              </h2>
+              <p className="text-stone-600 text-xs sm:text-sm font-medium leading-relaxed">
+                Everything you need to craft something extraordinary. Our thoughtfully curated kits include premium materials, specialized tools, and beginner-friendly instructions—tailored for every creative stage:
+              </p>
+              
+              {/* Audience Badges: Kids, Beginners, Hobby Artists, Creative Enthusiasts */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-bold text-stone-800">
+                <span className="bg-white/95 px-3 py-1 rounded-full border border-purple-200/70 text-[#7c2d8a] shadow-2xs">
+                  👶 Kids
+                </span>
+                <span className="bg-white/95 px-3 py-1 rounded-full border border-pink-200/70 text-[#d92672] shadow-2xs">
+                  🌱 Beginners
+                </span>
+                <span className="bg-white/95 px-3 py-1 rounded-full border border-amber-200/70 text-amber-800 shadow-2xs">
+                  🎨 Hobby Artists
+                </span>
+                <span className="bg-white/95 px-3 py-1 rounded-full border border-purple-200/70 text-purple-900 shadow-2xs">
+                  ✨ Creative Enthusiasts
+                </span>
+              </div>
+            </div>
+
+            <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3">
+              <button
+                type="button"
+                onClick={() => setSelectedStoreCategory("DIY Kits")}
+                className="inline-flex items-center justify-center gap-2 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full shadow-md hover:scale-[1.02] transition-all cursor-pointer"
+              >
+                <span>Filter DIY Kits</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+              <Link
+                href="/shop"
+                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-purple-50 text-stone-800 text-xs sm:text-sm font-bold px-6 py-3 rounded-full border border-pink-200 shadow-2xs transition-all cursor-pointer"
+              >
+                <span>Browse Full Store</span>
+                <ShoppingBag className="h-3.5 w-3.5 text-[#7c2d8a]" />
+              </Link>
+            </div>
+          </div>
+        </div>
 
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 pb-4 border-b border-pink-100/80">
@@ -473,7 +495,7 @@ export function AnuArtsTemplate({
           </Link>
         </div>
 
-        {/* Category Filter Pills for All Product Categories */}
+        {/* Category Filter Pills - Fully Data-Driven from SHOP_CATEGORIES */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 pt-1 scrollbar-none no-scrollbar">
           {storeFilterCategories.map((cat) => (
             <button
@@ -627,18 +649,21 @@ export function AnuArtsTemplate({
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 2: "Workshops for Everyone" (EXPLORE & CREATE)    */}
+      {/* SECTION 2: "DIY Kits for Everyone" (ALL-INCLUSIVE KITS)   */}
       {/* ========================================================= */}
-      <section id="workshops-section" className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="diy-kits-section" className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         
         {/* Section Header with Purple to Amber gradient touch */}
         <div className="text-center space-y-2.5 mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a] bg-white/80 px-3.5 py-1 rounded-full border border-pink-200/60 shadow-2xs">
-            <span>EXPLORE &amp; CREATE</span>
+            <span>ALL-INCLUSIVE ART &amp; CRAFT</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900">
-            Workshops for Everyone
+            DIY Kits for Everyone
           </h2>
+          <p className="text-xs sm:text-sm text-stone-600 max-w-2xl mx-auto font-medium">
+            Thoughtfully curated, all-inclusive DIY craft kits designed for kids, beginners, hobbyists and experienced creators alike. Everything you need to create straight out of the box.
+          </p>
           
           {/* Butterfly & Watercolor Swirl Ornament */}
           <div className="flex items-center justify-center gap-2 pt-1">
@@ -650,7 +675,7 @@ export function AnuArtsTemplate({
 
         {/* 5 Card Grid with Enhanced Colors (Purple, Rose, Yellow-Orange) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 sm:gap-6">
-          {workshopCategories.map((cat) => {
+          {diyKitCategories.map((cat) => {
             const Icon = cat.icon
             return (
               <div
@@ -680,14 +705,13 @@ export function AnuArtsTemplate({
                 </div>
 
                 {/* Action CTA Button */}
-                <button
-                  type="button"
-                  onClick={() => handleOpenWorkshopBooking(cat.title)}
+                <Link
+                  href="/shop"
                   className="w-full inline-flex items-center justify-center gap-1.5 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs font-bold py-2.5 px-4 rounded-full shadow-xs group-hover:shadow-md transition-all cursor-pointer relative z-10"
                 >
-                  <span>Explore</span>
+                  <span>Explore Kit</span>
                   <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
-                </button>
+                </Link>
               </div>
             )
           })}
@@ -696,7 +720,7 @@ export function AnuArtsTemplate({
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 2: "Nurturing Creativity In Every Heart" (ABOUT)  */}
+      {/* SECTION 3: "About Anu Arts" (ABOUT & STUDIO)              */}
       {/* ========================================================= */}
       <section id="about-section" className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-gradient-to-br from-[#fff7fc] via-white via-pink-50/20 to-[#fff8ee] rounded-3xl border border-pink-100/80 p-6 sm:p-10 lg:p-12 shadow-sm overflow-hidden relative">
@@ -705,45 +729,64 @@ export function AnuArtsTemplate({
           <div className="absolute top-0 left-0 w-72 h-72 bg-purple-200/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-amber-300/25 via-orange-200/20 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-          {/* Left: Artwork Image Provided by User - Fully Visible Original Aspect Ratio (6 Cols) */}
+          {/* Left: Authentic Studio Reference Image - Preserving Natural Aspect Ratio (6 Cols) */}
           <div className="lg:col-span-6 relative flex items-center justify-center">
-            <div className="relative w-full rounded-2xl overflow-hidden shadow-lg border-2 border-white bg-white/50">
+            <div className="relative w-full max-w-md lg:max-w-none rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-purple-50 group">
               <img
-                src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1787169452/download_29_f0phzf.jpg"
-                alt="Nurturing Creativity in Every Heart - Anu Arts"
-                className="w-full h-auto object-contain block rounded-2xl"
+                src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
+                alt="Anu Arts & Craft Studio Environment"
+                className="w-full h-auto max-h-[520px] object-cover object-center block rounded-2xl group-hover:scale-102 transition-transform duration-500"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.onerror = null
+                  e.currentTarget.src = "/images/anu-studio.jpg"
+                }}
               />
+              <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-pink-200 shadow-sm flex items-center gap-2">
+                <MapPin className="h-3.5 w-3.5 text-[#d92672]" />
+                <span className="text-[11px] font-bold text-stone-800">
+                  {SOCIAL_CONFIG.studio.shortAddress}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Right: Content & Bullet Points (6 Cols) */}
+          {/* Right: Client-Specified Content & Mission (6 Cols) */}
           <div className="lg:col-span-6 space-y-6 relative z-10">
             
             <div className="space-y-2">
-              <div className="text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a]">
-                ABOUT ANU ARTS
+              <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a] bg-purple-50 px-3 py-1 rounded-full border border-purple-200/60">
+                <Sparkles className="h-3 w-3 text-amber-500" />
+                <span>ABOUT ANU ARTS</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900 leading-tight">
-                Nurturing{" "}
-                <span className="font-script text-[#d92672] font-normal italic text-4xl sm:text-5xl lg:text-6xl inline-block ml-1">
-                  Creativity
+                About{" "}
+                <span className="font-script text-[#7c2d8a] font-normal italic text-4xl sm:text-5xl lg:text-6xl inline-block ml-1">
+                  Anu Arts
                 </span>
-                <br />
-                In Every Heart
               </h2>
             </div>
 
-            <p className="text-stone-600 text-xs sm:text-sm font-medium leading-relaxed">
-              At Anu Arts, we believe everyone is an artist. Our mission is to
-              inspire creativity through quality materials, expert guidance and a
-              community that celebrates art in every form.
+            {/* Client-Provided Core Copy */}
+            <p className="text-stone-700 text-sm sm:text-base font-medium leading-relaxed">
+              At Anu Arts, we believe creativity belongs to everyone. We’re committed to bringing you quality art materials, thoughtfully curated DIY kits, and engaging workshops that make exploring art easy and enjoyable.
             </p>
 
+            {/* Client-Provided Mission Direction */}
+            <div className="rounded-2xl bg-white/90 border border-purple-100 p-4 sm:p-5 shadow-2xs space-y-2">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#7c2d8a]">
+                Our Mission
+              </div>
+              <p className="text-stone-600 text-xs sm:text-sm font-medium leading-relaxed">
+                Our mission is to build a vibrant community that celebrates creativity in every form. From beginners discovering a new hobby to experienced artists exploring new techniques, our workshops and expert guidance are designed to inspire, learn and create.
+              </p>
+            </div>
+
             {/* 3 Checked Bullet Points */}
-            <div className="space-y-3 pt-1">
+            <div className="space-y-2.5 pt-1">
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full bg-purple-100 text-[#7c2d8a] flex items-center justify-center shrink-0 shadow-2xs">
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-xs sm:text-sm font-bold text-stone-800">
                   Curated premium art &amp; craft supplies
@@ -752,16 +795,16 @@ export function AnuArtsTemplate({
 
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full bg-pink-100 text-[#d92672] flex items-center justify-center shrink-0 shadow-2xs">
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-xs sm:text-sm font-bold text-stone-800">
-                  Hands-on workshops by expert artists
+                  Hands-on workshops for all skill levels
                 </span>
               </div>
 
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 shadow-2xs">
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-xs sm:text-sm font-bold text-stone-800">
                   Supportive &amp; inspiring creative community
@@ -769,22 +812,22 @@ export function AnuArtsTemplate({
               </div>
             </div>
 
-            {/* CTA Button & Studio Location Tag */}
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-4">
-              <button
-                type="button"
-                onClick={() => router.push("/about")}
+            {/* CTA Button */}
+            <div className="pt-2 flex flex-wrap items-center gap-4">
+              <Link
+                href="/about"
                 className="inline-flex items-center gap-2 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs sm:text-sm font-bold px-7 py-3 rounded-full shadow-md hover:shadow-purple-900/20 hover:scale-[1.02] transition-all cursor-pointer"
               >
                 <span>Know More About Us</span>
                 <ArrowRight className="h-4 w-4" />
-              </button>
+              </Link>
 
-              {/* Studio Location Pill with Amber Accent */}
-              <div className="flex items-center gap-2 text-stone-800 bg-white/90 border border-amber-200/90 px-3.5 py-1.5 rounded-2xl shadow-2xs">
-                <MapPin className="h-4 w-4 text-[#d92672]" />
-                <span className="text-[11px] font-bold text-stone-700">30, Chandralok Colony, Indore</span>
-              </div>
+              <Link
+                href="/workshops"
+                className="inline-flex items-center gap-2 bg-white hover:bg-purple-50 text-stone-800 text-xs sm:text-sm font-bold px-6 py-3 rounded-full border border-pink-200 shadow-2xs transition-all cursor-pointer"
+              >
+                <span>Explore Workshops</span>
+              </Link>
             </div>
 
           </div>
@@ -793,142 +836,149 @@ export function AnuArtsTemplate({
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 2.5: Interactive Artist Palette Card Tag Display   */}
-      {/* Inspired directly by Anu Arts Palette & QR Code Artifact   */}
+      {/* SECTION 2.5: Crafted with Passion in Indore & Instagram   */}
       {/* ========================================================= */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="relative rounded-3xl bg-gradient-to-r from-purple-900 via-[#7c2d8a] via-[#d92672] to-amber-500 p-1 shadow-xl">
-          <div className="bg-white rounded-[22px] p-6 sm:p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+        <div className="rounded-3xl bg-white border border-pink-100/90 shadow-xl overflow-hidden relative">
+          
+          {/* Subtle artistic watercolor background glow */}
+          <div className="absolute top-0 right-1/3 w-96 h-96 bg-purple-100/35 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-amber-100/35 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
             
-            {/* Left Description */}
-            <div className="space-y-4 max-w-xl text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#7c2d8a] bg-purple-50 px-3 py-1 rounded-full border border-purple-200/60">
-                <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-                <span>OFFICIAL ARTIST STUDIO IDENTITY</span>
-              </div>
-              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
-                Crafted with Passion in Indore
-              </h3>
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-medium">
-                Every workshop session and craft kit at Anu Arts is infused with our signature watercolor palette — blending vibrant lilac, rose fuchsia, and sunlit amber hues. Scan our Instagram channels or connect with our master instructors directly!
-              </p>
+            {/* Left 7 Columns: Crafted with Passion in Indore + Butterfly Philosophy */}
+            <div className="lg:col-span-7 space-y-6">
               
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#7c2d8a] bg-purple-50 px-3.5 py-1.5 rounded-full border border-purple-200/60 shadow-2xs">
+                  <span className="text-base">🦋</span>
+                  <span>OUR CREATIVE PHILOSOPHY</span>
+                </div>
+                
+                <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-stone-900 leading-tight">
+                  Crafted with Passion in Indore
+                </h3>
+              </div>
+
+              {/* Client's Butterfly Philosophy Copy */}
+              <div className="space-y-4 text-stone-700 text-sm sm:text-base leading-relaxed">
+                <p className="text-stone-800 font-semibold text-base sm:text-lg leading-relaxed">
+                  A butterfly represents transformation, freedom and endless possibilities—just like art.
+                </p>
+                <p className="text-stone-600 font-normal leading-relaxed">
+                  Every blank canvas is a chance to experiment, explore and transform an idea into something beautiful. Our flying butterfly reflects our belief that creativity has no limits and that every artist has the freedom to spread their wings, discover their own style and create something uniquely theirs.
+                </p>
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-50/90 via-pink-50/70 to-amber-50/90 border-l-4 border-[#7c2d8a] text-stone-900 font-serif italic text-base sm:text-lg leading-relaxed shadow-2xs">
+                  “At Anu Arts, we believe art isn’t just about creating—it’s about transforming the way you see the world.”
+                </div>
+              </div>
+
+              {/* Studio Contact & Location Badges */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <div className="inline-flex items-center gap-2 bg-stone-50 border border-stone-200 px-3.5 py-2 rounded-full text-xs font-bold text-stone-800">
+                  <MapPin className="h-3.5 w-3.5 text-[#d92672]" />
+                  <span>30, Chandralok Colony, Indore</span>
+                </div>
+
                 <a
                   href="tel:+919425356009"
-                  className="inline-flex items-center gap-2 bg-[#7c2d8a] text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-xs hover:bg-[#682274] transition-all"
+                  className="inline-flex items-center gap-2 bg-[#7c2d8a] text-white text-xs font-bold px-4 py-2 rounded-full shadow-xs hover:bg-[#682274] transition-all"
                 >
                   <Phone className="h-3.5 w-3.5" />
-                  <span>Call: +91 94253 56009</span>
+                  <span>+91 94253 56009</span>
                 </a>
+
                 <a
                   href="https://wa.me/919425356009"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-emerald-600 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-xs hover:bg-emerald-700 transition-all"
+                  className="inline-flex items-center gap-2 bg-emerald-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xs hover:bg-emerald-700 transition-all"
                 >
                   <MessageCircle className="h-3.5 w-3.5" />
-                  <span>WhatsApp Chat</span>
+                  <span>WhatsApp</span>
                 </a>
               </div>
             </div>
 
-            {/* Right: Interactive Palette Shape Flip Card (Front: Watercolor Palette with Yellow-Orange Lower Corner, Back: Black Palette with QRs) */}
-            <div className="flex flex-col items-center gap-3">
-              <div
-                onClick={() => setPaletteSide(paletteSide === "front" ? "back" : "front")}
-                className="cursor-pointer group relative w-72 sm:w-80 aspect-[16/10] rounded-[45px] shadow-2xl transition-transform duration-500 hover:scale-105 select-none overflow-hidden border-2 border-pink-200"
-                title="Click to Flip Palette Tag"
-              >
-                {paletteSide === "front" ? (
-                  /* FRONT: Watercolor Palette (Periwinkle left, Pink top, Yellow-Orange lower right) */
-                  <div className="w-full h-full p-4 sm:p-5 flex flex-col justify-between relative bg-white">
-                    
-                    {/* Palette Background Watercolor Blooms */}
-                    <div className="absolute inset-0 bg-radial-[at_15%_35%] from-indigo-200/50 to-transparent pointer-events-none" />
-                    <div className="absolute inset-0 bg-radial-[at_50%_15%] from-pink-300/45 to-transparent pointer-events-none" />
-                    <div className="absolute inset-0 bg-radial-[at_90%_85%] from-amber-300/60 via-orange-300/35 to-transparent pointer-events-none" />
+            {/* Right 5 Columns: Instagram Page Scanner (Ombre box replaced!) */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="w-full max-w-sm rounded-[32px] bg-gradient-to-b from-stone-900 via-stone-950 to-black text-white p-6 sm:p-7 shadow-2xl border border-stone-800 relative overflow-hidden flex flex-col items-center text-center group">
+                
+                {/* Subtle top corner gradient accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-500/20 via-purple-500/10 to-transparent pointer-events-none rounded-bl-full" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-amber-500/20 via-orange-500/10 to-transparent pointer-events-none rounded-tr-full" />
 
-                    {/* Palette Thumb Hole */}
-                    <div className="absolute top-1/2 left-3 -translate-y-1/2 w-6 h-6 rounded-full bg-white border-2 border-purple-200 shadow-inner z-10" />
-
-                    {/* Top Row: Logo & Brand */}
-                    <div className="pl-6 flex items-center justify-between relative z-10">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl text-[#7c2d8a]">🦋</span>
-                        <div>
-                          <span className="font-serif text-lg font-black text-stone-900 tracking-tight">Anu Arts</span>
-                          <span className="text-[9px] text-stone-400 font-bold ml-1">™</span>
-                        </div>
-                      </div>
-                      <span className="text-[10px] bg-white/80 border border-amber-200 px-2 py-0.5 rounded-full text-amber-800 font-bold flex items-center gap-1 shadow-2xs">
-                        <RotateCw className="h-2.5 w-2.5" /> Flip
-                      </span>
-                    </div>
-
-                    {/* Center Tagline */}
-                    <p className="pl-6 text-[10px] text-stone-600 font-medium leading-tight relative z-10 max-w-[200px]">
-                      Your one-stop destination for art &amp; craft materials. Explore workshops &amp; classes.
-                    </p>
-
-                    {/* Bottom Address & Phone with Yellow-Orange Bloom Backdrop */}
-                    <div className="pl-6 pt-1 text-[9px] font-bold text-stone-800 space-y-0.5 relative z-10">
-                      <div className="flex items-center gap-1 text-stone-700">
-                        <MapPin className="h-3 w-3 text-[#d92672]" />
-                        <span>30, Chandralok Colony, Indore</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-stone-700">
-                        <Phone className="h-3 w-3 text-amber-600" />
-                        <span>+91 94253 56009</span>
-                      </div>
-                    </div>
-
+                {/* Instagram Header with Logo */}
+                <div className="flex items-center gap-2.5 mb-3 relative z-10">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center shadow-md text-white">
+                    <InstagramIcon className="h-5 w-5" />
                   </div>
-                ) : (
-                  /* BACK: Black Palette with QR Codes & Tagline */
-                  <div className="w-full h-full p-4 sm:p-5 flex flex-col justify-between relative bg-stone-950 text-white">
-                    {/* Thumb Hole */}
-                    <div className="absolute top-1/2 right-3 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-900 border-2 border-stone-700 shadow-inner z-10" />
-
-                    <div className="text-center relative z-10">
-                      <h4 className="text-xs font-bold tracking-wide text-stone-200">
-                        Where your ideas come to life.
-                      </h4>
-                    </div>
-
-                    {/* 2 Instagram QR Placeholders */}
-                    <div className="grid grid-cols-2 gap-3 px-2 relative z-10">
-                      <div className="bg-white p-1.5 rounded-xl text-center text-stone-950 shadow-xs">
-                        <div className="w-full aspect-square bg-stone-100 rounded-lg flex items-center justify-center border border-stone-200">
-                          <QrCode className="h-10 w-10 text-stone-900" />
-                        </div>
-                        <span className="text-[7px] font-extrabold uppercase tracking-tighter block mt-1">
-                          ANUARTANDCRAFTSTUDIO
-                        </span>
-                      </div>
-
-                      <div className="bg-white p-1.5 rounded-xl text-center text-stone-950 shadow-xs">
-                        <div className="w-full aspect-square bg-stone-100 rounded-lg flex items-center justify-center border border-stone-200">
-                          <QrCode className="h-10 w-10 text-stone-900" />
-                        </div>
-                        <span className="text-[7px] font-extrabold uppercase tracking-tighter block mt-1">
-                          ANUARTS_CRAFTING_SUPPLIES
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="text-center">
-                      <span className="text-[9px] text-pink-300 font-bold flex items-center justify-center gap-1">
-                        <RotateCw className="h-2.5 w-2.5" /> Tap to see watercolor palette
-                      </span>
-                    </div>
+                  <div className="text-left">
+                    <span className="text-[10px] font-bold text-pink-300 uppercase tracking-widest block">
+                      OFFICIAL INSTAGRAM
+                    </span>
+                    <span className="text-xs font-black tracking-tight text-white">
+                      @anuartandcraftstudio
+                    </span>
                   </div>
-                )}
+                </div>
+
+                {/* Section Title */}
+                <h4 className="font-serif text-xl sm:text-2xl font-black text-white tracking-tight mb-1 relative z-10">
+                  Join Our Insta Family Now
+                </h4>
+                <p className="text-[11px] sm:text-xs text-stone-300 font-medium mb-4 max-w-xs relative z-10">
+                  Scan with your phone camera or tap below to follow our daily workshops, DIY kit tutorials &amp; studio creations!
+                </p>
+
+                {/* Scanner Frame with QR code */}
+                <a
+                  href={SOCIAL_CONFIG.instagram.mainUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative p-3.5 bg-white rounded-2xl shadow-xl transition-transform duration-300 hover:scale-105 cursor-pointer block border-2 border-pink-300/40 z-10"
+                  title="Click or scan to visit @anuartandcraftstudio on Instagram"
+                >
+                  {/* Scanner Corner Brackets */}
+                  <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[#d92672]" />
+                  <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-[#d92672]" />
+                  <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[#d92672]" />
+                  <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[#d92672]" />
+
+                  {/* QR Image */}
+                  <div className="w-44 h-44 sm:w-48 sm:h-48 relative flex items-center justify-center">
+                    <img
+                      src="/images/instagram-qr.svg"
+                      alt="Scan to follow Anu Arts on Instagram"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  <div className="mt-1 text-[9px] font-black text-stone-900 tracking-wider uppercase text-center flex items-center justify-center gap-1">
+                    <span className="text-rose-600">●</span> SCAN WITH PHONE CAMERA
+                  </div>
+                </a>
+
+                {/* Follow Button */}
+                <a
+                  href={SOCIAL_CONFIG.instagram.mainUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:via-pink-500 hover:to-amber-400 text-white text-xs font-bold py-2.5 px-6 rounded-full shadow-lg hover:shadow-pink-500/25 transition-all transform hover:-translate-y-0.5 cursor-pointer z-10"
+                >
+                  <InstagramIcon className="h-4 w-4" />
+                  <span>Join Our Insta Family Now</span>
+                  <ArrowRight className="h-3.5 w-3.5 ml-0.5" />
+                </a>
+
+                <div className="mt-3 flex items-center gap-3 text-[10px] text-stone-400 relative z-10">
+                  <span>10,000+ Students</span>
+                  <span>•</span>
+                  <span>Daily Inspirations</span>
+                </div>
+
               </div>
-              <span className="text-[11px] text-stone-500 font-semibold flex items-center gap-1">
-                <Sparkles className="h-3 w-3 text-amber-500" />
-                Tap palette tag to flip between sides
-              </span>
             </div>
 
           </div>
@@ -942,55 +992,55 @@ export function AnuArtsTemplate({
         <div className="relative rounded-3xl bg-gradient-to-r from-pink-100/70 via-purple-100/60 to-amber-100/70 border border-pink-200/60 backdrop-blur-md p-6 sm:p-8 shadow-sm">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-pink-200/50">
             
-            {/* Stat 1: 1000+ Happy Students */}
+            {/* Stat 1: 10,000+ Happy Students */}
             <div className="flex flex-col items-center justify-center p-2 space-y-1.5">
               <div className="w-10 h-10 rounded-full bg-purple-200/80 text-[#7c2d8a] flex items-center justify-center mb-1 shadow-2xs">
                 <Smile className="h-5 w-5" />
               </div>
               <div className="font-serif text-3xl sm:text-4xl font-bold text-stone-900">
-                1000+
+                10,000+
               </div>
               <div className="text-xs sm:text-sm font-medium text-stone-600">
                 Happy Students
               </div>
             </div>
 
-            {/* Stat 2: 200+ Workshops Conducted */}
+            {/* Stat 2: 500+ Workshops Conducted */}
             <div className="flex flex-col items-center justify-center p-2 space-y-1.5 pt-4 sm:pt-2">
               <div className="w-10 h-10 rounded-full bg-purple-200/80 text-[#7c2d8a] flex items-center justify-center mb-1 shadow-2xs">
                 <Users className="h-5 w-5" />
               </div>
               <div className="font-serif text-3xl sm:text-4xl font-bold text-stone-900">
-                200+
+                500+
               </div>
               <div className="text-xs sm:text-sm font-medium text-stone-600">
                 Workshops Conducted
               </div>
             </div>
 
-            {/* Stat 3: 1500+ Products Available */}
+            {/* Stat 3: 2500+ Products Available */}
             <div className="flex flex-col items-center justify-center p-2 space-y-1.5 pt-4 sm:pt-2">
               <div className="w-10 h-10 rounded-full bg-pink-200/80 text-[#d92672] flex items-center justify-center mb-1 shadow-2xs">
                 <Store className="h-5 w-5" />
               </div>
               <div className="font-serif text-3xl sm:text-4xl font-bold text-stone-900">
-                1500+
+                2500+
               </div>
               <div className="text-xs sm:text-sm font-medium text-stone-600">
                 Products Available
               </div>
             </div>
 
-            {/* Stat 4: 5+ Years of Creativity */}
+            {/* Stat 4: 10+ Years of Creativity and Trust */}
             <div className="flex flex-col items-center justify-center p-2 space-y-1.5 pt-4 sm:pt-2">
               <div className="w-10 h-10 rounded-full bg-amber-200/80 text-amber-700 flex items-center justify-center mb-1 shadow-2xs">
                 <Heart className="h-5 w-5 fill-amber-600" />
               </div>
               <div className="font-serif text-3xl sm:text-4xl font-bold text-stone-900">
-                5+
+                10+
               </div>
               <div className="text-xs sm:text-sm font-medium text-stone-600">
-                Years of Creativity
+                Years of Creativity and Trust
               </div>
             </div>
 
@@ -1089,20 +1139,55 @@ export function AnuArtsTemplate({
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 5: "Follow Our Journey" (@anuarts_studio)        */}
+      {/* SECTION 5: "Join Our Insta Family" (@anuarts_studio)      */}
       {/* ========================================================= */}
-      <section id="gallery-section" className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="instagram-section" className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         
-        {/* Header */}
-        <div className="text-center space-y-1.5 mb-8 sm:mb-10">
-          <div className="text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a]">
-            FOLLOW OUR JOURNEY
+        {/* Header & Scan-Style Card */}
+        <div className="text-center space-y-3 mb-10 sm:mb-12">
+          <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.25em] text-[#7c2d8a] bg-purple-50 px-3.5 py-1 rounded-full border border-purple-200/60 shadow-2xs">
+            <Camera className="h-3.5 w-3.5 text-[#d92672]" />
+            <span>INSTAGRAM COMMUNITY</span>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#7c2d8a] hover:underline cursor-pointer">
-            <a href="https://instagram.com/ANUARTANDCRAFTSTUDIO" target="_blank" rel="noopener noreferrer">
-              @anuarts_studio
-            </a>
+
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900">
+            Join Our Insta Family
           </h2>
+
+          <p className="text-xs sm:text-sm text-stone-600 max-w-xl mx-auto font-medium leading-relaxed">
+            Follow <strong className="text-[#7c2d8a]">{SOCIAL_CONFIG.instagram.handle}</strong> for daily studio moments, hands-on workshop reels, student spotlights, and fresh creative inspiration.
+          </p>
+
+          {/* Scan/Profile Feature Card */}
+          <div className="pt-3 max-w-sm mx-auto">
+            <div className="rounded-3xl bg-gradient-to-r from-purple-600 via-[#d92672] to-amber-500 p-[1.5px] shadow-lg">
+              <div className="bg-white rounded-[23px] p-4 sm:p-5 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#7c2d8a] via-[#d92672] to-[#ea580c] text-white flex items-center justify-center shadow-md shrink-0">
+                    <Camera className="h-6 w-6" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-sm font-black text-stone-900 tracking-tight">
+                      {SOCIAL_CONFIG.instagram.displayName}
+                    </div>
+                    <div className="text-xs font-bold text-[#7c2d8a]">
+                      {SOCIAL_CONFIG.instagram.handle}
+                    </div>
+                  </div>
+                </div>
+
+                <a
+                  href={SOCIAL_CONFIG.instagram.mainUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs font-bold px-4 py-2 rounded-full shadow-xs hover:shadow-md transition-all shrink-0 cursor-pointer"
+                >
+                  <span>Follow</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 6 Photo Artistic Grid */}
@@ -1111,7 +1196,7 @@ export function AnuArtsTemplate({
             {instagramPhotos.map((photo) => (
               <a
                 key={photo.id}
-                href="https://instagram.com/ANUARTANDCRAFTSTUDIO"
+                href={SOCIAL_CONFIG.instagram.mainUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm border border-pink-100 block"
@@ -1133,13 +1218,13 @@ export function AnuArtsTemplate({
           {/* Floating Center Overlay Button: "Follow Us on Instagram" */}
           <div className="absolute inset-x-0 bottom-[-20px] flex justify-center z-10">
             <a
-              href="https://instagram.com/ANUARTANDCRAFTSTUDIO"
+              href={SOCIAL_CONFIG.instagram.mainUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white hover:bg-purple-50 text-stone-900 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-full shadow-lg border border-pink-200 hover:scale-105 transition-all"
             >
               <Camera className="h-4 w-4 text-[#d92672]" />
-              <span>Follow Us on Instagram</span>
+              <span>Follow {SOCIAL_CONFIG.instagram.handle}</span>
             </a>
           </div>
 

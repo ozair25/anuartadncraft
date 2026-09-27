@@ -48,7 +48,6 @@ const navLinks = [
   { label: "Home", href: "/", icon: Home },
   { label: "About", href: "/about", icon: Info },
   { label: "Workshops", href: "/workshops", icon: Palette },
-  { label: "Gallery", href: "/gallery", icon: ImageIcon },
   { label: "Shop", href: "/shop", icon: ShoppingBag },
   { label: "Events", href: "/events", icon: Calendar },
   { label: "Contact", href: "/contact", icon: Phone },
@@ -155,19 +154,22 @@ export function SiteHeader({
       ref={headerRef}
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-pink-200/90 shadow-md text-stone-900"
-          : "bg-[#fffaff]/90 backdrop-blur-sm border-b border-pink-100/70 shadow-2xs text-stone-900"
+          ? "bg-white/95 backdrop-blur-md border-b border-pink-200/80 shadow-md text-stone-900"
+          : "bg-white backdrop-blur-sm border-b border-pink-100/60 shadow-2xs text-stone-900"
       }`}
     >
       {/* 1. Top Announcement Bar */}
       <div className="bg-gradient-to-r from-purple-900 via-[#7c2d8a] via-[#d92672] via-pink-500 to-amber-500 text-white px-4 py-1.5 text-center text-xs font-semibold tracking-wide flex items-center justify-between md:justify-center gap-3 shadow-2xs">
-        <div className="flex items-center gap-1.5 mx-auto">
+        <div className="flex items-center gap-2 mx-auto">
           <Sparkles className="h-3.5 w-3.5 text-amber-300 fill-amber-300 shrink-0" />
-          <span className="hidden sm:inline">
-            ✨ Free Craft Kit on Workshop Registrations this week! Call +91 94253 56009
+          <span className="font-bold">
+            NEW HERE? GET 10% OFF 🎉
           </span>
-          <span className="sm:hidden text-[11px] font-bold">
-            ✨ Free Delivery above ₹999 across India!
+          <span className="hidden sm:inline text-purple-100">
+            Use code <strong className="text-white underline decoration-amber-300 underline-offset-2 tracking-wide">FIRSTORDER10</strong> on your first order
+          </span>
+          <span className="sm:hidden text-[11px] text-amber-200 font-bold">
+            Code: FIRSTORDER10
           </span>
         </div>
         <a
@@ -396,7 +398,6 @@ export function SiteHeader({
                     { label: "Home", href: "/", icon: Home },
                     { label: "About Us", href: "/about", icon: Info },
                     { label: "Workshops & Classes", href: "/workshops", icon: Palette },
-                    { label: "Art Gallery", href: "/gallery", icon: ImageIcon },
                     { label: "Shop / Craft Supplies", href: "/shop", icon: ShoppingBag },
                     { label: "Curated Collections", href: "/collections", icon: Layers },
                     { label: "Events & Exhibitions", href: "/events", icon: Calendar },

@@ -61,36 +61,43 @@ export default function AboutPage() {
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white aspect-4/3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1200&auto=format&fit=crop"
-                  alt="Anu Arts Studio Painting Session"
+                  src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
+                  alt="Anu Arts Studio"
                   className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null
+                    e.currentTarget.src = "/images/anu-studio.jpg"
+                  }}
                 />
               </div>
 
               {/* Floating Stat Badge */}
               <div className="absolute -bottom-6 -right-4 sm:right-6 bg-white rounded-2xl p-4 shadow-xl border border-pink-100 flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-purple-100 text-[#7c2d8a] flex items-center justify-center font-serif font-black text-xl">
-                  12+
+                  10+
                 </div>
                 <div>
                   <p className="text-xs font-bold text-stone-900">Years of Mentorship</p>
-                  <p className="text-[10px] text-stone-500">Over 5,000+ happy students</p>
+                  <p className="text-[10px] text-stone-500">Over 10,000+ happy students</p>
                 </div>
               </div>
             </div>
 
             {/* Narrative Content */}
             <div className="space-y-6">
-              <RibbonLabel>Founder&apos;s Journey</RibbonLabel>
+              <RibbonLabel>About Anu Arts</RibbonLabel>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 leading-tight">
-                Where Passion Meets <span className="text-[#7c2d8a]">Fine Craftsmanship</span>
+                Creativity Belongs to <span className="text-[#7c2d8a]">Everyone</span>
               </h2>
-              <p className="text-sm text-stone-600 leading-relaxed">
-                What began as an intimate weekend gathering around a watercolor palette in Jabalpur has blossomed into one of Central India&apos;s most beloved art academies and trusted specialty art supply destinations.
+              <p className="text-sm text-stone-700 leading-relaxed font-medium">
+                At Anu Arts, we believe creativity belongs to everyone. We’re committed to bringing you quality art materials, thoughtfully curated DIY kits, and engaging workshops that make exploring art easy and enjoyable.
               </p>
-              <p className="text-sm text-stone-600 leading-relaxed">
-                Under the visionary guidance of <strong>Anu Jain</strong>, the studio champions a tactile, mindful approach to creative learning. We believe art is not reserved for the few—it is a deeply restorative practice accessible to curious children, busy professionals, and seasoned masters alike.
-              </p>
+              <div className="rounded-2xl bg-purple-50/70 border border-purple-100 p-4 space-y-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#7c2d8a]">Our Mission</span>
+                <p className="text-xs text-stone-600 leading-relaxed font-medium">
+                  Our mission is to build a vibrant community that celebrates creativity in every form. From beginners discovering a new hobby to experienced artists exploring new techniques, our workshops and expert guidance are designed to inspire, learn and create.
+                </p>
+              </div>
 
               {/* Core Pillars */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
@@ -103,9 +110,9 @@ export default function AboutPage() {
                 </div>
                 <div className="rounded-2xl border border-purple-100 bg-white p-4 shadow-2xs">
                   <Users className="h-5 w-5 text-[#7c2d8a] mb-1.5" />
-                  <h3 className="font-serif font-bold text-xs text-stone-900">Intimate Batches</h3>
+                  <h3 className="font-serif font-bold text-xs text-stone-900">Curated DIY Kits</h3>
                   <p className="text-[11px] text-stone-500 mt-1">
-                    Strict batch caps (10-15 students) to ensure dedicated 1-on-1 feedback.
+                    Complete all-in-one kits for kids, beginners &amp; hobby artists.
                   </p>
                 </div>
               </div>
@@ -118,10 +125,10 @@ export default function AboutPage() {
                   Explore Studio Workshops
                 </Link>
                 <Link
-                  href="/gallery"
+                  href="/shop"
                   className="border border-[#7c2d8a] text-[#7c2d8a] hover:bg-purple-50 text-xs font-bold px-6 py-3 rounded-full transition-all"
                 >
-                  View Student Gallery
+                  Browse Art Supplies &amp; Kits
                 </Link>
               </div>
             </div>
@@ -132,20 +139,20 @@ export default function AboutPage() {
         <section className="bg-gradient-to-r from-purple-900 via-[#7c2d8a] to-amber-600 py-12 px-4 text-white">
           <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">5,000+</p>
-              <p className="text-xs sm:text-sm text-purple-150 mt-1">Students Mentored</p>
+              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">10,000+</p>
+              <p className="text-xs sm:text-sm text-purple-150 mt-1">Happy Students</p>
             </div>
             <div>
-              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">450+</p>
+              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">500+</p>
               <p className="text-xs sm:text-sm text-purple-150 mt-1">Workshops Conducted</p>
             </div>
             <div>
-              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">100%</p>
-              <p className="text-xs sm:text-sm text-purple-150 mt-1">Authentic Art Supplies</p>
+              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">2500+</p>
+              <p className="text-xs sm:text-sm text-purple-150 mt-1">Products Available</p>
             </div>
             <div>
-              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">4.9 ★</p>
-              <p className="text-xs sm:text-sm text-purple-150 mt-1">Google &amp; Social Rating</p>
+              <p className="font-serif text-3xl sm:text-5xl font-black text-amber-300">10+</p>
+              <p className="text-xs sm:text-sm text-purple-150 mt-1">Years of Creativity &amp; Trust</p>
             </div>
           </div>
         </section>

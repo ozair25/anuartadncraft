@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { Hero } from "@/components/hero"
+import { PromoBanner } from "@/components/promo-banner"
 import { AnuArtsTemplate } from "@/components/anu-arts-template"
 import { SiteFooter } from "@/components/site-footer"
 import { CartDrawer } from "@/components/cart-drawer"
@@ -38,6 +39,7 @@ export function HomePageClient({ initialProducts = [] }: HomePageClientProps) {
             router.push("/contact")
           }}
         />
+        <PromoBanner />
         <AnuArtsTemplate
           initialProducts={initialProducts}
           onOpenCart={openCart}

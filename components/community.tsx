@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react"
 import { RibbonLabel } from "@/components/ribbon-label"
+import { SOCIAL_CONFIG } from "@/lib/config/social"
 
 const posts = [
   "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=600&auto=format&fit=crop",
@@ -24,8 +25,10 @@ export function Community() {
             </h2>
           </div>
           <a
-            href="#"
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-foreground hover:text-primary"
+            href={SOCIAL_CONFIG.instagram.mainUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-foreground hover:text-primary transition-colors"
           >
             Follow Us On Instagram
             <ArrowRight className="h-4 w-4" />

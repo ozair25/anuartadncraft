@@ -1,7 +1,7 @@
 import { Scissors, ShieldCheck, Palette, Truck, Lock } from "lucide-react"
 
 const items = [
-  { icon: Scissors, title: "Wide Range", sub: "1000+ Products" },
+  { icon: Scissors, title: "Wide Range", sub: "2500+ Products" },
   { icon: ShieldCheck, title: "Trusted Quality", sub: "Handpicked Items" },
   { icon: Palette, title: "For Every Creator", sub: "Beginners to Pros" },
   { icon: Truck, title: "Pan India Delivery", sub: "Fast & Reliable" },
