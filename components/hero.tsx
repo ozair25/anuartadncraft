@@ -50,7 +50,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
           <Link
             href="/workshops"
             onClick={onExploreWorkshops}
-            className="inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#250a2e] hover:from-[#351240] hover:via-[#521b63] hover:to-[#2c0e35] text-[#f5e2b3] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border-[1.5px] border-[#dfb76c] hover:border-[#ebd59b] shadow-[0_4px_16px_rgba(44,14,53,0.25)] hover:shadow-[0_6px_24px_rgba(223,183,108,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap"
+            className="-mt-[350px] h-[41.6px] w-[191.4px] pr-4 sm:mt-0 sm:h-auto sm:w-auto sm:pr-9 inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#250a2e] hover:from-[#351240] hover:via-[#521b63] hover:to-[#2c0e35] text-[#f5e2b3] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border-[1.5px] border-[#dfb76c] hover:border-[#ebd59b] shadow-[0_4px_16px_rgba(44,14,53,0.25)] hover:shadow-[0_6px_24px_rgba(223,183,108,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap"
           >
             <span>EXPLORE WORKSHOPS</span>
             <ArrowRight className="h-4 w-4 text-[#f5e2b3] group-hover:translate-x-1 transition-transform" />
@@ -58,7 +58,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
           <Link
             href="/shop"
             onClick={onVisitStore}
-            className="inline-flex items-center justify-center gap-2.5 bg-[#fcf5eb] hover:bg-white text-[#3b1548] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#eddcc4] hover:border-[#dfc8a7] shadow-[0_4px_14px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap"
+            className="-mt-[245px] h-[38.6px] w-[209.637px] sm:mt-0 sm:h-auto sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#fcf5eb] hover:bg-white text-[#3b1548] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#eddcc4] hover:border-[#dfc8a7] shadow-[0_4px_14px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap"
           >
             <span>VISIT OUR STORE</span>
             <Store className="h-4 w-4 stroke-[1.8] text-[#3b1548] group-hover:scale-105 transition-transform" />
