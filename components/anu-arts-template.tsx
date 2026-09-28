@@ -134,46 +134,6 @@ const testimonials = [
   },
 ]
 
-// 3. Instagram Grid Photos
-const instagramPhotos = [
-  {
-    id: 1,
-    title: "Paint brushes & watercolor palette",
-    image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&auto=format&fit=crop",
-    caption: "Morning studio brushwork 🎨",
-  },
-  {
-    id: 2,
-    title: "Calligraphy lettering 'create'",
-    image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=600&auto=format&fit=crop",
-    caption: "Modern brush lettering in progress ✨",
-  },
-  {
-    id: 3,
-    title: "Watercolor palette and artist paints",
-    image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=600&auto=format&fit=crop",
-    caption: "Vibrant hues blending together 🌸",
-  },
-  {
-    id: 4,
-    title: "Handmade floral clay / MDF craft",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop",
-    caption: "Handcrafted mosaic art pieces 💫",
-  },
-  {
-    id: 5,
-    title: "Hand-painted decorative glass bottles",
-    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600&auto=format&fit=crop",
-    caption: "Upcycled glass bottle painting 🍾",
-  },
-  {
-    id: 6,
-    title: "Art journal with paints & floral sprigs",
-    image: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=600&auto=format&fit=crop",
-    caption: "Botanical illustration sketchbook 🌿",
-  },
-]
-
 // 4. Products for In-Store Showcase
 const storeProducts: Product[] = [
   {
@@ -1182,46 +1142,6 @@ export function AnuArtsTemplate({
               </div>
             </div>
           </div>
-        </div>
-
-        {/* 6 Photo Artistic Grid */}
-        <div className="relative">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            {instagramPhotos.map((photo) => (
-              <a
-                key={photo.id}
-                href={SOCIAL_CONFIG.instagram.mainUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm border border-pink-100 block"
-              >
-                <img
-                  src={photo.image}
-                  alt={photo.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#7c2d8a]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
-                  <p className="text-white text-[10px] font-bold truncate">
-                    {photo.caption}
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          {/* Floating Center Overlay Button: "Follow Us on Instagram" */}
-          <div className="absolute inset-x-0 bottom-[-20px] flex justify-center z-10">
-            <a
-              href={SOCIAL_CONFIG.instagram.mainUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white hover:bg-purple-50 text-stone-900 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-full shadow-lg border border-pink-200 hover:scale-105 transition-all"
-            >
-              <Camera className="h-4 w-4 text-[#d92672]" />
-              <span>Follow {SOCIAL_CONFIG.instagram.handle}</span>
-            </a>
-          </div>
-
         </div>
 
       </section>

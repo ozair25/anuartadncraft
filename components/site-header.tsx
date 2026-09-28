@@ -397,12 +397,9 @@ export function SiteHeader({
                   {[
                     { label: "Home", href: "/", icon: Home },
                     { label: "About Us", href: "/about", icon: Info },
-                    { label: "Workshops & Classes", href: "/workshops", icon: Palette },
-                    { label: "Shop / Craft Supplies", href: "/shop", icon: ShoppingBag },
-                    { label: "Curated Collections", href: "/collections", icon: Layers },
-                    { label: "Events & Exhibitions", href: "/events", icon: Calendar },
-                    { label: "Blog & Art Tutorials", href: "/blog", icon: BookOpen },
-                    { label: "Frequently Asked Questions", href: "/faqs", icon: HelpCircle },
+                    { label: "Workshop Classes", href: "/workshops", icon: Palette },
+                    { label: "Shop", href: "/shop", icon: ShoppingBag },
+                    { label: "Art Tutorials", href: "/blog", icon: BookOpen },
                     { label: "Contact Us", href: "/contact", icon: Phone },
                   ].map((item) => {
                     const Icon = item.icon
