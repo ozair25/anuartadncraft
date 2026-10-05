@@ -65,7 +65,7 @@ export const PRODUCT_FRAGMENT = `
         }
       }
     }
-    collections(first: 5) {
+    collections(first: 20) {
       edges {
         node {
           id
@@ -100,7 +100,7 @@ export const GET_PRODUCT_BY_HANDLE_QUERY = `
 `
 
 export const GET_COLLECTIONS_QUERY = `
-  query GetCollections($first: Int = 20) {
+  query GetCollections($first: Int = 100) {
     collections(first: $first) {
       edges {
         node {

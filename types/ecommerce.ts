@@ -24,7 +24,9 @@ export interface Product {
   image?: string
   stock: number
   category: string
+  subcategory?: string // Reserved for future client-provided subcategories
   collection?: string
+  collections?: Array<{ id: string; title: string; handle: string }>
   tags: string[]
   brand: string
   rating: number

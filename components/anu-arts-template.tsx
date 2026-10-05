@@ -144,7 +144,7 @@ const storeProducts: Product[] = [
     rating: 5,
     reviewCount: 28,
     image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&auto=format&fit=crop",
-    category: "DIY Kits",
+    category: "Lippan Art Essentials",
     description: "Complete Lippan art kit with mirrors, modeling clay, MDF round board & acrylic paints.",
     inStock: true,
     variantId: "gid://shopify/ProductVariant/43659782914092",
@@ -166,7 +166,7 @@ const storeProducts: Product[] = [
     rating: 5,
     reviewCount: 42,
     image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=500&auto=format&fit=crop",
-    category: "Paints",
+    category: "Paints & Mediums",
     description: "High pigment load watercolor pans with water brush pen and mixing palette.",
     inStock: true,
     variantId: "gid://shopify/ProductVariant/43659902287916",
@@ -188,7 +188,7 @@ const storeProducts: Product[] = [
     rating: 5,
     reviewCount: 35,
     image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&auto=format&fit=crop",
-    category: "Resin",
+    category: "Resin Art Essentials",
     description: "Non-yellowing, bubble-free glossy epoxy resin ideal for ocean art & coasters.",
     inStock: true,
     variantId: "gid://shopify/ProductVariant/43885824344108",
@@ -210,7 +210,7 @@ const storeProducts: Product[] = [
     rating: 5,
     reviewCount: 19,
     image: "https://images.unsplash.com/photo-1579783901586-d8827248358f?w=500&auto=format&fit=crop",
-    category: "Canvas",
+    category: "Papers & Cardstocks",
     description: "Triple-primed acid-free cotton canvas boards ready for acrylic and oil painting.",
     inStock: true,
     variantId: "gid://shopify/ProductVariant/43660089131052",
@@ -232,7 +232,7 @@ const storeProducts: Product[] = [
     rating: 5,
     reviewCount: 22,
     image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=500&auto=format&fit=crop",
-    category: "Calligraphy",
+    category: "Brushes & Tools",
     description: "Flexible nylon brush nib and fine tip pens for modern calligraphy and journaling.",
     inStock: true,
     variantId: "gid://shopify/ProductVariant/43660199559212",
@@ -254,7 +254,7 @@ const storeProducts: Product[] = [
     rating: 5,
     reviewCount: 17,
     image: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500&auto=format&fit=crop",
-    category: "MDF",
+    category: "MDF & Acrylic Bases",
     description: "Smooth 3.5mm thick MDF bases ready for decoupage, paint, and glitter work.",
     inStock: true,
     variantId: "gid://shopify/ProductVariant/43660200247340",
@@ -323,30 +323,42 @@ export function AnuArtsTemplate({
       ? storeProducts
       : []
 
-  const storeFilterCategories = SHOP_CATEGORIES.map((c) => c.label)
+  const storeFilterCategories = useMemo(
+    () => ["All Supplies", ...SHOP_CATEGORIES.map((c) => c.name)],
+    []
+  )
 
   const filteredStoreProducts = useMemo(() => {
     if (selectedStoreCategory === "All Supplies" || selectedStoreCategory === "All") {
       return activeProducts.slice(0, 6)
     }
 
-    const matchedConfig = SHOP_CATEGORIES.find((c) => c.label === selectedStoreCategory)
+    if (selectedStoreCategory === "New Arrivals") {
+      const news = activeProducts.filter(
+        (p) => p.isNewArrival || (p.tags || []).some((t) => t.toLowerCase() === "new")
+      )
+      return (news.length > 0 ? news : activeProducts).slice(0, 6)
+    }
+
+    const matchedConfig = SHOP_CATEGORIES.find(
+      (c) => c.name === selectedStoreCategory || c.label === selectedStoreCategory
+    )
     const keywords = matchedConfig ? matchedConfig.keywords : [selectedStoreCategory.toLowerCase()]
 
     return activeProducts
       .filter((p) => {
+        if (p.category === selectedStoreCategory) return true
         const catLower = (p.category || "").toLowerCase()
         const colLower = (p.collection || "").toLowerCase()
         const nameLower = (p.name || "").toLowerCase()
         const tagsLower = (p.tags || []).map((t) => t.toLowerCase())
 
-        return (
-          keywords.some((kw) =>
+        return keywords.some(
+          (kw) =>
             catLower.includes(kw) ||
             colLower.includes(kw) ||
             nameLower.includes(kw) ||
             tagsLower.some((t) => t.includes(kw))
-          )
         )
       })
       .slice(0, 6)

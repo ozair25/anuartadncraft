@@ -1,56 +1,14 @@
 import { Category, Collection, Blog, Coupon, Testimonial } from "@/types/ecommerce"
+import { SHOP_CATEGORIES } from "@/lib/config/shop-categories"
 
-export const INITIAL_CATEGORIES: Category[] = [
-  {
-    id: "cat-1",
-    name: "Painting",
-    slug: "painting",
-    description: "High quality acrylics, oils, watercolors, and gouache paints for fine artists.",
-    image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=600&auto=format&fit=crop",
-    productCount: 24,
-  },
-  {
-    id: "cat-2",
-    name: "Drawing",
-    slug: "drawing",
-    description: "Pencils, sketchbooks, charcoal, markers, and pastels for every level of illustrator.",
-    image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop",
-    productCount: 18,
-  },
-  {
-    id: "cat-3",
-    name: "Crafting",
-    slug: "crafting",
-    description: "Clay tools, scissors, glue guns, resin art supplies, and crafting papers.",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600&auto=format&fit=crop",
-    productCount: 32,
-  },
-  {
-    id: "cat-4",
-    name: "DIY Kits",
-    slug: "diy-kits",
-    description: "Curated beginner-friendly complete DIY kits for embroidery, painting, resin, and pottery.",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600&auto=format&fit=crop",
-    badge: "New",
-    productCount: 12,
-  },
-  {
-    id: "cat-5",
-    name: "Stationery",
-    slug: "stationery",
-    description: "Journals, planners, fine liners, wax seals, and aesthetic desk organization.",
-    image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=600&auto=format&fit=crop",
-    productCount: 29,
-  },
-  {
-    id: "cat-6",
-    name: "Decor & More",
-    slug: "decor-and-more",
-    description: "Canvas boards, easels, wooden frames, and hand-crafted studio decor.",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=600&auto=format&fit=crop",
-    productCount: 15,
-  },
-]
+export const INITIAL_CATEGORIES: Category[] = SHOP_CATEGORIES.map((c) => ({
+  id: c.id,
+  name: c.name,
+  slug: c.slug,
+  description: c.description,
+  image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=600&auto=format&fit=crop",
+  productCount: 0,
+}))
 
 export const INITIAL_COLLECTIONS: Collection[] = [
   {

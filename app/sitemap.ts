@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllProducts } from '@/lib/shopify/products'
-import { INITIAL_CATEGORIES } from '@/lib/data/mock-db'
+import { SHOP_CATEGORIES } from '@/lib/config/shop-categories'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://anuarts.com'
@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }))
 
-  const categoryUrls = INITIAL_CATEGORIES.map((c) => ({
+  const categoryUrls = SHOP_CATEGORIES.map((c) => ({
     url: `${baseUrl}/shop/${c.slug}`,
     lastModified: new Date(),
   }))

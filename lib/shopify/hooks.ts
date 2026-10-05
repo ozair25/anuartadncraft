@@ -162,9 +162,13 @@ export function useShopifyProduct(handleOrSlug: string, initialProduct?: Product
   return { product, loading, error }
 }
 
-export function useShopifyCollections() {
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+export function useShopifyCollections(options?: { initialCollections?: Collection[] }) {
+  const [collections, setCollections] = useState<Collection[]>(
+    options?.initialCollections || []
+  )
+  const [loading, setLoading] = useState<boolean>(
+    !options?.initialCollections || options.initialCollections.length === 0
+  )
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {

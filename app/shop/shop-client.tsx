@@ -6,61 +6,131 @@ import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
-import { Product } from "@/types/ecommerce"
-import { useShopifyProducts } from "@/lib/shopify/hooks"
+import { Product, Collection } from "@/types/ecommerce"
+import { useShopifyProducts, useShopifyCollections } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
-import { Heart, ShoppingBag, Star, SlidersHorizontal, Search, ArrowLeft } from "lucide-react"
+import {
+  Heart,
+  ShoppingBag,
+  Star,
+  SlidersHorizontal,
+  Search,
+  ArrowLeft,
+  Sparkles,
+  Layers,
+  ChevronRight,
+  Filter,
+  X,
+  Flame,
+  FolderTree,
+} from "lucide-react"
 import { CartDrawer } from "@/components/cart-drawer"
+import {
+  buildShopifyCategoryHierarchy,
+  filterProductsByDynamicCategory,
+  DynamicShopCategory,
+} from "@/lib/shopify/category-hierarchy"
 
 export interface ShopClientProps {
   initialProducts?: Product[]
+  initialCollections?: Collection[]
+  initialCategory?: string
 }
 
-export function ShopClient({ initialProducts = [] }: ShopClientProps) {
+export function ShopClient({
+  initialProducts = [],
+  initialCollections = [],
+  initialCategory,
+}: ShopClientProps) {
   const router = useRouter()
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialCategory && initialCategory !== "all" ? initialCategory.toLowerCase() : "all"
+  )
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [sortBy, setSortBy] = useState<string>("featured")
   const [priceRange, setPriceRange] = useState<number>(2000)
+  const [mobileCategoryMenuOpen, setMobileCategoryMenuOpen] = useState<boolean>(false)
 
   const { addItem, isCartOpen, closeCart, isLoadingCart } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
+
+  // Live Shopify products and live Shopify collections
   const {
     products: allProducts,
     loading: isLoadingProducts,
     error: shopifyError,
   } = useShopifyProducts({ initialProducts })
 
-  const categoriesList = useMemo(() => {
-    const cats = new Map<string, { id: string; name: string; slug: string }>()
-    allProducts.forEach((p) => {
-      if (p.category && p.category.trim() && p.category !== "Home Page") {
-        const slug = p.category
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, "")
-        if (slug && !cats.has(slug)) {
-          cats.set(slug, { id: slug, name: p.category.trim(), slug })
-        }
-      }
-    })
-    return Array.from(cats.values())
-  }, [allProducts])
+  const {
+    collections: shopifyCollections,
+    loading: isLoadingCollections,
+  } = useShopifyCollections({ initialCollections })
 
+  // Dynamically construct Category Hierarchy driven by Shopify Collections as single source of truth
+  const categoriesHierarchy = useMemo(() => {
+    return buildShopifyCategoryHierarchy(shopifyCollections, allProducts)
+  }, [shopifyCollections, allProducts])
+
+  // Active Category object
+  const activeCategory = useMemo(() => {
+    if (selectedCategory === "all") return null
+    return (
+      categoriesHierarchy.find(
+        (c) =>
+          c.slug === selectedCategory ||
+          c.handle === selectedCategory ||
+          c.id === selectedCategory
+      ) || null
+    )
+  }, [categoriesHierarchy, selectedCategory])
+
+  // Synchronize when initialCategory prop changes
+  useEffect(() => {
+    if (initialCategory && initialCategory !== "all") {
+      setSelectedCategory(initialCategory.toLowerCase())
+    }
+  }, [initialCategory])
+
+  // Reset subcategory if category changes
+  useEffect(() => {
+    setSelectedSubcategory(null)
+  }, [selectedCategory])
+
+  // Handle category switching and clean URL updating
+  const handleSelectCategory = (slug: string) => {
+    setSelectedCategory(slug)
+    setSelectedSubcategory(null)
+    setMobileCategoryMenuOpen(false)
+
+    const targetUrl = slug === "all" ? "/shop" : `/shop/${slug}`
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", targetUrl)
+    }
+  }
+
+  // Filter products by category, subcategory, search, price, and sort
   const filteredProducts = useMemo(() => {
-    return allProducts
+    const byCategory = filterProductsByDynamicCategory(
+      allProducts,
+      selectedCategory,
+      selectedSubcategory,
+      categoriesHierarchy
+    )
+
+    return byCategory
       .filter((p) => {
-        const matchCategory =
-          selectedCategory === "all" ||
-          p.category.toLowerCase().replace(/[^a-z0-9]+/g, "-") === selectedCategory.toLowerCase() ||
-          p.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-          (p.collection && p.collection.toLowerCase().includes(selectedCategory.toLowerCase()))
         const matchSearch =
+          !searchQuery.trim() ||
           p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchQuery.toLowerCase())
+          p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (p.category && p.category.toLowerCase().includes(searchQuery.toLowerCase()))
+
         const matchPrice = p.price <= priceRange
-        return matchCategory && matchSearch && matchPrice
+
+        return matchSearch && matchPrice
       })
       .sort((a, b) => {
         if (sortBy === "price-low") return a.price - b.price
@@ -68,234 +138,674 @@ export function ShopClient({ initialProducts = [] }: ShopClientProps) {
         if (sortBy === "rating") return b.rating - a.rating
         return 0
       })
-  }, [allProducts, selectedCategory, searchQuery, sortBy, priceRange])
-
-  // Clear runtime console diagnostics
-  useEffect(() => {
-    console.log("[Shopify Diagnostics] Number of products returned:", allProducts.length)
-    console.log("[Shopify Diagnostics] Number of products after filtering:", filteredProducts.length)
-    console.log("[Shopify Diagnostics] Selected category:", selectedCategory)
-    console.log("[Shopify Diagnostics] Search query:", searchQuery)
-  }, [allProducts.length, filteredProducts.length, selectedCategory, searchQuery])
+  }, [
+    allProducts,
+    selectedCategory,
+    selectedSubcategory,
+    categoriesHierarchy,
+    searchQuery,
+    priceRange,
+    sortBy,
+  ])
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       <SiteHeader />
-      <main className="flex-1 py-10">
+
+      <main className="flex-1 py-8 sm:py-10">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="mb-6 inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary cursor-pointer"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back to Previous Page
-          </button>
-
-          {/* Header section */}
-          <div className="mb-8">
-            <RibbonLabel>Shop Supplies</RibbonLabel>
-            <h1 className="mt-4 font-serif text-3xl font-black text-foreground md:text-5xl">
-              All Art &amp; Craft <span className="italic text-primary">Supplies</span>
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
-              Browse our curated collection of professional paints, sketchbooks, crafting tools, and DIY kits.
-            </p>
-          </div>
-
-          {/* Filter and Search Bar */}
-          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-xl border border-border bg-card p-4 shadow-sm">
-            {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-border bg-background pl-9 pr-4 py-2 text-xs text-foreground focus:outline-none focus:border-primary"
-              />
-            </div>
-
-            {/* Sort & Price Filter Controls */}
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-foreground">Max Price:</span>
-                <input
-                  type="range"
-                  min={100}
-                  max={2000}
-                  step={50}
-                  value={priceRange}
-                  onChange={(e) => setPriceRange(Number(e.target.value))}
-                  className="accent-primary cursor-pointer"
-                />
-                <span className="text-xs font-semibold text-primary">₹{priceRange}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:border-primary"
-                >
-                  <option value="featured">Featured</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Top Rated</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Shopify Connection Error Diagnostic Banner */}
-          {shopifyError && (
-            <div className="mb-8 rounded-2xl bg-amber-50 p-4 border border-amber-200 text-amber-900 text-xs">
-              <div className="font-bold flex items-center gap-2 mb-1 text-amber-800">
-                <span>⚠️ Shopify Storefront API Diagnostic Notice:</span>
-              </div>
-              <p className="font-mono text-[11px] bg-white/70 p-2 rounded-lg border border-amber-200/60 mt-1">
-                {shopifyError}
-              </p>
-              <p className="mt-1.5 text-[11px] text-amber-700">
-                Connected store: <span className="font-bold">e08d97-2b.myshopify.com</span> (API 2026-04)
-              </p>
-            </div>
-          )}
-
-          {/* Category Chips */}
-          <div className="mb-8 flex flex-wrap gap-2">
+          {/* Breadcrumb / Back button */}
+          <div className="mb-6 flex items-center justify-between">
             <button
-              onClick={() => setSelectedCategory("all")}
-              className={`rounded-full px-4 py-1.5 text-xs font-bold transition-colors ${
-                selectedCategory === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card border border-border text-foreground hover:bg-secondary"
-              }`}
+              type="button"
+              onClick={() => router.back()}
+              className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-primary transition-colors cursor-pointer"
             >
-              All Products ({allProducts.length})
+              <ArrowLeft className="h-4 w-4" /> Back to Previous Page
             </button>
-            {categoriesList.map((cat) => (
+
+            {selectedCategory !== "all" && (
               <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.slug)}
-                className={`rounded-full px-4 py-1.5 text-xs font-bold transition-colors ${
-                  selectedCategory === cat.slug
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card border border-border text-foreground hover:bg-secondary"
-                }`}
+                type="button"
+                onClick={() => handleSelectCategory("all")}
+                className="text-xs font-bold text-[#7c2d8a] hover:underline cursor-pointer"
               >
-                {cat.name}
+                Clear Category Filter
               </button>
-            ))}
+            )}
           </div>
 
-          {/* Loading Skeleton */}
-          {isLoadingProducts && allProducts.length === 0 && (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {[...Array(10)].map((_, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col overflow-hidden rounded-lg border border-border/60 bg-card p-3 space-y-3 animate-pulse"
-                >
-                  <div className="aspect-square bg-muted/60 rounded-md" />
-                  <div className="h-3 bg-muted/80 rounded w-3/4" />
-                  <div className="h-3 bg-muted/50 rounded w-1/2" />
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Category Banner */}
+          <div className="mb-8 rounded-2xl border border-pink-100/90 bg-gradient-to-r from-white via-purple-50/30 to-pink-50/20 p-6 md:p-8 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <RibbonLabel>
+                  {activeCategory
+                    ? activeCategory.type === "merchandising"
+                      ? "Special Merchandising Collection"
+                      : activeCategory.type === "seasonal"
+                      ? "Seasonal Collection"
+                      : "Shopify Managed Collection"
+                    : "All Art & Craft Supplies"}
+                </RibbonLabel>
 
-          {/* Product Grid */}
-          {!isLoadingProducts && filteredProducts.length === 0 ? (
-            <div className="py-20 text-center bg-card rounded-xl border border-border p-8">
-              <h3 className="font-serif text-xl font-bold text-foreground">No supplies found</h3>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Try adjusting your search query, price filter, or category selection.
-              </p>
-              <button
-                onClick={() => {
-                  setSelectedCategory("all")
-                  setSearchQuery("")
-                  setPriceRange(2000)
-                }}
-                className="mt-4 rounded-full bg-primary px-6 py-2 text-xs font-bold text-primary-foreground"
-              >
-                Reset Filters
-              </button>
+                <h1 className="mt-3 font-serif text-3xl font-black text-foreground md:text-4xl lg:text-5xl">
+                  {activeCategory ? (
+                    <>
+                      {activeCategory.name}{" "}
+                      <span className="italic text-[#7c2d8a] font-normal">
+                        {activeCategory.type === "merchandising" ? "Collection" : "Supplies"}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      All Art &amp; Craft{" "}
+                      <span className="italic text-[#7c2d8a] font-normal">Supplies</span>
+                    </>
+                  )}
+                </h1>
+
+                <p className="mt-2 text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                  {activeCategory
+                    ? activeCategory.description
+                    : "Browse our complete catalog of curated craft materials, bases, artist tools, and DIY kits."}
+                </p>
+              </div>
+
+              {/* Total Count Badge */}
+              <div className="shrink-0 flex items-center gap-2 self-start md:self-auto bg-white px-4 py-2 rounded-full border border-pink-100 shadow-2xs">
+                <Layers className="h-4 w-4 text-[#7c2d8a]" />
+                <span className="text-xs font-bold text-stone-800">
+                  {filteredProducts.length}{" "}
+                  {filteredProducts.length === 1 ? "Product" : "Products"}
+                </span>
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {filteredProducts.map((p) => {
-                const inWishlist = isInWishlist(p.id)
-                return (
-                  <article
-                    key={p.id}
-                    className="group flex flex-col overflow-hidden rounded-lg border border-border/60 bg-card shadow-[3px_3px_0_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1"
-                  >
-                    <div className="relative aspect-square overflow-hidden bg-secondary/40">
-                      <Link href={`/product/${p.slug}`}>
-                        <img
-                          src={p.thumbnail || "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"}
-                          alt={p.name}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null
-                            e.currentTarget.src = "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
-                          }}
-                        />
-                      </Link>
-                      <button
-                        aria-label="Add to wishlist"
-                        onClick={() => toggleWishlist(p.id)}
-                        className={`absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full shadow transition-colors ${
-                          inWishlist
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-card/90 text-foreground hover:bg-primary hover:text-primary-foreground"
-                        }`}
-                      >
-                        <Heart className={`h-4 w-4 ${inWishlist ? "fill-primary-foreground" : ""}`} />
-                      </button>
-                      {p.discount && (
-                        <span className="absolute left-2 top-2 rounded bg-primary/90 px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
-                          {p.discount}
+
+            {/* Dynamic Subcategories Managed from Shopify Admin */}
+            {activeCategory && activeCategory.subcategories.length > 0 && (
+              <div className="mt-5 pt-4 border-t border-pink-100/60 flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#7c2d8a] mr-2">
+                  <FolderTree className="h-3.5 w-3.5 text-[#d92672]" />
+                  <span>Subcategories:</span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedSubcategory(null)}
+                  className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                    selectedSubcategory === null
+                      ? "bg-[#7c2d8a] text-white shadow-2xs"
+                      : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100"
+                  }`}
+                >
+                  All {activeCategory.name} ({activeCategory.productCount})
+                </button>
+
+                {activeCategory.subcategories.map((sub) => {
+                  const isSubActive = selectedSubcategory === sub.slug
+                  return (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() =>
+                        setSelectedSubcategory(isSubActive ? null : sub.slug)
+                      }
+                      className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        isSubActive
+                          ? "bg-[#7c2d8a] text-white shadow-2xs"
+                          : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100"
+                      }`}
+                    >
+                      <span>{sub.name}</span>
+                      {sub.productCount > 0 && (
+                        <span
+                          className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                            isSubActive
+                              ? "bg-white/20 text-white"
+                              : "bg-purple-100 text-[#7c2d8a]"
+                          }`}
+                        >
+                          {sub.productCount}
                         </span>
                       )}
-                    </div>
-                    <div className="flex flex-1 flex-col gap-2 p-3">
-                      <Link href={`/product/${p.slug}`}>
-                        <h3 className="line-clamp-2 min-h-[2.5rem] text-xs font-semibold leading-snug text-foreground hover:text-primary transition-colors">
-                          {p.name}
-                        </h3>
-                      </Link>
-                      <div className="flex items-center justify-between">
-                        <p className="font-serif text-lg font-black text-primary">₹{p.price}</p>
-                        {p.originalPrice && (
-                          <span className="text-xs text-muted-foreground line-through">₹{p.originalPrice}</span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3.5 w-3.5 fill-primary text-primary" />
-                        <span className="text-xs font-bold text-foreground">{p.rating}</span>
-                        <span className="text-[11px] text-muted-foreground">({p.reviewsCount})</span>
-                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Category Trigger & Horizontal Bar */}
+          <div className="lg:hidden mb-6 space-y-3">
+            <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-pink-100 shadow-2xs">
+              <div className="flex items-center gap-2 truncate">
+                <Filter className="h-4 w-4 text-[#7c2d8a] shrink-0" />
+                <span className="text-xs font-bold text-stone-800 truncate">
+                  Category:{" "}
+                  <span className="text-[#7c2d8a]">
+                    {activeCategory ? activeCategory.name : "All Supplies"}
+                  </span>
+                  {selectedSubcategory && (
+                    <span className="text-stone-500 font-normal ml-1">
+                      / {selectedSubcategory}
+                    </span>
+                  )}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setMobileCategoryMenuOpen(!mobileCategoryMenuOpen)}
+                className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold bg-purple-50 text-[#7c2d8a] hover:bg-purple-100 px-3 py-1.5 rounded-lg border border-purple-200/60 transition-colors cursor-pointer"
+              >
+                <span>Browse All</span>
+                <ChevronRight
+                  className={`h-3.5 w-3.5 transition-transform ${
+                    mobileCategoryMenuOpen ? "rotate-90" : ""
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Collapsible Mobile Drawer */}
+            {mobileCategoryMenuOpen && (
+              <div className="bg-white rounded-2xl border border-pink-100 p-3 shadow-lg space-y-1.5 animate-fadeIn">
+                <div className="flex items-center justify-between px-2 py-1 border-b border-pink-100/60 pb-2 mb-1">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-[#7c2d8a]">
+                    Shopify Main Collections ({categoriesHierarchy.length})
+                  </span>
+                  <button
+                    onClick={() => setMobileCategoryMenuOpen(false)}
+                    className="p-1 text-stone-400 hover:text-stone-700"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectCategory("all")}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all text-left ${
+                    selectedCategory === "all"
+                      ? "bg-[#7c2d8a] text-white shadow-2xs"
+                      : "text-stone-800 hover:bg-purple-50"
+                  }`}
+                >
+                  <span>All Supplies</span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                      selectedCategory === "all"
+                        ? "bg-white/20 text-white"
+                        : "bg-purple-50 text-[#7c2d8a]"
+                    }`}
+                  >
+                    {allProducts.length}
+                  </span>
+                </button>
+
+                {categoriesHierarchy.map((cat) => {
+                  const isSelected = selectedCategory === cat.slug
+                  return (
+                    <div key={cat.id} className="space-y-1">
                       <button
-                        disabled={isLoadingCart}
-                        onClick={() => addItem(p)}
-                        className="mt-2 flex items-center justify-center gap-2 rounded-full bg-[#7c2d8a] py-2 min-h-[40px] text-xs font-bold text-white transition-all hover:bg-[#682274] active:scale-95 cursor-pointer shadow-xs disabled:opacity-70"
+                        type="button"
+                        onClick={() => handleSelectCategory(cat.slug)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all text-left ${
+                          isSelected
+                            ? "bg-[#7c2d8a] text-white shadow-2xs"
+                            : "text-stone-800 hover:bg-purple-50"
+                        }`}
                       >
-                        <ShoppingBag className="h-4 w-4" />
-                        <span>Add to Cart</span>
+                        <div className="flex items-center gap-2 truncate pr-2">
+                          {cat.type === "merchandising" && (
+                            <Sparkles className="h-3 w-3 text-amber-400 shrink-0" />
+                          )}
+                          {cat.type === "seasonal" && (
+                            <Flame className="h-3 w-3 text-orange-400 shrink-0" />
+                          )}
+                          <span className="truncate">{cat.name}</span>
+                        </div>
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                            isSelected
+                              ? "bg-white/20 text-white"
+                              : "bg-purple-50 text-[#7c2d8a]"
+                          }`}
+                        >
+                          {cat.productCount}
+                        </span>
                       </button>
+
+                      {isSelected && cat.subcategories.length > 0 && (
+                        <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-purple-200 ml-3">
+                          {cat.subcategories.map((sub) => (
+                            <button
+                              key={sub.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedSubcategory(
+                                  selectedSubcategory === sub.slug ? null : sub.slug
+                                )
+                                setMobileCategoryMenuOpen(false)
+                              }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors ${
+                                selectedSubcategory === sub.slug
+                                  ? "bg-purple-100 text-[#7c2d8a] font-bold"
+                                  : "text-stone-600 hover:bg-purple-50"
+                              }`}
+                            >
+                              <span>{sub.name}</span>
+                              <span className="text-[9px] text-stone-400">
+                                {sub.productCount}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  </article>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Horizontal Scrollable Category Bar for Mobile */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">
+              <button
+                type="button"
+                onClick={() => handleSelectCategory("all")}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${
+                  selectedCategory === "all"
+                    ? "bg-[#7c2d8a] text-white shadow-2xs"
+                    : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100 shadow-2xs"
+                }`}
+              >
+                All Supplies ({allProducts.length})
+              </button>
+              {categoriesHierarchy.map((cat) => {
+                const isSelected = selectedCategory === cat.slug
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => handleSelectCategory(cat.slug)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
+                      isSelected
+                        ? "bg-[#7c2d8a] text-white shadow-2xs"
+                        : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100 shadow-2xs"
+                    }`}
+                  >
+                    <span>{cat.name}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                        isSelected ? "bg-white/25 text-white" : "bg-purple-100 text-[#7c2d8a]"
+                      }`}
+                    >
+                      {cat.productCount}
+                    </span>
+                  </button>
                 )
               })}
             </div>
-          )}
+          </div>
+
+          {/* Main Grid: Left Category Sidebar + Right Product Area */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Desktop Left Category Sidebar (CMS Driven from Shopify Collections) */}
+            <aside className="hidden lg:block lg:col-span-3 xl:col-span-3 sticky top-24">
+              <div className="rounded-2xl border border-pink-100/90 bg-white p-4 shadow-sm space-y-4">
+                {/* Sidebar Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-pink-100/80">
+                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#7c2d8a]">
+                    <Layers className="h-4 w-4" />
+                    <span>Shopify Collections</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-stone-400">
+                    {categoriesHierarchy.length} Main
+                  </span>
+                </div>
+
+                {/* All Supplies Button */}
+                <button
+                  type="button"
+                  onClick={() => handleSelectCategory("all")}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
+                    selectedCategory === "all"
+                      ? "bg-[#7c2d8a] text-white shadow-sm"
+                      : "text-stone-700 hover:bg-purple-50 hover:text-[#7c2d8a]"
+                  }`}
+                >
+                  <span className="truncate">All Supplies</span>
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                      selectedCategory === "all"
+                        ? "bg-white/25 text-white"
+                        : "bg-purple-50 text-[#7c2d8a]"
+                    }`}
+                  >
+                    {allProducts.length}
+                  </span>
+                </button>
+
+                {/* Dynamic Category List with Subcategory Expansion */}
+                <nav
+                  aria-label="Shop collections navigation"
+                  className="space-y-1 max-h-[65vh] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-purple-200"
+                >
+                  {categoriesHierarchy.map((cat) => {
+                    const isSelected = selectedCategory === cat.slug
+
+                    return (
+                      <div key={cat.id} className="space-y-1">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectCategory(cat.slug)}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer group ${
+                            isSelected
+                              ? "bg-[#7c2d8a] text-white font-bold shadow-xs"
+                              : "text-stone-700 hover:bg-purple-50/80 hover:text-[#7c2d8a]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 truncate pr-2">
+                            {cat.type === "merchandising" && (
+                              <Sparkles
+                                className={`h-3 w-3 shrink-0 ${
+                                  isSelected ? "text-amber-300" : "text-amber-500"
+                                }`}
+                              />
+                            )}
+                            {cat.type === "seasonal" && (
+                              <Flame
+                                className={`h-3 w-3 shrink-0 ${
+                                  isSelected ? "text-orange-300" : "text-orange-500"
+                                }`}
+                              />
+                            )}
+                            <span className="truncate">{cat.name}</span>
+                          </div>
+
+                          <span
+                            className={`shrink-0 text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors ${
+                              isSelected
+                                ? "bg-white/20 text-white"
+                                : "bg-purple-50 text-[#7c2d8a] group-hover:bg-purple-100"
+                            }`}
+                          >
+                            {cat.productCount}
+                          </span>
+                        </button>
+
+                        {/* Nested Subcategories from Shopify Collections */}
+                        {isSelected && cat.subcategories.length > 0 && (
+                          <div className="ml-3 pl-3 border-l-2 border-purple-200 space-y-1 py-1 animate-fadeIn">
+                            {cat.subcategories.map((sub) => {
+                              const isSubActive = selectedSubcategory === sub.slug
+                              return (
+                                <button
+                                  key={sub.id}
+                                  type="button"
+                                  onClick={() =>
+                                    setSelectedSubcategory(isSubActive ? null : sub.slug)
+                                  }
+                                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors cursor-pointer ${
+                                    isSubActive
+                                      ? "text-[#7c2d8a] font-bold bg-purple-50"
+                                      : "text-stone-600 hover:text-[#7c2d8a] hover:bg-purple-50/50"
+                                  }`}
+                                >
+                                  <span className="truncate">{sub.name}</span>
+                                  {sub.productCount > 0 && (
+                                    <span className="text-[9px] text-stone-400">
+                                      {sub.productCount}
+                                    </span>
+                                  )}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </nav>
+              </div>
+            </aside>
+
+            {/* Right Product Section */}
+            <div className="lg:col-span-9 xl:col-span-9 space-y-6">
+              {/* Search, Sort & Price Filter Bar */}
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border border-pink-100/90 bg-white p-4 shadow-sm">
+                {/* Search Input */}
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search in this collection..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full rounded-full border border-pink-100 bg-[#fffaff] pl-9 pr-4 py-2 text-xs text-foreground focus:outline-none focus:border-[#7c2d8a] transition-colors"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Sort & Price Filter Controls */}
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-stone-700">Max Price:</span>
+                    <input
+                      type="range"
+                      min={100}
+                      max={2000}
+                      step={50}
+                      value={priceRange}
+                      onChange={(e) => setPriceRange(Number(e.target.value))}
+                      className="accent-[#7c2d8a] cursor-pointer w-24 sm:w-32"
+                    />
+                    <span className="text-xs font-bold text-[#7c2d8a]">₹{priceRange}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="rounded-lg border border-pink-100 bg-[#fffaff] px-3 py-1.5 text-xs font-bold text-foreground focus:outline-none focus:border-[#7c2d8a] cursor-pointer"
+                    >
+                      <option value="featured">Featured</option>
+                      <option value="price-low">Price: Low to High</option>
+                      <option value="price-high">Price: High to Low</option>
+                      <option value="rating">Top Rated</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Shopify Notice */}
+              {shopifyError && (
+                <div className="rounded-2xl bg-amber-50 p-4 border border-amber-200 text-amber-900 text-xs">
+                  <div className="font-bold flex items-center gap-2 mb-1 text-amber-800">
+                    <span>⚠️ Shopify Storefront API Notice:</span>
+                  </div>
+                  <p className="font-mono text-[11px] bg-white/70 p-2 rounded-lg border border-amber-200/60 mt-1">
+                    {shopifyError}
+                  </p>
+                </div>
+              )}
+
+              {/* Loading Skeleton */}
+              {isLoadingProducts && allProducts.length === 0 && (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                  {[...Array(8)].map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-col overflow-hidden rounded-2xl border border-pink-100 bg-white p-3 space-y-3 animate-pulse shadow-sm"
+                    >
+                      <div className="aspect-square bg-purple-50/70 rounded-xl" />
+                      <div className="h-3 bg-purple-100/60 rounded w-3/4" />
+                      <div className="h-3 bg-purple-50/50 rounded w-1/2" />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Product Grid or Empty State */}
+              {!isLoadingProducts && filteredProducts.length === 0 ? (
+                <div className="py-16 sm:py-20 text-center bg-white rounded-3xl border border-pink-100/90 p-8 shadow-sm">
+                  <div className="w-16 h-16 rounded-full bg-purple-50 text-[#7c2d8a] flex items-center justify-center mx-auto mb-4 border border-purple-100">
+                    <ShoppingBag className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900">
+                    {selectedSubcategory
+                      ? `No products in ${selectedSubcategory} yet`
+                      : activeCategory
+                      ? `No products in ${activeCategory.name} yet`
+                      : "No supplies found matching your criteria"}
+                  </h3>
+                  <p className="mt-2 text-xs sm:text-sm text-stone-500 max-w-md mx-auto leading-relaxed">
+                    {activeCategory
+                      ? `Products can be assigned directly to this collection inside Shopify Admin. Please check back shortly or explore other categories.`
+                      : "Try adjusting your search query, price filter, or choose a different category."}
+                  </p>
+                  <div className="mt-6 flex flex-wrap justify-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSelectCategory("all")
+                        setSearchQuery("")
+                        setPriceRange(2000)
+                      }}
+                      className="rounded-full bg-[#7c2d8a] hover:bg-[#682274] text-white px-6 py-2.5 text-xs font-bold shadow-md transition-all cursor-pointer"
+                    >
+                      View All Supplies ({allProducts.length})
+                    </button>
+                    {activeCategory && (
+                      <button
+                        type="button"
+                        onClick={() => handleSelectCategory("diy-kits")}
+                        className="rounded-full bg-purple-50 hover:bg-purple-100 text-[#7c2d8a] border border-purple-200 px-6 py-2.5 text-xs font-bold transition-all cursor-pointer"
+                      >
+                        Explore DIY Kits
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                  {filteredProducts.map((p) => {
+                    const inWishlist = isInWishlist(p.id)
+                    return (
+                      <article
+                        key={p.id}
+                        className="group flex flex-col overflow-hidden rounded-2xl border border-pink-100/80 bg-white shadow-2xs hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                      >
+                        {/* Image & Wishlist Container */}
+                        <div className="relative aspect-square overflow-hidden bg-purple-50/30">
+                          <Link href={`/product/${p.slug}`}>
+                            <img
+                              src={
+                                p.thumbnail ||
+                                "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
+                              }
+                              alt={p.name}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null
+                                e.currentTarget.src =
+                                  "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
+                              }}
+                            />
+                          </Link>
+
+                          {/* Wishlist Button */}
+                          <button
+                            aria-label="Add to wishlist"
+                            onClick={() => toggleWishlist(p.id)}
+                            className={`absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full shadow-sm transition-all cursor-pointer ${
+                              inWishlist
+                                ? "bg-[#d92672] text-white"
+                                : "bg-white/90 text-stone-700 hover:bg-[#d92672] hover:text-white"
+                            }`}
+                          >
+                            <Heart
+                              className={`h-4 w-4 ${
+                                inWishlist ? "fill-white" : ""
+                              }`}
+                            />
+                          </button>
+
+                          {/* Category / Discount Badge */}
+                          <div className="absolute left-2.5 top-2.5 flex flex-col gap-1">
+                            {p.discount && (
+                              <span className="rounded-full bg-[#d92672] px-2 py-0.5 text-[10px] font-black text-white shadow-2xs">
+                                {p.discount}
+                              </span>
+                            )}
+                            <span className="rounded-full bg-white/95 backdrop-blur-xs px-2 py-0.5 text-[9px] font-bold text-[#7c2d8a] shadow-2xs border border-purple-100">
+                              {p.category}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Product Info */}
+                        <div className="flex flex-1 flex-col justify-between p-3.5 space-y-2.5">
+                          <div className="space-y-1">
+                            <Link href={`/product/${p.slug}`}>
+                              <h3 className="line-clamp-2 min-h-[2.5rem] text-xs font-bold leading-snug text-stone-900 group-hover:text-[#7c2d8a] transition-colors">
+                                {p.name}
+                              </h3>
+                            </Link>
+
+                            <div className="flex items-center gap-1 text-[11px] text-amber-500">
+                              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                              <span className="font-bold text-stone-800">
+                                {p.rating}
+                              </span>
+                              <span className="text-stone-400 text-[10px]">
+                                ({p.reviewsCount})
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2 pt-1 border-t border-pink-50">
+                            <div className="flex items-baseline justify-between">
+                              <span className="font-serif text-base sm:text-lg font-black text-[#7c2d8a]">
+                                ₹{p.price}
+                              </span>
+                              {p.originalPrice && p.originalPrice > p.price && (
+                                <span className="text-[11px] text-stone-400 line-through">
+                                  ₹{p.originalPrice}
+                                </span>
+                              )}
+                            </div>
+
+                            <button
+                              disabled={isLoadingCart}
+                              onClick={() => addItem(p)}
+                              className="w-full flex items-center justify-center gap-2 rounded-full bg-[#7c2d8a] py-2 min-h-[36px] text-xs font-bold text-white transition-all hover:bg-[#682274] active:scale-95 cursor-pointer shadow-xs disabled:opacity-70"
+                            >
+                              <ShoppingBag className="h-3.5 w-3.5" />
+                              <span>Add to Bag</span>
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </main>
+
       <SiteFooter />
       <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
     </div>

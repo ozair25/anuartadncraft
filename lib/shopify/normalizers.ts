@@ -1,4 +1,5 @@
 import { Product, ProductVariant, Collection } from "@/types/ecommerce"
+import { mapProductToMainCategory } from "@/lib/config/shop-categories"
 
 export interface ShopifyProductNode {
   id: string
@@ -118,14 +119,45 @@ export function normalizeShopifyProduct(node: ShopifyProductNode): Product {
       ? 50
       : 0
 
-  // Category & Collection
+  // Clean description
+  const cleanDescription =
+    node.descriptionHtml ||
+    node.description ||
+    "High quality premium art and craft supply from Anu Art & Craft Studio."
+
+  const shortDescription = node.description
+    ? node.description.length > 150
+      ? node.description.slice(0, 150) + "..."
+      : node.description
+    : "Premium handmade art product crafted with care."
+
+  const tags = node.tags || []
+  const isBestSeller =
+    tags.some((t) => t.toLowerCase().includes("bestseller") || t.toLowerCase() === "hot")
+  const isFeatured =
+    tags.some((t) => t.toLowerCase().includes("featured") || t.toLowerCase() === "popular")
+  const isNewArrival =
+    tags.some((t) => t.toLowerCase().includes("new") || t.toLowerCase() === "latest")
+
+  // Category & Collection mapping
   const primaryCollection = node.collections?.edges?.[0]?.node
-  const category =
+  const collection = primaryCollection?.handle || ""
+  const rawCategory =
     node.productType && node.productType.trim().length > 0
       ? node.productType.trim()
       : primaryCollection?.title || "Art Supplies"
 
-  const collection = primaryCollection?.handle || ""
+  const mappedCategoryConfig = mapProductToMainCategory({
+    name: node.title,
+    description: cleanDescription,
+    category: rawCategory,
+    collection,
+    tags,
+    isNewArrival,
+  })
+
+  // Official Category Name from client's 16 categories, or unassigned fallback
+  const category = mappedCategoryConfig ? mappedCategoryConfig.name : (rawCategory || "Unassigned")
 
   // Map variants
   const variants: ProductVariant[] =
@@ -163,25 +195,12 @@ export function normalizeShopifyProduct(node: ShopifyProductNode): Product {
     specs["Category"] = category
   }
 
-  // Clean description
-  const cleanDescription =
-    node.descriptionHtml ||
-    node.description ||
-    "High quality premium art and craft supply from Anu Art & Craft Studio."
-
-  const shortDescription = node.description
-    ? node.description.length > 150
-      ? node.description.slice(0, 150) + "..."
-      : node.description
-    : "Premium handmade art product crafted with care."
-
-  const tags = node.tags || []
-  const isBestSeller =
-    tags.some((t) => t.toLowerCase().includes("bestseller") || t.toLowerCase() === "hot")
-  const isFeatured =
-    tags.some((t) => t.toLowerCase().includes("featured") || t.toLowerCase() === "popular")
-  const isNewArrival =
-    tags.some((t) => t.toLowerCase().includes("new") || t.toLowerCase() === "latest")
+  const collections =
+    node.collections?.edges?.map((e) => ({
+      id: e.node?.id || "",
+      title: e.node?.title || "",
+      handle: e.node?.handle || "",
+    })) || []
 
   return {
     id: node.id,
@@ -199,6 +218,7 @@ export function normalizeShopifyProduct(node: ShopifyProductNode): Product {
     stock,
     category,
     collection,
+    collections,
     tags,
     brand: node.vendor || "Anu Arts",
     rating: 4.9,

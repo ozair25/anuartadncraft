@@ -139,7 +139,7 @@ export async function getProductsByCollection(
 /**
  * Fetch collections from Shopify.
  */
-export async function getCollections(first = 20): Promise<Collection[]> {
+export async function getCollections(first = 100): Promise<Collection[]> {
   const config = getShopifyConfig()
 
   if (!config.isConfigured) {
