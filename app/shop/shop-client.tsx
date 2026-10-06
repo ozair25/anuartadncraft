@@ -36,19 +36,24 @@ export interface ShopClientProps {
   initialProducts?: Product[]
   initialCollections?: Collection[]
   initialCategory?: string
+  initialSubcategory?: string
 }
 
 export function ShopClient({
   initialProducts = [],
   initialCollections = [],
   initialCategory,
+  initialSubcategory,
 }: ShopClientProps) {
   const router = useRouter()
 
   const [selectedCategory, setSelectedCategory] = useState<string>(
     initialCategory && initialCategory !== "all" ? initialCategory.toLowerCase() : "all"
   )
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
+    initialSubcategory ? initialSubcategory.toLowerCase() : null
+  )
+  const [selectedChildSubcategory, setSelectedChildSubcategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [sortBy, setSortBy] = useState<string>("featured")
   const [priceRange, setPriceRange] = useState<number>(2000)
@@ -94,15 +99,24 @@ export function ShopClient({
     }
   }, [initialCategory])
 
+  // Synchronize when initialSubcategory prop changes
+  useEffect(() => {
+    if (initialSubcategory) {
+      setSelectedSubcategory(initialSubcategory.toLowerCase())
+    }
+  }, [initialSubcategory])
+
   // Reset subcategory if category changes
   useEffect(() => {
     setSelectedSubcategory(null)
+    setSelectedChildSubcategory(null)
   }, [selectedCategory])
 
   // Handle category switching and clean URL updating
   const handleSelectCategory = (slug: string) => {
     setSelectedCategory(slug)
     setSelectedSubcategory(null)
+    setSelectedChildSubcategory(null)
     setMobileCategoryMenuOpen(false)
 
     const targetUrl = slug === "all" ? "/shop" : `/shop/${slug}`
@@ -111,13 +125,14 @@ export function ShopClient({
     }
   }
 
-  // Filter products by category, subcategory, search, price, and sort
+  // Filter products by category, subcategory, child subcategory, search, price, and sort
   const filteredProducts = useMemo(() => {
     const byCategory = filterProductsByDynamicCategory(
       allProducts,
       selectedCategory,
       selectedSubcategory,
-      categoriesHierarchy
+      categoriesHierarchy,
+      selectedChildSubcategory
     )
 
     return byCategory
@@ -224,54 +239,126 @@ export function ShopClient({
 
             {/* Dynamic Subcategories Managed from Shopify Admin */}
             {activeCategory && activeCategory.subcategories.length > 0 && (
-              <div className="mt-5 pt-4 border-t border-pink-100/60 flex flex-wrap items-center gap-2">
-                <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#7c2d8a] mr-2">
-                  <FolderTree className="h-3.5 w-3.5 text-[#d92672]" />
-                  <span>Subcategories:</span>
+              <div className="mt-5 pt-4 border-t border-pink-100/60 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#7c2d8a] mr-2">
+                    <FolderTree className="h-3.5 w-3.5 text-[#d92672]" />
+                    <span>Subcategories:</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedSubcategory(null)
+                      setSelectedChildSubcategory(null)
+                    }}
+                    className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                      selectedSubcategory === null
+                        ? "bg-[#7c2d8a] text-white shadow-2xs"
+                        : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100"
+                    }`}
+                  >
+                    All {activeCategory.name} ({activeCategory.productCount})
+                  </button>
+
+                  {activeCategory.subcategories.map((sub) => {
+                    const isSubActive = selectedSubcategory === sub.slug
+                    return (
+                      <button
+                        key={sub.id}
+                        type="button"
+                        onClick={() => {
+                          if (isSubActive) {
+                            setSelectedSubcategory(null)
+                            setSelectedChildSubcategory(null)
+                          } else {
+                            setSelectedSubcategory(sub.slug)
+                            setSelectedChildSubcategory(null)
+                          }
+                        }}
+                        className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSubActive
+                            ? "bg-[#7c2d8a] text-white shadow-2xs"
+                            : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100"
+                        }`}
+                      >
+                        <span>{sub.name}</span>
+                        {sub.productCount > 0 && (
+                          <span
+                            className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                              isSubActive
+                                ? "bg-white/20 text-white"
+                                : "bg-purple-100 text-[#7c2d8a]"
+                            }`}
+                          >
+                            {sub.productCount}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedSubcategory(null)}
-                  className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer ${
-                    selectedSubcategory === null
-                      ? "bg-[#7c2d8a] text-white shadow-2xs"
-                      : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100"
-                  }`}
-                >
-                  All {activeCategory.name} ({activeCategory.productCount})
-                </button>
-
-                {activeCategory.subcategories.map((sub) => {
-                  const isSubActive = selectedSubcategory === sub.slug
-                  return (
-                    <button
-                      key={sub.id}
-                      type="button"
-                      onClick={() =>
-                        setSelectedSubcategory(isSubActive ? null : sub.slug)
-                      }
-                      className={`rounded-full px-3.5 py-1 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        isSubActive
-                          ? "bg-[#7c2d8a] text-white shadow-2xs"
-                          : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100"
-                      }`}
-                    >
-                      <span>{sub.name}</span>
-                      {sub.productCount > 0 && (
-                        <span
-                          className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                            isSubActive
-                              ? "bg-white/20 text-white"
-                              : "bg-purple-100 text-[#7c2d8a]"
-                          }`}
-                        >
-                          {sub.productCount}
-                        </span>
-                      )}
-                    </button>
+                {/* 3rd Tier Child Subcategories (e.g. 10x15 inch, 7x10 inch, Metallic, Mini transfer) */}
+                {(() => {
+                  const currentSub = activeCategory.subcategories.find(
+                    (s) => s.slug === selectedSubcategory
                   )
-                })}
+                  if (!currentSub || !currentSub.children || currentSub.children.length === 0) {
+                    return null
+                  }
+                  return (
+                    <div className="pt-2 border-t border-pink-100/50 flex flex-wrap items-center gap-2 animate-fadeIn">
+                      <div className="flex items-center gap-1 text-[11px] font-black uppercase tracking-wider text-[#d92672] mr-2">
+                        <ChevronRight className="h-3 w-3" />
+                        <span>{currentSub.name} Options:</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedChildSubcategory(null)}
+                        className={`rounded-full px-3 py-0.5 text-[11px] font-bold transition-all cursor-pointer ${
+                          selectedChildSubcategory === null
+                            ? "bg-[#d92672] text-white shadow-2xs"
+                            : "bg-white text-stone-700 hover:bg-pink-50 border border-pink-200"
+                        }`}
+                      >
+                        All {currentSub.name} ({currentSub.productCount})
+                      </button>
+
+                      {currentSub.children.map((child) => {
+                        const isChildActive = selectedChildSubcategory === child.slug
+                        return (
+                          <button
+                            key={child.id}
+                            type="button"
+                            onClick={() =>
+                              setSelectedChildSubcategory(isChildActive ? null : child.slug)
+                            }
+                            className={`rounded-full px-3 py-0.5 text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                              isChildActive
+                                ? "bg-[#d92672] text-white shadow-2xs"
+                                : "bg-white text-stone-700 hover:bg-pink-50 border border-pink-200"
+                            }`}
+                          >
+                            <span>{child.name}</span>
+                            {child.productCount > 0 && (
+                              <span
+                                className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
+                                  isChildActive
+                                    ? "bg-white/20 text-white"
+                                    : "bg-pink-100 text-[#d92672]"
+                                }`}
+                              >
+                                {child.productCount}
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )
+                })()}
               </div>
             )}
           </div>
@@ -289,6 +376,11 @@ export function ShopClient({
                   {selectedSubcategory && (
                     <span className="text-stone-500 font-normal ml-1">
                       / {selectedSubcategory}
+                    </span>
+                  )}
+                  {selectedChildSubcategory && (
+                    <span className="text-[#d92672] font-semibold ml-1">
+                      / {selectedChildSubcategory}
                     </span>
                   )}
                 </span>
@@ -379,28 +471,72 @@ export function ShopClient({
 
                       {isSelected && cat.subcategories.length > 0 && (
                         <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-purple-200 ml-3">
-                          {cat.subcategories.map((sub) => (
-                            <button
-                              key={sub.id}
-                              type="button"
-                              onClick={() => {
-                                setSelectedSubcategory(
-                                  selectedSubcategory === sub.slug ? null : sub.slug
-                                )
-                                setMobileCategoryMenuOpen(false)
-                              }}
-                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors ${
-                                selectedSubcategory === sub.slug
-                                  ? "bg-purple-100 text-[#7c2d8a] font-bold"
-                                  : "text-stone-600 hover:bg-purple-50"
-                              }`}
-                            >
-                              <span>{sub.name}</span>
-                              <span className="text-[9px] text-stone-400">
-                                {sub.productCount}
-                              </span>
-                            </button>
-                          ))}
+                          {cat.subcategories.map((sub) => {
+                            const isSubActive = selectedSubcategory === sub.slug
+                            const hasChildren = sub.children && sub.children.length > 0
+                            return (
+                              <div key={sub.id} className="space-y-1">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (isSubActive) {
+                                      setSelectedSubcategory(null)
+                                      setSelectedChildSubcategory(null)
+                                    } else {
+                                      setSelectedSubcategory(sub.slug)
+                                      setSelectedChildSubcategory(null)
+                                    }
+                                    if (!hasChildren) {
+                                      setMobileCategoryMenuOpen(false)
+                                    }
+                                  }}
+                                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors ${
+                                    isSubActive
+                                      ? "bg-purple-100 text-[#7c2d8a] font-bold"
+                                      : "text-stone-600 hover:bg-purple-50"
+                                  }`}
+                                >
+                                  <span>{sub.name}</span>
+                                  <span className="text-[9px] text-stone-400">
+                                    {sub.productCount}
+                                  </span>
+                                </button>
+
+                                {isSubActive && hasChildren && (
+                                  <div className="pl-3 py-0.5 space-y-1 border-l border-pink-300 ml-2">
+                                    {sub.children!.map((child) => {
+                                      const isChildActive =
+                                        selectedChildSubcategory === child.slug
+                                      return (
+                                        <button
+                                          key={child.id}
+                                          type="button"
+                                          onClick={() => {
+                                            setSelectedChildSubcategory(
+                                              isChildActive ? null : child.slug
+                                            )
+                                            setMobileCategoryMenuOpen(false)
+                                          }}
+                                          className={`w-full flex items-center justify-between px-2 py-1 rounded-md text-[10px] font-medium text-left transition-colors ${
+                                            isChildActive
+                                              ? "bg-pink-100 text-[#d92672] font-bold"
+                                              : "text-stone-500 hover:bg-pink-50"
+                                          }`}
+                                        >
+                                          <span>{child.name}</span>
+                                          {child.productCount > 0 && (
+                                            <span className="text-[8px] text-stone-400">
+                                              {child.productCount}
+                                            </span>
+                                          )}
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
                         </div>
                       )}
                     </div>
@@ -540,26 +676,67 @@ export function ShopClient({
                           <div className="ml-3 pl-3 border-l-2 border-purple-200 space-y-1 py-1 animate-fadeIn">
                             {cat.subcategories.map((sub) => {
                               const isSubActive = selectedSubcategory === sub.slug
+                              const hasChildren = sub.children && sub.children.length > 0
                               return (
-                                <button
-                                  key={sub.id}
-                                  type="button"
-                                  onClick={() =>
-                                    setSelectedSubcategory(isSubActive ? null : sub.slug)
-                                  }
-                                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors cursor-pointer ${
-                                    isSubActive
-                                      ? "text-[#7c2d8a] font-bold bg-purple-50"
-                                      : "text-stone-600 hover:text-[#7c2d8a] hover:bg-purple-50/50"
-                                  }`}
-                                >
-                                  <span className="truncate">{sub.name}</span>
-                                  {sub.productCount > 0 && (
-                                    <span className="text-[9px] text-stone-400">
-                                      {sub.productCount}
-                                    </span>
+                                <div key={sub.id} className="space-y-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (isSubActive) {
+                                        setSelectedSubcategory(null)
+                                        setSelectedChildSubcategory(null)
+                                      } else {
+                                        setSelectedSubcategory(sub.slug)
+                                        setSelectedChildSubcategory(null)
+                                      }
+                                    }}
+                                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors cursor-pointer ${
+                                      isSubActive
+                                        ? "text-[#7c2d8a] font-bold bg-purple-50"
+                                        : "text-stone-600 hover:text-[#7c2d8a] hover:bg-purple-50/50"
+                                    }`}
+                                  >
+                                    <span className="truncate">{sub.name}</span>
+                                    {sub.productCount > 0 && (
+                                      <span className="text-[9px] text-stone-400">
+                                        {sub.productCount}
+                                      </span>
+                                    )}
+                                  </button>
+
+                                  {/* 3rd Tier Child Subcategories (e.g. 10x15 inch, 7x10 inch, Metallic, Mini transfer) */}
+                                  {isSubActive && hasChildren && (
+                                    <div className="ml-2 pl-2.5 border-l border-pink-300 space-y-0.5 py-0.5 animate-fadeIn">
+                                      {sub.children!.map((child) => {
+                                        const isChildActive =
+                                          selectedChildSubcategory === child.slug
+                                        return (
+                                          <button
+                                            key={child.id}
+                                            type="button"
+                                            onClick={() =>
+                                              setSelectedChildSubcategory(
+                                                isChildActive ? null : child.slug
+                                              )
+                                            }
+                                            className={`w-full flex items-center justify-between px-2 py-1 rounded-md text-[10px] font-medium text-left transition-colors cursor-pointer ${
+                                              isChildActive
+                                                ? "text-[#d92672] font-bold bg-pink-50"
+                                                : "text-stone-500 hover:text-[#d92672] hover:bg-pink-50/40"
+                                            }`}
+                                          >
+                                            <span className="truncate">{child.name}</span>
+                                            {child.productCount > 0 && (
+                                              <span className="text-[8px] text-stone-400">
+                                                {child.productCount}
+                                              </span>
+                                            )}
+                                          </button>
+                                        )
+                                      })}
+                                    </div>
                                   )}
-                                </button>
+                                </div>
                               )
                             })}
                           </div>

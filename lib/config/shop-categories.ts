@@ -1,16 +1,14 @@
 /**
  * Centralized Shop Category Configuration
  * 
- * Official Main Shop Categories as defined by client.
- * IMPORTANT:
- * Do NOT invent, rename, merge, delete, or reorganize these main categories.
- * These are the official top-level categories and must be used exactly as written.
+ * Official Main Shop Categories and Subcategories as defined by client.
  * 
  * SHOP HIERARCHY:
  * Shop
  *  → Main Category (16 official categories)
- *    → Subcategory (Reserved architecture for future client-provided subcategories)
- *      → Product
+ *    → Subcategory (Official client subcategories)
+ *      → Child Subcategory (e.g. Transfer sheet sizes/types)
+ *        → Product
  */
 
 export interface ShopSubcategoryConfig {
@@ -18,6 +16,8 @@ export interface ShopSubcategoryConfig {
   name: string
   slug: string
   description?: string
+  keywords?: string[]
+  children?: ShopSubcategoryConfig[]
 }
 
 export type CategoryType = "material" | "merchandising" | "seasonal"
@@ -30,11 +30,6 @@ export interface ShopCategoryConfig {
   description: string
   type: CategoryType
   keywords: string[]
-  /**
-   * Future Subcategory Support:
-   * Architecture is in place so subcategories can be populated later
-   * without rebuilding the Shop navigation or schema.
-   */
   subcategories: ShopSubcategoryConfig[]
 }
 
@@ -63,7 +58,7 @@ export const MAIN_SHOP_CATEGORIES: readonly string[] = [
 export type MainShopCategoryName = (typeof MAIN_SHOP_CATEGORIES)[number]
 
 /**
- * Official Centralized Category Definitions with metadata and subcategory support
+ * Official Centralized Category & Subcategory Definitions
  */
 export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   {
@@ -74,7 +69,7 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     description: "Discover the newest additions to our art, craft, and DIY studio catalog.",
     type: "merchandising",
     keywords: ["new", "latest", "arrival", "fresh", "recent"],
-    subcategories: [], // Ready for future client-provided subcategories
+    subcategories: [],
   },
   {
     id: "accessories",
@@ -83,7 +78,7 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     slug: "accessories",
     description: "Essential crafting accessories, findings, embellishments, and craft hardware.",
     type: "material",
-    keywords: ["accessory", "accessories", "finding", "hardware", "hook", "embellishment"],
+    keywords: ["accessory", "accessories", "finding", "hardware", "hook", "embellishment", "moti", "beads"],
     subcategories: [],
   },
   {
@@ -103,8 +98,60 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     slug: "decoupage-material",
     description: "Decoupage napkins, specialty glues, mod podge, varnishes, and transfer mediums.",
     type: "material",
-    keywords: ["decoupage", "mod podge", "tissue paper", "napkin", "transfer medium"],
-    subcategories: [],
+    keywords: ["decoupage", "mod podge", "tissue paper", "napkin", "transfer medium", "transfer sheet"],
+    subcategories: [
+      {
+        id: "decoupage-mediums",
+        name: "Mediums",
+        slug: "mediums",
+        description: "Decoupage glues, mod podge, varnishes, sealers, and crackle mediums.",
+        keywords: ["medium", "glue", "mod podge", "varnish", "sealer", "art and craft mediums"],
+      },
+      {
+        id: "decoupage-tissue-paper",
+        name: "Tissue & paper",
+        slug: "tissue-paper",
+        description: "Decoupage tissues, specialty rice papers, napkins, and printed decoupage sheets.",
+        keywords: ["tissue", "paper", "decoupage paper", "rice paper", "napkin"],
+      },
+      {
+        id: "decoupage-transfer-sheets",
+        name: "Transfer sheets",
+        slug: "transfer-sheets",
+        description: "Water transfer stickers, metallic rub-on transfers, and decorative decals.",
+        keywords: ["transfer sheet", "transfer sticker", "rub on", "decal", "transfers"],
+        children: [
+          {
+            id: "transfer-10x15-inch",
+            name: "10x15 inch",
+            slug: "10x15-inch",
+            description: "Large 10x15 inch / A3 format decorative transfer sheets.",
+            keywords: ["10x15", "a3 transfer", "mini-transfer-sheets", "10x15 inch"],
+          },
+          {
+            id: "transfer-7x10-inch",
+            name: "7x10 inch",
+            slug: "7x10-inch",
+            description: "Medium 7x10 inch / A4 format transfer decals.",
+            keywords: ["7x10", "a4 size transfer", "7x10 inch"],
+          },
+          {
+            id: "transfer-metallic",
+            name: "Metallic",
+            slug: "metallic",
+            description: "Shimmering metallic gold, silver, and copper transfer sheets.",
+            keywords: ["metallic", "metallic transfers", "gold transfer", "foil transfer"],
+          },
+          {
+            id: "transfer-mini",
+            name: "Mini transfer",
+            slug: "mini-transfer",
+            description: "Compact mini transfer decals and stickers for small craft articles.",
+            keywords: ["mini transfer", "mini-transfer-sheet", "mini decal"],
+          },
+        ],
+      },
+    ],
   },
   {
     id: "papers-cardstocks",
@@ -124,7 +171,50 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     description: "Reusable laser-cut stencils, mandala designs, borders, and pattern templates.",
     type: "material",
     keywords: ["stencil", "stencils", "template", "templates", "mandala stencil", "jali", "border stencil"],
-    subcategories: [],
+    subcategories: [
+      {
+        id: "stencils-4x4-inch",
+        name: "4x4 inch",
+        slug: "4x4-inch",
+        description: "Compact 4x4 inch stencils for coasters, small bases, and card accents.",
+        keywords: ["4x4", "4x4 inch", "4x4-inch-stencils"],
+      },
+      {
+        id: "stencils-4x8-inch",
+        name: "4x8 inch",
+        slug: "4x8-inch",
+        description: "Popular 4x8 inch decorative stencils and pattern strips.",
+        keywords: ["4x8", "4x8 inch", "4x8 stencil", "a4-size-stencil-collection"],
+      },
+      {
+        id: "stencils-a4-size",
+        name: "A4 size",
+        slug: "a4-size",
+        description: "Standard A4 size stencils featuring full artistic backgrounds and focal motifs.",
+        keywords: ["a4 size", "a4 stencil", "a4-size-stencil-collection-1"],
+      },
+      {
+        id: "stencils-12x12-inch",
+        name: "12x12 inch",
+        slug: "12x12-inch",
+        description: "12x12 inch classic mandala stencils and large art backdrops.",
+        keywords: ["12x12", "12 inch", "12-inch-stencil-collection"],
+      },
+      {
+        id: "stencils-12x18-inch",
+        name: "12x18 inch",
+        slug: "12x18-inch",
+        description: "Extra large 12x18 inch stencils for wall decor, furniture, and canvas art.",
+        keywords: ["12x18", "12x18 inch", "large stencil", "wall stencil"],
+      },
+      {
+        id: "stencils-combos",
+        name: "Combos",
+        slug: "combos",
+        description: "4 in 1 multi-design stencil collections and value combo packs.",
+        keywords: ["4 in 1", "combo", "4 in 1 stencil", "stencil combo"],
+      },
+    ],
   },
   {
     id: "scrapbooking-journaling-supplies",
@@ -154,7 +244,43 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     description: "Artisanal chalk paints, acrylics, watercolours, gesso, and texturing mediums.",
     type: "material",
     keywords: ["paint", "paints", "chalk paint", "acrylic", "watercolor", "watercolour", "medium", "gesso", "varnish"],
-    subcategories: [],
+    subcategories: [
+      {
+        id: "paints-chalk-paints",
+        name: "Chalk paints",
+        slug: "chalk-paints",
+        description: "Velvety ultra-matte chalk paints in 50ml, 100ml, and 250ml artisanal shades.",
+        keywords: ["chalk paint", "chalk paints", "chalk-paints-50-ml", "chalk-paint-100-ml", "chalk-paint-250-ml"],
+      },
+      {
+        id: "paints-glue-varnish",
+        name: "Glue & Varnish",
+        slug: "glue-varnish",
+        description: "Protective clear gloss and matte varnishes, adhesives, and craft sealers.",
+        keywords: ["glue", "varnish", "sealer", "adhesive", "mod podge", "clear coat"],
+      },
+      {
+        id: "paints-acrylic-paints",
+        name: "Acrylic paints",
+        slug: "acrylic-paints",
+        description: "Richly pigmented artist-grade acrylic paints and liquid colours.",
+        keywords: ["acrylic", "acrylic paint", "acrylics"],
+      },
+      {
+        id: "paints-combos",
+        name: "Combos",
+        slug: "combos",
+        description: "Assorted colour palette combos and value chalk paint sets.",
+        keywords: ["combo", "metallic combo", "paint combo", "palette set"],
+      },
+      {
+        id: "paints-markers-pens",
+        name: "Markers and pens",
+        slug: "markers-pens",
+        description: "Dual-tip brush pens, calligraphy lettering pens, and acrylic paint markers.",
+        keywords: ["marker", "pen", "pens", "calligraphy pen", "brush pen", "lettering"],
+      },
+    ],
   },
   {
     id: "mdf-acrylic-bases",
@@ -174,7 +300,57 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     description: "Crystal-clear epoxy resins, hardeners, silicone molds, mica pigments, and cups.",
     type: "material",
     keywords: ["resin", "epoxy", "hardener", "silicone mold", "mica pigment", "resin art"],
-    subcategories: [],
+    subcategories: [
+      {
+        id: "resin-stickers-insert-sheets",
+        name: "Stickers & insert sheets",
+        slug: "stickers-insert-sheets",
+        description: "Clear gold foil quote stickers, floral films, and transparent resin insert sheets.",
+        keywords: ["sticker", "insert sheet", "resin-insert-sheet", "quote sticker", "gold film"],
+      },
+      {
+        id: "resin-powders-pigments",
+        name: "Powders & Pigments",
+        slug: "powders-pigments",
+        description: "Shimmering mica powders, metallic pigments, paste colours, and alcohol inks.",
+        keywords: ["powder", "pigment", "mica", "alcohol-inks", "resin pigment"],
+      },
+      {
+        id: "resin-sillicon-moulds",
+        name: "Sillicon Moulds",
+        slug: "sillicon-moulds",
+        description: "High-grade silicone casting moulds for coasters, trays, clocks, and jewelry.",
+        keywords: ["silicone", "mould", "mold", "resin-art-moulds", "silicone mould", "coaster mould"],
+      },
+      {
+        id: "resin-kits",
+        name: "Kits",
+        slug: "kits",
+        description: "All-in-one beginner and artist resin crafting starter kits.",
+        keywords: ["resin kit", "starter kit", "epoxy kit"],
+      },
+      {
+        id: "resin-decorative-materials",
+        name: "Decorative materials",
+        slug: "decorative-materials",
+        description: "Glitters, natural crushed shells, gold foil flakes, and resin inclusions.",
+        keywords: ["decorative", "resin-embellishments", "glitter", "shell", "gold flake", "pebble"],
+      },
+      {
+        id: "resin-mdf-acrylic-cuttings",
+        name: "Mdf & acrylic cuttings",
+        slug: "mdf-acrylic-cuttings",
+        description: "Pre-cut MDF bases, clock shapes, and acrylic backings ready for resin pouring.",
+        keywords: ["mdf cutting", "acrylic cutting", "resin base", "wooden cutting", "clock base"],
+      },
+      {
+        id: "resin-epoxy-resin",
+        name: "Epoxy resin",
+        slug: "epoxy-resin",
+        description: "Ultra-clear 2:1 and 3:1 bubble-free epoxy resins and hardeners.",
+        keywords: ["epoxy", "epoxy resin", "resin-essentials", "crystal clear", "hardener"],
+      },
+    ],
   },
   {
     id: "diy-kits",
@@ -184,7 +360,50 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     description: "Complete all-in-one craft kits with materials, pre-marked bases, and step-by-step guidance.",
     type: "material",
     keywords: ["diy kit", "diy kits", "diy", "activity kit", "decor kit", "dangler", "clock kit", "tote bag kit"],
-    subcategories: [],
+    subcategories: [
+      {
+        id: "diy-under-99",
+        name: "Under 99",
+        slug: "under-99",
+        description: "Pocket-friendly craft activity sets and mini DIY items under ₹99.",
+        keywords: ["under 99", "99", "pocket kit", "mini kit"],
+      },
+      {
+        id: "diy-mandala-art",
+        name: "Mandala art",
+        slug: "mandala-art",
+        description: "Pre-marked mandala bases, dotting tools, and beginner-friendly mandala kits.",
+        keywords: ["mandala", "mandala art", "mandala-art-kits", "dot mandala"],
+      },
+      {
+        id: "diy-kids-craft-kits",
+        name: "Kids craft kits",
+        slug: "kids-craft-kits",
+        description: "Creative clock kits, tote bags, and activity sets designed specifically for kids.",
+        keywords: ["kids", "clock-diy-kits", "tote-bag-diy", "kids craft", "dinosaur", "sailboat", "unicorn"],
+      },
+      {
+        id: "diy-home-decor-kits",
+        name: "Home decor kits",
+        slug: "home-decor-kits",
+        description: "Handcrafted dangling art pieces, wall hangings, and decorative accent kits.",
+        keywords: ["home decor", "dangler-diy-kits", "dangler", "hot air balloon", "evil eye", "hamsa"],
+      },
+      {
+        id: "diy-return-gift-range",
+        name: "Return gift range",
+        slug: "return-gift-range",
+        description: "Thoughtful DIY craft kits curated for birthday party favors and return gifts.",
+        keywords: ["return gift", "party favor", "magnet-diy", "mini dangler", "bulk gift"],
+      },
+      {
+        id: "diy-combo",
+        name: "Combo",
+        slug: "combo",
+        description: "6 in 1 multi-activity kits, family crafting bundles, and combo packs.",
+        keywords: ["combo", "6 in 1", "bundle", "multi kit"],
+      },
+    ],
   },
   {
     id: "candle-making-supplies",
@@ -194,7 +413,50 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     description: "Soy wax, paraffin flakes, candle wicks, dye chips, and artisanal fragrances.",
     type: "material",
     keywords: ["candle", "candle making", "wax", "soy wax", "wick", "candle fragrance"],
-    subcategories: [],
+    subcategories: [
+      {
+        id: "candle-wax-gel",
+        name: "Wax & gel",
+        slug: "wax-gel",
+        description: "Pure natural soy wax, paraffin wax flakes, and transparent candle gel.",
+        keywords: ["wax", "gel", "soy wax", "gel wax", "paraffin", "candle-making"],
+      },
+      {
+        id: "candle-colours-fragrances",
+        name: "Colours & fragrances",
+        slug: "colours-fragrances",
+        description: "Concentrated candle dye blocks, chips, and premium aromatic fragrance oils.",
+        keywords: ["colour", "fragrance", "dye", "scent", "aroma oil"],
+      },
+      {
+        id: "candle-moulds",
+        name: "Candle moulds",
+        slug: "candle-moulds",
+        description: "Silicone 3D candle moulds, pillar moulds, bubble cube, and geometric shapes.",
+        keywords: ["candle mould", "candle mold", "pillar mould", "bubble mould"],
+      },
+      {
+        id: "candle-bowls-urlis",
+        name: "Bowls & urlis",
+        slug: "bowls-urlis",
+        description: "Traditional brass & metal urlis, terracotta bowls, and glass candle jars.",
+        keywords: ["bowl", "urli", "candle holder", "candle-holder", "metal urli", "jar"],
+      },
+      {
+        id: "candle-wicks-tools",
+        name: "Wicks & tools",
+        slug: "wicks-tools",
+        description: "Lead-free cotton wicks, wooden wicks, wick sustainers, and wax melting pots.",
+        keywords: ["wick", "wicks", "wick holder", "melting pot", "thermometer", "tool"],
+      },
+      {
+        id: "candle-kits",
+        name: "Kits",
+        slug: "kits",
+        description: "Complete DIY scented candle making beginner kits with wax, wick, and fragrance.",
+        keywords: ["candle kit", "candle making kit", "diy candle"],
+      },
+    ],
   },
   {
     id: "lippan-art-essentials",
@@ -271,7 +533,6 @@ export function getCategoryByName(name: string): ShopCategoryConfig | undefined 
 
 /**
  * Intelligent product-to-main-category mapper based on the client's explicit classification logic.
- * If a product cannot confidently be assigned, returns null (temporary/unassigned state).
  */
 export function mapProductToMainCategory(product: {
   name?: string
@@ -293,7 +554,7 @@ export function mapProductToMainCategory(product: {
   )
   if (directMatch) return directMatch
 
-  // 1. Merchandising: Value Packs (Bundled / combo products)
+  // 1. Merchandising: Value Packs
   if (
     name.includes("combo") ||
     name.includes("value pack") ||
@@ -303,7 +564,7 @@ export function mapProductToMainCategory(product: {
     return getCategoryByName("Value Packs")!
   }
 
-  // 2. Seasonal: Festive Collection (diwali, rakhi, seasonal products)
+  // 2. Seasonal: Festive Collection
   if (
     tags.includes("festive") ||
     name.includes("diwali") ||
@@ -335,7 +596,7 @@ export function mapProductToMainCategory(product: {
     return getCategoryByName("Lippan Art Essentials")!
   }
 
-  // 5. DIY Kits (Ready-made DIY projects/kits)
+  // 5. DIY Kits
   if (
     rawCat.toLowerCase().includes("diy kit") ||
     coll.includes("diy-kit") ||
@@ -444,6 +705,5 @@ export function mapProductToMainCategory(product: {
     return getCategoryByName("Accessories")!
   }
 
-  // Cannot be confidently assigned: return null for unassigned state
   return null
 }
