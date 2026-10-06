@@ -2,6 +2,7 @@ import { Product, Collection } from "@/types/ecommerce"
 import { shopifyFetch, getShopifyConfig } from "./client"
 import {
   GET_ALL_PRODUCTS_QUERY,
+  GET_ALL_PRODUCTS_PAGINATED_QUERY,
   GET_PRODUCT_BY_HANDLE_QUERY,
   GET_COLLECTION_PRODUCTS_QUERY,
   GET_COLLECTIONS_QUERY,
@@ -13,13 +14,22 @@ import {
   ShopifyCollectionNode,
 } from "./normalizers"
 
+// In-memory catalog cache for high performance & instant responses across all 16 categories
+let cachedCatalog: {
+  products: Product[]
+  timestamp: number
+} | null = null
+
+const CATALOG_CACHE_TTL = 3 * 60 * 1000 // 3 minutes cache
+
 /**
- * Fetch all products from Shopify Storefront API.
+ * Fetch all products from Shopify Storefront API with complete pagination.
  * Shopify is the single source of truth for product catalog data.
  */
 export async function getAllProducts(options?: {
   query?: string
   first?: number
+  fetchAll?: boolean
 }): Promise<Product[]> {
   const config = getShopifyConfig()
   if (!config.isConfigured) {
@@ -29,31 +39,91 @@ export async function getAllProducts(options?: {
     return []
   }
 
-  const response = await shopifyFetch<{
-    products: {
-      edges: Array<{
-        node: ShopifyProductNode
-      }>
-    }
-  }>({
-    query: GET_ALL_PRODUCTS_QUERY,
-    variables: {
-      first: options?.first || 100,
-      query: options?.query,
-    },
-    revalidate: 60, // Cache for 60 seconds
-  })
+  // If a search query is passed or small slice is requested specifically
+  if (options?.query || (options?.first && !options?.fetchAll && options.first <= 100)) {
+    const response = await shopifyFetch<{
+      products: {
+        edges: Array<{
+          node: ShopifyProductNode
+        }>
+      }
+    }>({
+      query: GET_ALL_PRODUCTS_QUERY,
+      variables: {
+        first: options?.first || 100,
+        query: options?.query,
+      },
+      revalidate: 60,
+    })
 
-  if (response.errors && response.errors.length > 0) {
-    const errorMsg = response.errors.map((e) => e.message).join("; ")
-    console.error("Shopify GraphQL errors:", errorMsg)
-    throw new Error(`Shopify API Error: ${errorMsg}`)
+    if (response.errors && response.errors.length > 0) {
+      const errorMsg = response.errors.map((e) => e.message).join("; ")
+      console.error("Shopify GraphQL errors:", errorMsg)
+      throw new Error(`Shopify API Error: ${errorMsg}`)
+    }
+
+    if (response.data?.products?.edges) {
+      return response.data.products.edges.map((edge) =>
+        normalizeShopifyProduct(edge.node)
+      )
+    }
+
+    return []
   }
 
-  if (response.data?.products?.edges) {
-    return response.data.products.edges.map((edge) =>
-      normalizeShopifyProduct(edge.node)
-    )
+  // Return cached full catalog if fresh
+  if (cachedCatalog && Date.now() - cachedCatalog.timestamp < CATALOG_CACHE_TTL) {
+    return cachedCatalog.products
+  }
+
+  // Paginated fetch to retrieve the full multi-thousand catalog across all 16 categories
+  const allProducts: Product[] = []
+  let cursor: string | null = null
+  let hasNextPage = true
+  let safetyLimit = 15 // Up to 3,750 products (250 per page)
+
+  while (hasNextPage && safetyLimit > 0) {
+    safetyLimit--
+    const response = await shopifyFetch<{
+      products: {
+        pageInfo: {
+          hasNextPage: boolean
+          endCursor: string | null
+        }
+        edges: Array<{
+          node: ShopifyProductNode
+        }>
+      }
+    }>({
+      query: GET_ALL_PRODUCTS_PAGINATED_QUERY,
+      variables: {
+        first: 250,
+        cursor,
+      },
+      revalidate: 180,
+    })
+
+    if (response.errors && response.errors.length > 0) {
+      const errorMsg = response.errors.map((e) => e.message).join("; ")
+      console.error("Shopify GraphQL pagination error:", errorMsg)
+      break
+    }
+
+    const edges = response.data?.products?.edges || []
+    for (const edge of edges) {
+      allProducts.push(normalizeShopifyProduct(edge.node))
+    }
+
+    hasNextPage = response.data?.products?.pageInfo?.hasNextPage ?? false
+    cursor = response.data?.products?.pageInfo?.endCursor ?? null
+  }
+
+  if (allProducts.length > 0) {
+    cachedCatalog = {
+      products: allProducts,
+      timestamp: Date.now(),
+    }
+    return allProducts
   }
 
   return []

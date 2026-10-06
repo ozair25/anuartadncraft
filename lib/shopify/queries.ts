@@ -90,6 +90,23 @@ export const GET_ALL_PRODUCTS_QUERY = `
   }
 `
 
+export const GET_ALL_PRODUCTS_PAGINATED_QUERY = `
+  ${PRODUCT_FRAGMENT}
+  query GetAllProductsPaginated($first: Int = 250, $cursor: String, $query: String) {
+    products(first: $first, after: $cursor, query: $query) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      edges {
+        node {
+          ...ProductDetails
+        }
+      }
+    }
+  }
+`
+
 export const GET_PRODUCT_BY_HANDLE_QUERY = `
   ${PRODUCT_FRAGMENT}
   query GetProductByHandle($handle: String!) {
