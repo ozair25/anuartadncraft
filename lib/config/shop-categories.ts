@@ -76,10 +76,39 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     name: "Accessories",
     label: "Accessories",
     slug: "accessories",
-    description: "Essential crafting accessories, findings, embellishments, and craft hardware.",
+    description: "Essential crafting accessories, mirrors, beads, moti, patches, and decorative motifs.",
     type: "material",
-    keywords: ["accessory", "accessories", "finding", "hardware", "hook", "embellishment", "moti", "beads"],
-    subcategories: [],
+    keywords: ["accessory", "accessories", "mirror", "mirrors", "beads", "moti", "patch", "patches", "motif", "motifs"],
+    subcategories: [
+      {
+        id: "accessories-mirrors",
+        name: "Mirrors",
+        slug: "mirrors",
+        description: "Small craft mirrors, round pink/gold mirrors, convex and flat mirrors for Lippan and embroidery.",
+        keywords: ["mirror", "mirrors", "round pink", "round gold", "flat mirror", "convex mirror"],
+      },
+      {
+        id: "accessories-beads",
+        name: "Beads",
+        slug: "beads",
+        description: "Hanging moti, pearl beads, acrylic beads, and jewellery craft accessories.",
+        keywords: ["bead", "beads", "moti", "hanging moti", "craft-accessories", "pearl", "ghungroo"],
+      },
+      {
+        id: "accessories-patches",
+        name: "Patches",
+        slug: "patches",
+        description: "Embroidered craft patches, fabric appliques, and decorative designer patches.",
+        keywords: ["patch", "patches", "embroidered patch", "decorative patch", "decorative-flowers-and-patches"],
+      },
+      {
+        id: "accessories-motifs",
+        name: "Motifs",
+        slug: "motifs",
+        description: "Artistic motifs, embellishment butis, and traditional decorative craft accents.",
+        keywords: ["motif", "motifs", "applique", "buti", "zari motif", "accent motif"],
+      },
+    ],
   },
   {
     id: "brushes-tools",
@@ -287,10 +316,81 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
     name: "MDF & Acrylic Bases",
     label: "MDF & Acrylic Bases",
     slug: "mdf-acrylic-bases",
-    description: "Precision-cut MDF cutouts, plaques, mandir backdrops, and clear acrylic bases.",
+    description: "Precision-cut MDF cutouts, coaster bases, trays, fridge magnets, keyholders, and acrylic embellishments.",
     type: "material",
-    keywords: ["mdf", "mdf base", "acrylic base", "cutout", "plaque", "wooden base", "board"],
-    subcategories: [],
+    keywords: ["mdf", "mdf base", "acrylic base", "coaster", "tray", "magnet", "keyholder", "plank", "embellishment"],
+    subcategories: [
+      {
+        id: "mdf-coasters",
+        name: "Coasters",
+        slug: "coasters",
+        description: "Round, square, and designer MDF coaster bases and sets for resin, decoupage, and painting.",
+        keywords: ["coaster", "coasters", "tea-coasters", "tea coaster", "cup coaster"],
+      },
+      {
+        id: "mdf-trays-organisers",
+        name: "Trays & organisers",
+        slug: "trays-organisers",
+        description: "Wooden and MDF serving trays, tile trays, desk organisers, and multi-compartment boxes.",
+        keywords: ["tray", "trays", "organiser", "organisers", "organizer", "trays-and-organisers", "tile tray"],
+      },
+      {
+        id: "mdf-fridge-magnets",
+        name: "Fridge magnets",
+        slug: "fridge-magnets",
+        description: "Laser cut MDF fridge magnet blanks, cutout bases, and miniature magnet surfaces.",
+        keywords: ["fridge magnet", "fridge-magnet-bases", "magnet", "magnet base", "magnet diy"],
+      },
+      {
+        id: "mdf-keyholders",
+        name: "Keyholders",
+        slug: "keyholders",
+        description: "Designer wall-hanging keyholder blanks and pre-drilled MDF key stands.",
+        keywords: ["keyholder", "keyholders", "key holder", "key stand", "key rack"],
+      },
+      {
+        id: "mdf-planks",
+        name: "Planks",
+        slug: "planks",
+        description: "Smooth wooden planks, welcome signs, name plates, and decorative hanging boards.",
+        keywords: ["plank", "planks", "welcome plank", "name plate", "hanging plank", "mdf-wall-decors"],
+      },
+      {
+        id: "mdf-acrylic-embellishments",
+        name: "Acrylic embellishments",
+        slug: "acrylic-embellishments",
+        description: "Precision laser cut acrylic cutouts, mantra plaques, mirrors, and modern embellishments.",
+        keywords: ["acrylic embellishment", "acrylic cutout", "acrylic-cutouts", "mantra", "acrylic cutouts"],
+      },
+      {
+        id: "mdf-embellishments",
+        name: "Mdf embellishments",
+        slug: "mdf-embellishments",
+        description: "3D wooden laser cutouts, miniatures, floral accents, borders, and decorative MDF motifs.",
+        keywords: ["mdf embellishment", "mdf-embelishments", "3d-wooden-embellishment", "minature", "miniature"],
+      },
+      {
+        id: "mdf-candle-holders",
+        name: "Candle holders",
+        slug: "candle-holders",
+        description: "Tea light bases, festive diya holders, and wooden candle stands.",
+        keywords: ["candle holder", "candle-holder", "tlight", "t-light", "tea light base"],
+      },
+      {
+        id: "mdf-festive-special",
+        name: "Festive special",
+        slug: "festive-special",
+        description: "Festive Rangoli bases, Shubh Labh cutouts, festive centerpieces, and festival MDF specials.",
+        keywords: ["festive special", "festive-diy", "rangoli", "shubh labh", "diwali base", "toran"],
+      },
+      {
+        id: "mdf-other-miscellaneous-bases",
+        name: "Other miscellaneous bases",
+        slug: "other-miscellaneous-bases",
+        description: "MDF tiles, clock faces, photo frames, desk plaques, and assorted craft cutouts.",
+        keywords: ["miscellaneous", "mdf-tiles", "3-inch-mdf-tiles", "tile", "clock base", "blank base"],
+      },
+    ],
   },
   {
     id: "resin-art-essentials",
@@ -651,10 +751,26 @@ export function mapProductToMainCategory(product: {
 
   // 9. MDF & Acrylic Bases
   if (
+    coll === "tea-coasters" ||
+    coll === "trays-and-organisers" ||
+    coll === "fridge-magnet-bases" ||
+    coll === "keyholders" ||
+    coll === "candle-holder" ||
+    coll === "acrylic-cutouts" ||
+    coll === "mdf-embelishments" ||
+    coll === "3d-wooden-embellishment" ||
+    coll === "mdf-tiles" ||
+    coll === "3-inch-mdf-tiles" ||
+    coll === "mdf-wall-decors" ||
+    coll === "festive-diy" ||
     name.includes("mdf") ||
     rawCat.toLowerCase().includes("mdf") ||
     name.includes("acrylic base") ||
-    name.includes("cutout")
+    name.includes("cutout") ||
+    name.includes("coaster") ||
+    name.includes("fridge magnet") ||
+    name.includes("keyholder") ||
+    name.includes("plank")
   ) {
     return getCategoryByName("MDF & Acrylic Bases")!
   }
@@ -701,7 +817,18 @@ export function mapProductToMainCategory(product: {
   }
 
   // 15. Accessories
-  if (name.includes("accessory") || name.includes("accessories")) {
+  if (
+    coll === "mirrors" ||
+    coll === "craft-accessories" ||
+    coll === "decorative-flowers-and-patches" ||
+    name.includes("mirror") ||
+    name.includes("moti") ||
+    name.includes("bead") ||
+    name.includes("patch") ||
+    name.includes("motif") ||
+    name.includes("accessory") ||
+    name.includes("accessories")
+  ) {
     return getCategoryByName("Accessories")!
   }
 

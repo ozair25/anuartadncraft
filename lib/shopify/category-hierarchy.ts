@@ -556,6 +556,120 @@ export function isProductInSubcategory(
     }
   }
 
+  // 8. Accessories Subcategories
+  if (parentCategorySlug === "accessories") {
+    if (subSlug === "mirrors") {
+      return (
+        colHandles.includes("mirrors") ||
+        name.includes("mirror")
+      )
+    }
+    if (subSlug === "beads") {
+      return (
+        colHandles.includes("craft-accessories") ||
+        name.includes("moti") ||
+        name.includes("bead") ||
+        name.includes("pearl") ||
+        name.includes("ghungroo")
+      )
+    }
+    if (subSlug === "patches") {
+      return (
+        colHandles.includes("decorative-flowers-and-patches") ||
+        name.includes("patch")
+      )
+    }
+    if (subSlug === "motifs") {
+      return (
+        name.includes("motif") ||
+        name.includes("buti") ||
+        name.includes("applique")
+      )
+    }
+  }
+
+  // 9. MDF & Acrylic Bases Subcategories
+  if (parentCategorySlug === "mdf-acrylic-bases") {
+    if (subSlug === "coasters") {
+      return (
+        colHandles.includes("tea-coasters") ||
+        name.includes("coaster")
+      )
+    }
+    if (subSlug === "trays-organisers") {
+      return (
+        colHandles.includes("trays-and-organisers") ||
+        name.includes("tray") ||
+        name.includes("organiser") ||
+        name.includes("organizer")
+      )
+    }
+    if (subSlug === "fridge-magnets") {
+      return (
+        colHandles.includes("fridge-magnet-bases") ||
+        colHandles.includes("magnet-diy") ||
+        (name.includes("magnet") && (name.includes("base") || name.includes("mwe") || name.includes("fridge")))
+      )
+    }
+    if (subSlug === "keyholders") {
+      return (
+        colHandles.includes("keyholders") ||
+        name.includes("keyholder") ||
+        name.includes("key holder")
+      )
+    }
+    if (subSlug === "planks") {
+      return (
+        name.includes("plank") ||
+        name.includes("name plate") ||
+        (colHandles.includes("mdf-wall-decors") && !name.includes("clock"))
+      )
+    }
+    if (subSlug === "acrylic-embellishments") {
+      return (
+        colHandles.includes("acrylic-cutouts") ||
+        (name.includes("acrylic") &&
+          (name.includes("cutout") || name.includes("embellishment") || name.includes("mantra")))
+      )
+    }
+    if (subSlug === "mdf-embellishments") {
+      return (
+        colHandles.includes("mdf-embelishments") ||
+        colHandles.includes("3d-wooden-embellishment") ||
+        name.includes("minature") ||
+        name.includes("miniature") ||
+        (name.includes("wooden") && name.includes("embellishment")) ||
+        (name.includes("mdf") && name.includes("embellishment"))
+      )
+    }
+    if (subSlug === "candle-holders") {
+      return (
+        colHandles.includes("candle-holder") ||
+        (name.includes("candle") && name.includes("holder")) ||
+        name.includes("tlight") ||
+        name.includes("t-light")
+      )
+    }
+    if (subSlug === "festive-special") {
+      return (
+        colHandles.includes("festive-diy") ||
+        name.includes("rangoli") ||
+        name.includes("shubh labh") ||
+        name.includes("festive base")
+      )
+    }
+    if (subSlug === "other-miscellaneous-bases") {
+      return (
+        colHandles.includes("mdf-tiles") ||
+        colHandles.includes("3-inch-mdf-tiles") ||
+        name.includes("tile") ||
+        name.includes("clock base") ||
+        name.includes("blank base") ||
+        name.includes("plaque")
+      )
+    }
+  }
+
   // Custom keywords fallback
   if (keywords && keywords.length > 0) {
     return keywords.some(

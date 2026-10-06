@@ -518,38 +518,48 @@ export function AnuArtsTemplate({
                 ? prod.collection.replace(/-/g, " ")
                 : "Art & Craft"
 
+            const productUrl = `/product/${encodeURIComponent(prod.slug || prod.id)}`
             return (
               <div
                 key={prod.id}
-                className="group bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-purple-900/10 transition-all duration-300 flex flex-col justify-between"
+                className="group relative bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-sm hover:shadow-xl hover:shadow-purple-900/10 transition-all duration-300 flex flex-col justify-between cursor-pointer"
               >
+                {/* Stretched Link covering card */}
+                <Link
+                  href={productUrl}
+                  className="absolute inset-0 z-1 cursor-pointer"
+                  aria-label={prod.name}
+                />
+
                 {/* Product Image */}
                 <div className="relative aspect-[4/3] bg-pink-50/50 overflow-hidden">
-                  <Link href={`/product/${prod.slug || prod.id}`}>
-                    <img
-                      src={
-                        prod.thumbnail ||
-                        prod.image ||
-                        (prod.images && prod.images[0]) ||
+                  <img
+                    src={
+                      prod.thumbnail ||
+                      prod.image ||
+                      (prod.images && prod.images[0]) ||
+                      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&auto=format&fit=crop"
+                    }
+                    alt={prod.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null
+                      e.currentTarget.src =
                         "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&auto=format&fit=crop"
-                      }
-                      alt={prod.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        e.currentTarget.onerror = null
-                        e.currentTarget.src =
-                          "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&auto=format&fit=crop"
-                      }}
-                    />
-                  </Link>
+                    }}
+                  />
                   <div className="absolute top-3 left-3 bg-[#7c2d8a] text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider pointer-events-none">
                     {categoryBadge}
                   </div>
                   <button
                     type="button"
-                    onClick={() => toggleWishlist(prod)}
-                    className="absolute top-3 right-3 p-2 rounded-full bg-white/90 text-stone-600 hover:text-pink-600 hover:scale-110 transition-all shadow-xs cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      toggleWishlist(prod)
+                    }}
+                    className="relative z-10 absolute top-3 right-3 p-2 rounded-full bg-white/90 text-stone-600 hover:text-pink-600 hover:scale-110 transition-all shadow-xs cursor-pointer"
                     title="Wishlist"
                   >
                     <Heart className={`h-4 w-4 ${inWish ? "fill-pink-500 text-pink-500" : ""}`} />
@@ -567,11 +577,9 @@ export function AnuArtsTemplate({
                         ({prod.reviewsCount || (prod as { reviewCount?: number }).reviewCount || 24})
                       </span>
                     </div>
-                    <Link href={`/product/${prod.slug || prod.id}`}>
-                      <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-[#7c2d8a] transition-colors">
-                        {prod.name}
-                      </h3>
-                    </Link>
+                    <h3 className="font-bold text-stone-900 text-sm leading-snug group-hover:text-[#7c2d8a] transition-colors">
+                      {prod.name}
+                    </h3>
                     <p className="text-xs text-stone-500 mt-1 line-clamp-2">
                       {cleanDescription}
                     </p>
@@ -591,8 +599,12 @@ export function AnuArtsTemplate({
 
                     <button
                       type="button"
-                      onClick={() => handleAddToCart(prod)}
-                      className="inline-flex items-center justify-center gap-1.5 bg-[#7c2d8a] hover:bg-[#682274] active:scale-95 text-white text-xs font-bold px-4 py-2.5 min-h-[40px] rounded-full shadow-xs hover:shadow-md transition-all cursor-pointer z-10"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleAddToCart(prod)
+                      }}
+                      className="relative z-10 inline-flex items-center justify-center gap-1.5 bg-[#7c2d8a] hover:bg-[#682274] active:scale-95 text-white text-xs font-bold px-4 py-2.5 min-h-[40px] rounded-full shadow-xs hover:shadow-md transition-all cursor-pointer"
                     >
                       <ShoppingBag className="h-4 w-4" />
                       <span>Add to Cart</span>

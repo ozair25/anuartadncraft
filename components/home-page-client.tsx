@@ -28,17 +28,7 @@ export function HomePageClient({ initialProducts = [] }: HomePageClientProps) {
         onOpenBookClass={() => setIsBookClassOpen(true)}
       />
       <main>
-        <Hero
-          onExploreWorkshops={() => {
-            router.push("/workshops")
-          }}
-          onVisitStore={() => {
-            router.push("/shop")
-          }}
-          onContact={() => {
-            router.push("/contact")
-          }}
-        />
+        <Hero />
         <PromoBanner />
         <AnuArtsTemplate
           initialProducts={initialProducts}

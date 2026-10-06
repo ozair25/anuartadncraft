@@ -15,8 +15,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
       {/* Full Hero Banner at 100% Maximum Opacity */}
       <Link
         href="/shop"
-        onClick={onVisitStore}
-        className="block relative w-full focus:outline-hidden transition-opacity hover:opacity-98"
+        className="block relative w-full focus:outline-hidden transition-opacity hover:opacity-98 cursor-pointer"
         title="Explore Anu Arts Studio & Art Supplies"
       >
         <picture className="w-full block">
@@ -45,20 +44,18 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
       </Link>
 
       {/* Hero CTA Buttons - placed between Hero Background and Special Welcome Offer */}
-      <div className="relative z-10 w-full pt-5 pb-6 sm:pt-7 sm:pb-8 lg:pt-9 lg:pb-12 px-4 bg-gradient-to-b from-[#fffbf5] via-[#fff8fc] to-[#fffaff]">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-3.5 sm:gap-5 md:gap-6">
+      <div className="relative z-10 w-full pt-4 pb-6 sm:pt-7 sm:pb-8 lg:pt-9 lg:pb-12 px-4 bg-gradient-to-b from-[#fffbf5] via-[#fff8fc] to-[#fffaff]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 md:gap-6">
           <Link
             href="/workshops"
-            onClick={onExploreWorkshops}
-            className="-mt-[350px] h-[41.6px] w-[191.4px] pr-4 sm:mt-0 sm:h-auto sm:w-auto sm:pr-9 inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#250a2e] hover:from-[#351240] hover:via-[#521b63] hover:to-[#2c0e35] text-[#f5e2b3] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border-[1.5px] border-[#dfb76c] hover:border-[#ebd59b] shadow-[0_4px_16px_rgba(44,14,53,0.25)] hover:shadow-[0_6px_24px_rgba(223,183,108,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap"
+            className="w-full max-w-xs sm:max-w-none sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#250a2e] hover:from-[#351240] hover:via-[#521b63] hover:to-[#2c0e35] text-[#f5e2b3] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border-[1.5px] border-[#dfb76c] hover:border-[#ebd59b] shadow-[0_4px_16px_rgba(44,14,53,0.25)] hover:shadow-[0_6px_24px_rgba(223,183,108,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
           >
             <span>EXPLORE WORKSHOPS</span>
             <ArrowRight className="h-4 w-4 text-[#f5e2b3] group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
             href="/shop"
-            onClick={onVisitStore}
-            className="-mt-[245px] h-[38.6px] w-[209.637px] sm:mt-0 sm:h-auto sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#fcf5eb] hover:bg-white text-[#3b1548] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#eddcc4] hover:border-[#dfc8a7] shadow-[0_4px_14px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap"
+            className="w-full max-w-xs sm:max-w-none sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2.5 bg-[#fcf5eb] hover:bg-white text-[#3b1548] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#eddcc4] hover:border-[#dfc8a7] shadow-[0_4px_14px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
           >
             <span>VISIT OUR STORE</span>
             <Store className="h-4 w-4 stroke-[1.8] text-[#3b1548] group-hover:scale-105 transition-transform" />

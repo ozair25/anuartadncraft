@@ -20,17 +20,57 @@ import {
   Sparkles,
   Layers,
   ChevronRight,
+  ChevronDown,
   Filter,
   X,
   Flame,
   FolderTree,
+  Gem,
+  Paintbrush,
+  FileText,
+  LayoutGrid,
+  BookOpen,
+  Flower2,
+  Palette,
+  Box,
+  Droplets,
+  Scissors,
+  Compass,
+  Package,
+  PartyPopper,
+  Check,
+  LayoutList,
+  RotateCcw,
 } from "lucide-react"
+import { createPortal } from "react-dom"
 import { CartDrawer } from "@/components/cart-drawer"
 import {
   buildShopifyCategoryHierarchy,
   filterProductsByDynamicCategory,
   DynamicShopCategory,
 } from "@/lib/shopify/category-hierarchy"
+
+// Helper to resolve an icon for each official category
+function getCategoryIcon(slug: string) {
+  const s = slug.toLowerCase()
+  if (s.includes("new-arrivals")) return Sparkles
+  if (s.includes("accessories")) return Gem
+  if (s.includes("brushes") || s.includes("tool")) return Paintbrush
+  if (s.includes("decoupage")) return Layers
+  if (s.includes("paper") || s.includes("cardstock")) return FileText
+  if (s.includes("stencil") || s.includes("template")) return LayoutGrid
+  if (s.includes("scrapbook") || s.includes("journal")) return BookOpen
+  if (s.includes("flower")) return Flower2
+  if (s.includes("paint") || s.includes("medium")) return Palette
+  if (s.includes("mdf") || s.includes("acrylic-base")) return Box
+  if (s.includes("resin")) return Droplets
+  if (s.includes("diy-kit")) return Scissors
+  if (s.includes("candle")) return Flame
+  if (s.includes("lippan")) return Compass
+  if (s.includes("value-pack")) return Package
+  if (s.includes("festive")) return PartyPopper
+  return Sparkles
+}
 
 export interface ShopClientProps {
   initialProducts?: Product[]
@@ -58,6 +98,33 @@ export function ShopClient({
   const [sortBy, setSortBy] = useState<string>("featured")
   const [priceRange, setPriceRange] = useState<number>(2000)
   const [mobileCategoryMenuOpen, setMobileCategoryMenuOpen] = useState<boolean>(false)
+  const [mobileCategorySearch, setMobileCategorySearch] = useState<string>("")
+  const [expandedMobileCategory, setExpandedMobileCategory] = useState<string | null>(null)
+  const [mounted, setMounted] = useState<boolean>(false)
+
+  // Track hydration mount for react portal
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Lock background scroll when mobile category drawer is open
+  useEffect(() => {
+    if (mobileCategoryMenuOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [mobileCategoryMenuOpen])
+
+  // Synchronize expanded mobile category when category changes
+  useEffect(() => {
+    if (selectedCategory && selectedCategory !== "all") {
+      setExpandedMobileCategory(selectedCategory)
+    }
+  }, [selectedCategory])
 
   const { addItem, isCartOpen, closeCart, isLoadingCart } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
@@ -111,6 +178,17 @@ export function ShopClient({
     setSelectedSubcategory(null)
     setSelectedChildSubcategory(null)
   }, [selectedCategory])
+
+  // Filtered categories for mobile search
+  const filteredCategories = useMemo(() => {
+    if (!mobileCategorySearch.trim()) return categoriesHierarchy
+    const q = mobileCategorySearch.toLowerCase().trim()
+    return categoriesHierarchy.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.subcategories.some((s) => s.name.toLowerCase().includes(q))
+    )
+  }, [categoriesHierarchy, mobileCategorySearch])
 
   // Handle category switching and clean URL updating
   const handleSelectCategory = (slug: string) => {
@@ -363,227 +441,472 @@ export function ShopClient({
             )}
           </div>
 
-          {/* Mobile Category Trigger & Horizontal Bar */}
-          <div className="lg:hidden mb-6 space-y-3">
-            <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-pink-100 shadow-2xs">
-              <div className="flex items-center gap-2 truncate">
-                <Filter className="h-4 w-4 text-[#7c2d8a] shrink-0" />
-                <span className="text-xs font-bold text-stone-800 truncate">
-                  Category:{" "}
-                  <span className="text-[#7c2d8a]">
-                    {activeCategory ? activeCategory.name : "All Supplies"}
-                  </span>
-                  {selectedSubcategory && (
-                    <span className="text-stone-500 font-normal ml-1">
-                      / {selectedSubcategory}
-                    </span>
-                  )}
-                  {selectedChildSubcategory && (
-                    <span className="text-[#d92672] font-semibold ml-1">
-                      / {selectedChildSubcategory}
-                    </span>
-                  )}
-                </span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setMobileCategoryMenuOpen(!mobileCategoryMenuOpen)}
-                className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold bg-purple-50 text-[#7c2d8a] hover:bg-purple-100 px-3 py-1.5 rounded-lg border border-purple-200/60 transition-colors cursor-pointer"
-              >
-                <span>Browse All</span>
-                <ChevronRight
-                  className={`h-3.5 w-3.5 transition-transform ${
-                    mobileCategoryMenuOpen ? "rotate-90" : ""
-                  }`}
-                />
-              </button>
-            </div>
-
-            {/* Collapsible Mobile Drawer */}
-            {mobileCategoryMenuOpen && (
-              <div className="bg-white rounded-2xl border border-pink-100 p-3 shadow-lg space-y-1.5 animate-fadeIn">
-                <div className="flex items-center justify-between px-2 py-1 border-b border-pink-100/60 pb-2 mb-1">
-                  <span className="text-[11px] font-black uppercase tracking-wider text-[#7c2d8a]">
-                    Shopify Main Collections ({categoriesHierarchy.length})
-                  </span>
-                  <button
-                    onClick={() => setMobileCategoryMenuOpen(false)}
-                    className="p-1 text-stone-400 hover:text-stone-700"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+          {/* Mobile Category Navigation Hub (Replaces horizontal swipe strip with menu-style browsing) */}
+          <div className="lg:hidden mb-6 space-y-2.5">
+            {/* Main Category Selector Card */}
+            <div className="bg-white p-3.5 rounded-2xl border border-pink-100 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div
+                  onClick={() => {
+                    setMobileCategoryMenuOpen(true)
+                    setExpandedMobileCategory(selectedCategory !== "all" ? selectedCategory : null)
+                  }}
+                  className="flex items-center gap-3 min-w-0 cursor-pointer"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-purple-50 text-[#7c2d8a] flex items-center justify-center shrink-0 border border-purple-100/70">
+                    {(() => {
+                      const Icon = activeCategory ? getCategoryIcon(activeCategory.slug) : ShoppingBag
+                      return <Icon className="h-5 w-5" />
+                    })()}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-black uppercase tracking-wider text-stone-400">
+                      Category
+                    </div>
+                    <div className="text-sm font-bold text-stone-900 truncate flex items-center gap-2">
+                      <span className="truncate">
+                        {activeCategory ? activeCategory.name : "All Art Supplies"}
+                      </span>
+                      <span className="shrink-0 bg-purple-100 text-[#7c2d8a] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        {filteredProducts.length}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => handleSelectCategory("all")}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all text-left ${
-                    selectedCategory === "all"
-                      ? "bg-[#7c2d8a] text-white shadow-2xs"
-                      : "text-stone-800 hover:bg-purple-50"
-                  }`}
+                  onClick={() => {
+                    setMobileCategoryMenuOpen(true)
+                    setExpandedMobileCategory(selectedCategory !== "all" ? selectedCategory : null)
+                  }}
+                  className="shrink-0 inline-flex items-center gap-1.5 text-xs font-bold bg-[#7c2d8a] text-white hover:bg-[#682274] px-3.5 py-2 rounded-xl transition-all shadow-xs cursor-pointer touch-manipulation active:scale-95"
                 >
-                  <span>All Supplies</span>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                      selectedCategory === "all"
-                        ? "bg-white/20 text-white"
-                        : "bg-purple-50 text-[#7c2d8a]"
-                    }`}
-                  >
-                    {allProducts.length}
-                  </span>
+                  <LayoutList className="h-4 w-4" />
+                  <span>Browse All</span>
+                  <ChevronRight className="h-3.5 w-3.5 opacity-80" />
                 </button>
+              </div>
 
-                {categoriesHierarchy.map((cat) => {
-                  const isSelected = selectedCategory === cat.slug
-                  return (
-                    <div key={cat.id} className="space-y-1">
+              {/* Active Filter Chips & Reset */}
+              {(selectedCategory !== "all" || selectedSubcategory || selectedChildSubcategory) && (
+                <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-pink-100/60 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectCategory("all")}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 hover:text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                    <span>Reset Filter</span>
+                  </button>
+
+                  {selectedCategory !== "all" && activeCategory && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#7c2d8a] bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200">
+                      {activeCategory.name}
+                    </span>
+                  )}
+
+                  {selectedSubcategory && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#7c2d8a] bg-purple-100/80 px-2.5 py-1 rounded-full border border-purple-200">
+                      <span>{selectedSubcategory}</span>
                       <button
                         type="button"
-                        onClick={() => handleSelectCategory(cat.slug)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all text-left ${
-                          isSelected
-                            ? "bg-[#7c2d8a] text-white shadow-2xs"
-                            : "text-stone-800 hover:bg-purple-50"
-                        }`}
+                        onClick={() => {
+                          setSelectedSubcategory(null)
+                          setSelectedChildSubcategory(null)
+                        }}
+                        className="hover:text-rose-600"
                       >
-                        <div className="flex items-center gap-2 truncate pr-2">
-                          {cat.type === "merchandising" && (
-                            <Sparkles className="h-3 w-3 text-amber-400 shrink-0" />
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+
+                  {selectedChildSubcategory && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#d92672] bg-pink-100 px-2.5 py-1 rounded-full border border-pink-200">
+                      <span>{selectedChildSubcategory}</span>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedChildSubcategory(null)}
+                        className="hover:text-rose-600"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Quick Subcategories Wrap Row (No horizontal swiping needed) */}
+              {activeCategory && activeCategory.subcategories.length > 0 && (
+                <div className="pt-2 border-t border-pink-100/60 space-y-1.5">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a]">
+                    Subcategories in {activeCategory.name}:
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedSubcategory(null)
+                        setSelectedChildSubcategory(null)
+                      }}
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                        selectedSubcategory === null
+                          ? "bg-[#7c2d8a] text-white shadow-2xs"
+                          : "bg-purple-50/70 text-stone-700 hover:bg-purple-100 border border-purple-100"
+                      }`}
+                    >
+                      All ({activeCategory.productCount})
+                    </button>
+                    {activeCategory.subcategories.map((sub) => {
+                      const isSubActive = selectedSubcategory === sub.slug
+                      return (
+                        <button
+                          key={sub.id}
+                          type="button"
+                          onClick={() => {
+                            if (isSubActive) {
+                              setSelectedSubcategory(null)
+                              setSelectedChildSubcategory(null)
+                            } else {
+                              setSelectedSubcategory(sub.slug)
+                              setSelectedChildSubcategory(null)
+                            }
+                          }}
+                          className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                            isSubActive
+                              ? "bg-[#7c2d8a] text-white shadow-2xs"
+                              : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100"
+                          }`}
+                        >
+                          <span>{sub.name}</span>
+                          {sub.productCount > 0 && (
+                            <span
+                              className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
+                                isSubActive
+                                  ? "bg-white/20 text-white"
+                                  : "bg-purple-100 text-[#7c2d8a]"
+                              }`}
+                            >
+                              {sub.productCount}
+                            </span>
                           )}
-                          {cat.type === "seasonal" && (
-                            <Flame className="h-3 w-3 text-orange-400 shrink-0" />
-                          )}
-                          <span className="truncate">{cat.name}</span>
-                        </div>
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                            isSelected
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Full-Screen Mobile Category Menu Drawer (Matching WhatsApp Image Design) */}
+          {mounted &&
+            mobileCategoryMenuOpen &&
+            createPortal(
+              <div
+                id="mobile-category-drawer"
+                className="fixed inset-0 z-[999999] lg:hidden flex justify-end"
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+                  zIndex: 999999,
+                  backgroundColor: "rgba(15, 10, 20, 0.75)",
+                }}
+                onClick={() => setMobileCategoryMenuOpen(false)}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    maxWidth: "385px",
+                    height: "100%",
+                    backgroundColor: "#fffaff",
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                    boxShadow: "-4px 0 25px rgba(0,0,0,0.25)",
+                  }}
+                  className="text-stone-900 animate-in slide-in-from-right duration-300"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Drawer Header with Title and Close X Button */}
+                  <div className="flex items-center justify-between px-5 py-4 border-b border-pink-100 bg-white/95 backdrop-blur-md shrink-0 shadow-2xs">
+                    <div>
+                      <h2 className="font-serif text-lg font-bold text-stone-900 leading-tight">
+                        Shop All Categories
+                      </h2>
+                      <p className="text-[11px] text-[#7c2d8a] font-medium">
+                        16 Official Collections &amp; Supplies
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setMobileCategoryMenuOpen(false)}
+                      className="min-w-[42px] min-h-[42px] flex items-center justify-center rounded-full bg-purple-50 hover:bg-purple-100 active:bg-purple-200 text-[#7c2d8a] transition-colors cursor-pointer border border-purple-100 touch-manipulation"
+                      aria-label="Close categories menu"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  {/* Scrollable Content */}
+                  <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                    {/* Search Categories Input */}
+                    <div className="relative">
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+                      <input
+                        type="text"
+                        value={mobileCategorySearch}
+                        onChange={(e) => setMobileCategorySearch(e.target.value)}
+                        placeholder="Search categories (e.g. Resin, Coasters)..."
+                        className="w-full rounded-full border border-pink-200 bg-white py-2.5 pl-10 pr-9 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200/50 shadow-2xs"
+                      />
+                      {mobileCategorySearch && (
+                        <button
+                          type="button"
+                          onClick={() => setMobileCategorySearch("")}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* All Supplies Top Banner */}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectCategory("all")}
+                      className={`w-full min-h-[48px] px-3.5 py-3 rounded-2xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation border ${
+                        selectedCategory === "all"
+                          ? "bg-gradient-to-r from-purple-900 via-[#7c2d8a] to-[#d92672] text-white border-purple-900 shadow-md scale-[1.01]"
+                          : "bg-white border-pink-100 text-stone-800 hover:bg-purple-50/80 shadow-2xs"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                            selectedCategory === "all"
                               ? "bg-white/20 text-white"
                               : "bg-purple-50 text-[#7c2d8a]"
                           }`}
                         >
-                          {cat.productCount}
+                          <ShoppingBag className="h-4 w-4" />
+                        </div>
+                        <div className="text-left">
+                          <div className="leading-tight font-bold">All Art &amp; Craft Supplies</div>
+                          <div
+                            className={`text-[10px] font-medium ${
+                              selectedCategory === "all" ? "text-purple-200" : "text-stone-400"
+                            }`}
+                          >
+                            Complete Store Catalog
+                          </div>
+                        </div>
+                      </div>
+                      <span
+                        className={`text-[10px] font-black px-2.5 py-1 rounded-full ${
+                          selectedCategory === "all"
+                            ? "bg-white text-[#7c2d8a]"
+                            : "bg-purple-100 text-[#7c2d8a]"
+                        }`}
+                      >
+                        {allProducts.length}
+                      </span>
+                    </button>
+
+                    {/* Section Heading matching WhatsApp Image */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between px-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a]">
+                          EXPLORE CATEGORIES ({categoriesHierarchy.length})
                         </span>
-                      </button>
+                        {selectedCategory !== "all" && (
+                          <button
+                            type="button"
+                            onClick={() => handleSelectCategory("all")}
+                            className="text-[10px] font-bold text-stone-400 hover:text-stone-700 underline"
+                          >
+                            Clear Selection
+                          </button>
+                        )}
+                      </div>
 
-                      {isSelected && cat.subcategories.length > 0 && (
-                        <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-purple-200 ml-3">
-                          {cat.subcategories.map((sub) => {
-                            const isSubActive = selectedSubcategory === sub.slug
-                            const hasChildren = sub.children && sub.children.length > 0
-                            return (
-                              <div key={sub.id} className="space-y-1">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (isSubActive) {
-                                      setSelectedSubcategory(null)
-                                      setSelectedChildSubcategory(null)
-                                    } else {
-                                      setSelectedSubcategory(sub.slug)
-                                      setSelectedChildSubcategory(null)
-                                    }
-                                    if (!hasChildren) {
-                                      setMobileCategoryMenuOpen(false)
-                                    }
-                                  }}
-                                  className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors ${
-                                    isSubActive
-                                      ? "bg-purple-100 text-[#7c2d8a] font-bold"
-                                      : "text-stone-600 hover:bg-purple-50"
-                                  }`}
-                                >
-                                  <span>{sub.name}</span>
-                                  <span className="text-[9px] text-stone-400">
-                                    {sub.productCount}
+                      {/* Vertical Menu Card List matching WhatsApp Image design */}
+                      <div className="bg-white rounded-2xl p-2 border border-pink-100 shadow-2xs divide-y divide-pink-50">
+                        {filteredCategories.map((cat) => {
+                          const isSelected = selectedCategory === cat.slug
+                          const isExpanded = expandedMobileCategory === cat.slug
+                          const hasSubs = cat.subcategories.length > 0
+                          const Icon = getCategoryIcon(cat.slug)
+
+                          return (
+                            <div key={cat.id} className="py-1 first:pt-0 last:pb-0">
+                              <div
+                                onClick={() => {
+                                  if (hasSubs) {
+                                    setExpandedMobileCategory(isExpanded ? null : cat.slug)
+                                  } else {
+                                    handleSelectCategory(cat.slug)
+                                  }
+                                }}
+                                className={`w-full min-h-[46px] px-3 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation ${
+                                  isSelected
+                                    ? "bg-purple-100/90 text-[#7c2d8a] shadow-2xs"
+                                    : "text-stone-800 hover:bg-purple-50/70"
+                                }`}
+                              >
+                                <div className="flex items-center gap-3 min-w-0 pr-2">
+                                  <div
+                                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                                      isSelected
+                                        ? "bg-[#7c2d8a] text-white shadow-2xs"
+                                        : "bg-purple-50 text-[#7c2d8a]"
+                                    }`}
+                                  >
+                                    <Icon className="h-4 w-4" />
+                                  </div>
+                                  <div className="min-w-0 text-left">
+                                    <span className="block truncate text-xs font-bold leading-tight">
+                                      {cat.name}
+                                    </span>
+                                    {hasSubs && (
+                                      <span className="block text-[9px] font-normal text-stone-400">
+                                        {cat.subcategories.length} subcategories
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <span
+                                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                      isSelected
+                                        ? "bg-[#7c2d8a] text-white"
+                                        : "bg-purple-50 text-[#7c2d8a]"
+                                    }`}
+                                  >
+                                    {cat.productCount}
                                   </span>
-                                </button>
 
-                                {isSubActive && hasChildren && (
-                                  <div className="pl-3 py-0.5 space-y-1 border-l border-pink-300 ml-2">
-                                    {sub.children!.map((child) => {
-                                      const isChildActive =
-                                        selectedChildSubcategory === child.slug
-                                      return (
+                                  {hasSubs ? (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setExpandedMobileCategory(isExpanded ? null : cat.slug)
+                                      }}
+                                      className="p-1 text-stone-400 hover:text-[#7c2d8a] transition-transform"
+                                      aria-label={isExpanded ? "Collapse" : "Expand"}
+                                    >
+                                      <ChevronDown
+                                        className={`h-4 w-4 transition-transform duration-200 ${
+                                          isExpanded ? "rotate-180 text-[#7c2d8a]" : ""
+                                        }`}
+                                      />
+                                    </button>
+                                  ) : (
+                                    <ChevronRight className="h-4 w-4 text-stone-400" />
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Accordion Subcategories List (Indented) */}
+                              {hasSubs && isExpanded && (
+                                <div className="ml-4 pl-3.5 pr-1 py-1.5 border-l-2 border-purple-200 space-y-1 animate-fadeIn">
+                                  {/* "All [Category Name]" quick select button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSelectCategory(cat.slug)}
+                                    className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-colors cursor-pointer ${
+                                      isSelected && selectedSubcategory === null
+                                        ? "bg-[#7c2d8a] text-white"
+                                        : "text-stone-700 hover:bg-purple-50"
+                                    }`}
+                                  >
+                                    <span>All {cat.name}</span>
+                                    <span className="text-[10px] opacity-80">
+                                      {cat.productCount}
+                                    </span>
+                                  </button>
+
+                                  {cat.subcategories.map((sub) => {
+                                    const isSubActive =
+                                      isSelected && selectedSubcategory === sub.slug
+                                    const hasChildren = sub.children && sub.children.length > 0
+
+                                    return (
+                                      <div key={sub.id} className="space-y-1">
                                         <button
-                                          key={child.id}
                                           type="button"
                                           onClick={() => {
-                                            setSelectedChildSubcategory(
-                                              isChildActive ? null : child.slug
-                                            )
+                                            setSelectedCategory(cat.slug)
+                                            setSelectedSubcategory(sub.slug)
+                                            setSelectedChildSubcategory(null)
                                             setMobileCategoryMenuOpen(false)
                                           }}
-                                          className={`w-full flex items-center justify-between px-2 py-1 rounded-md text-[10px] font-medium text-left transition-colors ${
-                                            isChildActive
-                                              ? "bg-pink-100 text-[#d92672] font-bold"
-                                              : "text-stone-500 hover:bg-pink-50"
+                                          className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors cursor-pointer ${
+                                            isSubActive
+                                              ? "bg-purple-100 text-[#7c2d8a] font-bold"
+                                              : "text-stone-600 hover:bg-purple-50 hover:text-[#7c2d8a]"
                                           }`}
                                         >
-                                          <span>{child.name}</span>
-                                          {child.productCount > 0 && (
-                                            <span className="text-[8px] text-stone-400">
-                                              {child.productCount}
+                                          <span className="truncate">{sub.name}</span>
+                                          {sub.productCount > 0 && (
+                                            <span className="text-[9px] text-stone-400">
+                                              {sub.productCount}
                                             </span>
                                           )}
                                         </button>
-                                      )
-                                    })}
-                                  </div>
-                                )}
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            )}
 
-            {/* Horizontal Scrollable Category Bar for Mobile */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">
-              <button
-                type="button"
-                onClick={() => handleSelectCategory("all")}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${
-                  selectedCategory === "all"
-                    ? "bg-[#7c2d8a] text-white shadow-2xs"
-                    : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100 shadow-2xs"
-                }`}
-              >
-                All Supplies ({allProducts.length})
-              </button>
-              {categoriesHierarchy.map((cat) => {
-                const isSelected = selectedCategory === cat.slug
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => handleSelectCategory(cat.slug)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 flex items-center gap-1.5 ${
-                      isSelected
-                        ? "bg-[#7c2d8a] text-white shadow-2xs"
-                        : "bg-white text-stone-700 hover:bg-purple-50 border border-pink-100 shadow-2xs"
-                    }`}
-                  >
-                    <span>{cat.name}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                        isSelected ? "bg-white/25 text-white" : "bg-purple-100 text-[#7c2d8a]"
-                      }`}
-                    >
-                      {cat.productCount}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
+                                        {/* 3rd-tier children if any */}
+                                        {isSubActive && hasChildren && (
+                                          <div className="ml-3 pl-2.5 py-1 border-l border-pink-300 space-y-0.5">
+                                            {sub.children!.map((child) => {
+                                              const isChildActive =
+                                                selectedChildSubcategory === child.slug
+                                              return (
+                                                <button
+                                                  key={child.id}
+                                                  type="button"
+                                                  onClick={() => {
+                                                    setSelectedChildSubcategory(child.slug)
+                                                    setMobileCategoryMenuOpen(false)
+                                                  }}
+                                                  className={`w-full flex items-center justify-between px-2 py-1 rounded text-[10px] font-medium text-left cursor-pointer ${
+                                                    isChildActive
+                                                      ? "bg-pink-100 text-[#d92672] font-bold"
+                                                      : "text-stone-500 hover:bg-pink-50"
+                                                  }`}
+                                                >
+                                                  <span className="truncate">{child.name}</span>
+                                                  {child.productCount > 0 && (
+                                                    <span className="text-[8px] text-stone-400">
+                                                      {child.productCount}
+                                                    </span>
+                                                  )}
+                                                </button>
+                                              )
+                                            })}
+                                          </div>
+                                        )}
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>,
+              document.body
+            )}
 
           {/* Main Grid: Left Category Sidebar + Right Product Area */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -877,35 +1200,46 @@ export function ShopClient({
                 <div className="grid grid-cols-2 gap-3.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredProducts.map((p) => {
                     const inWishlist = isInWishlist(p.id)
+                    const productUrl = `/product/${encodeURIComponent(p.slug)}`
                     return (
-                      <article
+                      <div
                         key={p.id}
-                        className="group flex flex-col overflow-hidden rounded-2xl border border-pink-100/80 bg-white shadow-2xs hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                        className="group relative flex flex-col overflow-hidden rounded-2xl border border-pink-100/80 bg-white shadow-2xs hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                       >
+                        {/* Stretched Link for 100% reliable instant navigation on entire card */}
+                        <Link
+                          href={productUrl}
+                          className="absolute inset-0 z-1 cursor-pointer"
+                          aria-label={p.name}
+                        />
+
                         {/* Image & Wishlist Container */}
                         <div className="relative aspect-square overflow-hidden bg-purple-50/30">
-                          <Link href={`/product/${p.slug}`}>
-                            <img
-                              src={
-                                p.thumbnail ||
+                          <img
+                            src={
+                              p.thumbnail ||
+                              "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
+                            }
+                            alt={p.name}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null
+                              e.currentTarget.src =
                                 "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
-                              }
-                              alt={p.name}
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              referrerPolicy="no-referrer"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null
-                                e.currentTarget.src =
-                                  "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
-                              }}
-                            />
-                          </Link>
+                            }}
+                          />
 
-                          {/* Wishlist Button */}
+                          {/* Wishlist Button - elevated above stretched link */}
                           <button
+                            type="button"
                             aria-label="Add to wishlist"
-                            onClick={() => toggleWishlist(p.id)}
-                            className={`absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full shadow-sm transition-all cursor-pointer ${
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              toggleWishlist(p.id)
+                            }}
+                            className={`relative z-10 absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full shadow-sm transition-all cursor-pointer ${
                               inWishlist
                                 ? "bg-[#d92672] text-white"
                                 : "bg-white/90 text-stone-700 hover:bg-[#d92672] hover:text-white"
@@ -919,7 +1253,7 @@ export function ShopClient({
                           </button>
 
                           {/* Category / Discount Badge */}
-                          <div className="absolute left-2.5 top-2.5 flex flex-col gap-1">
+                          <div className="absolute left-2.5 top-2.5 z-10 flex flex-col gap-1 pointer-events-none">
                             {p.discount && (
                               <span className="rounded-full bg-[#d92672] px-2 py-0.5 text-[10px] font-black text-white shadow-2xs">
                                 {p.discount}
@@ -934,11 +1268,9 @@ export function ShopClient({
                         {/* Product Info */}
                         <div className="flex flex-1 flex-col justify-between p-3.5 space-y-2.5">
                           <div className="space-y-1">
-                            <Link href={`/product/${p.slug}`}>
-                              <h3 className="line-clamp-2 min-h-[2.5rem] text-xs font-bold leading-snug text-stone-900 group-hover:text-[#7c2d8a] transition-colors">
-                                {p.name}
-                              </h3>
-                            </Link>
+                            <h3 className="line-clamp-2 min-h-[2.5rem] text-xs font-bold leading-snug text-stone-900 group-hover:text-[#7c2d8a] transition-colors">
+                              {p.name}
+                            </h3>
 
                             <div className="flex items-center gap-1 text-[11px] text-amber-500">
                               <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
@@ -963,17 +1295,23 @@ export function ShopClient({
                               )}
                             </div>
 
+                            {/* Add to Bag Button - elevated above stretched link */}
                             <button
+                              type="button"
                               disabled={isLoadingCart}
-                              onClick={() => addItem(p)}
-                              className="w-full flex items-center justify-center gap-2 rounded-full bg-[#7c2d8a] py-2 min-h-[36px] text-xs font-bold text-white transition-all hover:bg-[#682274] active:scale-95 cursor-pointer shadow-xs disabled:opacity-70"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                addItem(p)
+                              }}
+                              className="relative z-10 w-full flex items-center justify-center gap-2 rounded-full bg-[#7c2d8a] py-2 min-h-[36px] text-xs font-bold text-white transition-all hover:bg-[#682274] active:scale-95 cursor-pointer shadow-xs disabled:opacity-70"
                             >
                               <ShoppingBag className="h-3.5 w-3.5" />
                               <span>Add to Bag</span>
                             </button>
                           </div>
                         </div>
-                      </article>
+                      </div>
                     )
                   })}
                 </div>
