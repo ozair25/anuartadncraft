@@ -15,6 +15,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
       {/* Full Hero Banner at 100% Maximum Opacity */}
       <Link
         href="/shop"
+        prefetch={true}
         className="block relative w-full focus:outline-hidden transition-opacity hover:opacity-98 cursor-pointer"
         title="Explore Anu Arts Studio & Art Supplies"
       >
@@ -48,6 +49,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 md:gap-6">
           <Link
             href="/workshops"
+            prefetch={true}
             className="w-full max-w-xs sm:max-w-none sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#250a2e] hover:from-[#351240] hover:via-[#521b63] hover:to-[#2c0e35] text-[#f5e2b3] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border-[1.5px] border-[#dfb76c] hover:border-[#ebd59b] shadow-[0_4px_16px_rgba(44,14,53,0.25)] hover:shadow-[0_6px_24px_rgba(223,183,108,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
           >
             <span>EXPLORE WORKSHOPS</span>
@@ -55,6 +57,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
           </Link>
           <Link
             href="/shop"
+            prefetch={true}
             className="w-full max-w-xs sm:max-w-none sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2.5 bg-[#fcf5eb] hover:bg-white text-[#3b1548] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#eddcc4] hover:border-[#dfc8a7] shadow-[0_4px_14px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
           >
             <span>VISIT OUR STORE</span>

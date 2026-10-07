@@ -1,27 +1,11 @@
-import { getAllProducts, getCollections } from "@/lib/shopify/products"
 import { ShopClient } from "@/app/shop/shop-client"
-import { Product, Collection } from "@/types/ecommerce"
+import { Metadata } from "next"
 
-export const dynamic = "force-dynamic"
+export const metadata: Metadata = {
+  title: "Shop Art & Craft Supplies | Anu Arts Studio",
+  description: "Browse premium craft supplies, tools, resin art, MDF bases, paints, and DIY kits from Anu Art & Craft Studio.",
+}
 
-export default async function ShopPage() {
-  let products: Product[] = []
-  let collections: Collection[] = []
-  try {
-    const [prodsRes, colsRes] = await Promise.all([
-      getAllProducts(),
-      getCollections(100),
-    ])
-    products = prodsRes
-    collections = colsRes
-  } catch (err) {
-    console.error("ShopPage server fetch error:", err)
-  }
-
-  return (
-    <ShopClient
-      initialProducts={products}
-      initialCollections={collections}
-    />
-  )
+export default function ShopPage() {
+  return <ShopClient />
 }

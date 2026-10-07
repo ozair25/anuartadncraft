@@ -24,23 +24,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const resolvedParams = await params
-  let products: Product[] = []
-  let collections: Collection[] = []
-  try {
-    const [prodsRes, colsRes] = await Promise.all([
-      getAllProducts(),
-      getCollections(100),
-    ])
-    products = prodsRes
-    collections = colsRes
-  } catch (err) {
-    console.error("CategoryPage server fetch error:", err)
-  }
 
   return (
     <ShopClient
-      initialProducts={products}
-      initialCollections={collections}
       initialCategory={resolvedParams.category}
     />
   )
