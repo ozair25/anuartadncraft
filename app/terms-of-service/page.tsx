@@ -184,7 +184,7 @@ export default function TermsOfServicePage() {
                 All content published on this website, including but not limited to brand logos, trademarks, artwork photographs, instructional articles, workshop video teasers, design templates, and software code, is the exclusive intellectual property of <strong>Anu Art &amp; Craft Studio</strong> and protected under Indian and international copyright laws.
               </p>
               <p>
-                No portion of this website or our creative curricula may be reproduced, duplicated, copied, sold, resold, or exploited for commercial purposes without express written permission from Anu Jain.
+                No portion of this website or our creative curricula may be reproduced, duplicated, copied, sold, resold, or exploited for commercial purposes without express written permission from YASHASWEE SANGHAWI.
               </p>
             </section>
 
@@ -221,7 +221,7 @@ export default function TermsOfServicePage() {
               </div>
               <div className="flex flex-wrap items-center gap-2 shrink-0">
                 <a
-                  href="mailto:anuarts.indore@gmail.com"
+                  href="mailto:anuarts005@gmail.com"
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#7c2d8a] text-white text-xs font-bold hover:bg-[#682474] transition-colors shadow-xs"
                 >
                   <Mail className="h-3.5 w-3.5" />

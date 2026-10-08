@@ -117,16 +117,23 @@ export const INITIAL_COUPONS: Coupon[] = [
 export const INITIAL_TESTIMONIALS: Testimonial[] = [
   {
     id: "t1",
-    name: "Priya V.",
-    role: "Fine Art Student",
-    content: "The quality of acrylics and sketchbooks from Anu Arts is outstanding. Fast shipping and super eco-friendly packaging!",
+    name: "Pooja Patidar",
+    role: "Mixed Media Artist, Indore",
+    content: "Anu Art & Craft Studio by Yashaswee Sanghawi is a true paradise for craft lovers! From resin art supplies and MDF cutouts to decoupage, everything is top quality and reasonably priced.",
     rating: 5
   },
   {
     id: "t2",
-    name: "Vikram Mehta",
-    role: "Hobbyist Painter",
-    content: "Ordered the resin art starter kit and Camel pastels. Every single item arrived in pristine condition.",
+    name: "Surbhi Chordia",
+    role: "Resin & Decoupage Creator",
+    content: "Central India's finest art studio! Yashaswee's workshops are full of practical techniques and deep artistic insights. The guidance is exceptional and materials are 100% authentic.",
+    rating: 5
+  },
+  {
+    id: "t3",
+    name: "Dr. Meenakshi Kulkarni",
+    role: "Studio Customer & Crafter",
+    content: "The best one-stop store for all crafting materials in Indore. The staff is polite, helpful, and parcel delivery is super swift.",
     rating: 5
   }
 ]

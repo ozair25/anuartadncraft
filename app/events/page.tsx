@@ -47,7 +47,7 @@ const EVENTS_LIST: StudioEvent[] = [
     description: "An open grand showcase of over 150 original canvas paintings, resin sculptures, Lippan murals, and craft projects by our students and guest artists.",
     image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop",
     features: [
-      "Live portrait painting by Anu Jain",
+      "Live portrait painting by Yashaswee Sanghawi",
       "Interactive DIY greeting card booth",
       "Exclusive 25% discount on all art supplies",
       "Art collector networking evening",
@@ -62,7 +62,7 @@ const EVENTS_LIST: StudioEvent[] = [
     location: "Studio Hall & Live Zoom Broadcast",
     price: "₹499 (Includes ₹300 Supply Voucher)",
     status: "Limited Seats",
-    description: "Watch master resin artist Anu Jain demonstrate crystal geode embedding, lacing resin ocean waves, and high-gloss heat torching techniques live.",
+    description: "Watch master resin artist Yashaswee Sanghawi demonstrate crystal geode embedding, lacing resin ocean waves, and high-gloss heat torching techniques live.",
     image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800&auto=format&fit=crop",
     features: [
       "Live interactive Q&A session",

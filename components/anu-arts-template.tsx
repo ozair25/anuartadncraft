@@ -8,6 +8,7 @@ import { useWishlist } from "@/lib/context/wishlist-context"
 import { useShopifyProducts } from "@/lib/shopify/hooks"
 import { Product } from "@/types/ecommerce"
 import { BookClassModal } from "@/components/book-class-modal"
+import { StudioPromoVideo } from "@/components/studio-promo-video"
 import { SHOP_CATEGORIES } from "@/lib/config/shop-categories"
 import { SOCIAL_CONFIG } from "@/lib/config/social"
 import {
@@ -28,6 +29,7 @@ import {
   Heart,
   ShoppingBag,
   Camera,
+  Play,
   ExternalLink,
   Sparkles,
   MapPin,
@@ -102,35 +104,49 @@ export const diyKitCategories = [
 // Backwards-compatibility alias
 export const workshopCategories = diyKitCategories
 
-// 2. Student Testimonials
+// 2. Real Studio Reviews (Central India's Premier Art & Craft Studio by Yashaswee Sanghawi)
 const testimonials = [
   {
     quote:
-      "“Anu Ma'am's classes are amazing! I learned so many new techniques and found my passion for painting.”",
-    author: "Priya Sharma",
+      "“Anu Art & Craft Studio by Yashaswee Sanghawi is a true paradise for craft lovers! From resin art supplies and MDF cutouts to decoupage and scrapbooking materials, everything is top quality and reasonably priced.”",
+    author: "Pooja Patidar",
     rating: 5,
-    role: "Watercolor Student",
+    role: "Mixed Media Artist, Indore",
   },
   {
     quote:
-      "“The best place for art lovers! The materials are top quality and the workshops are so inspiring.”",
-    author: "Neha Verma",
+      "“Central India's finest art studio! Yashaswee's workshops are full of practical techniques and deep artistic insights. The guidance is exceptional and materials are 100% authentic.”",
+    author: "Surbhi Chordia",
     rating: 5,
-    role: "Resin Art Enthusiast",
+    role: "Resin & Decoupage Creator",
   },
   {
     quote:
-      "“My kids absolutely love the art sessions. It's creative, fun and so well managed.”",
-    author: "Ritu Agarwal",
+      "“Attended the offline workshop at their Chandralok Colony studio. Yashaswee Ma'am personally guides every single step. The complete DIY kits provided had everything needed!”",
+    author: "Anjali Agrawal",
     rating: 5,
-    role: "Parent of 2 Kids",
+    role: "Lippan Art Workshop Student",
   },
   {
     quote:
-      "“Attended the Lippan art workshop and made a gorgeous wall piece! The material kit was complete with everything.”",
-    author: "Meera Joshi",
+      "“The best one-stop store for all crafting materials in Indore. The staff is so polite and prompt, and parcel delivery is super swift. Truly grateful to have this creative space.”",
+    author: "Dr. Meenakshi Kulkarni",
     rating: 5,
-    role: "Crafting Workshop",
+    role: "Studio Customer & Crafter",
+  },
+  {
+    quote:
+      "“Extremely inspiring atmosphere and phenomenal collection of art mediums. Whether you are into fluid art, alcohol inks, or mixed media, Yashaswee Ma'am's studio has it all.”",
+    author: "Divya Rathore",
+    rating: 5,
+    role: "Fine Arts Enthusiast",
+  },
+  {
+    quote:
+      "“Ordered online through their catalogue and got prompt assistance on WhatsApp. Every mold, resin bottle, and MDF base arrived safely packed. 10/10 experience!”",
+    author: "Ritika Solanki",
+    rating: 5,
+    role: "Verified Crafting Client",
   },
 ]
 
@@ -280,6 +296,7 @@ export function AnuArtsTemplate({
   const [selectedStoreCategory, setSelectedStoreCategory] = useState("All")
   const [testimonialIdx, setTestimonialIdx] = useState(0)
   const [addedToast, setAddedToast] = useState<string | null>(null)
+  const [aboutMediaType, setAboutMediaType] = useState<"video" | "photo">("video")
 
   const { addToCart } = useCart()
   const { toggleWishlist, isInWishlist } = useWishlist()
@@ -299,12 +316,13 @@ export function AnuArtsTemplate({
     }
   }
 
+  const maxIdx = Math.max(0, testimonials.length - 3)
   const nextTestimonial = () => {
-    setTestimonialIdx((prev) => (prev + 1) % (testimonials.length - 2))
+    setTestimonialIdx((prev) => (prev >= maxIdx ? 0 : prev + 1))
   }
 
   const prevTestimonial = () => {
-    setTestimonialIdx((prev) => (prev === 0 ? testimonials.length - 3 : prev - 1))
+    setTestimonialIdx((prev) => (prev <= 0 ? maxIdx : prev - 1))
   }
 
   const {
@@ -462,7 +480,7 @@ export function AnuArtsTemplate({
             href="/shop"
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#7c2d8a] hover:text-[#5c1c68] bg-white hover:bg-purple-50 px-4 py-2 rounded-full border border-purple-200/80 shadow-2xs hover:shadow-xs transition-all cursor-pointer self-start md:self-auto"
           >
-            <span>View All 100 Products</span>
+            <span>Explore All Products</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -616,13 +634,13 @@ export function AnuArtsTemplate({
           })}
         </div>
 
-        {/* Option to View All 100 Products and redirect to Shop Page */}
+        {/* Option to Explore All Products and redirect to Shop Page */}
         <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center text-center gap-3">
           <Link
             href="/shop"
             className="inline-flex items-center justify-center gap-2.5 bg-[#7c2d8a] hover:bg-[#682274] active:scale-[0.98] text-white text-sm sm:text-base font-bold px-8 sm:px-10 py-3.5 rounded-full shadow-md hover:shadow-lg shadow-purple-900/15 hover:shadow-purple-900/25 transition-all cursor-pointer group"
           >
-            <span>View All 100 Products</span>
+            <span>Explore All Products</span>
             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Link>
           <p className="text-xs text-stone-500 font-medium">
@@ -713,20 +731,59 @@ export function AnuArtsTemplate({
           <div className="absolute top-0 left-0 w-72 h-72 bg-purple-200/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-amber-300/25 via-orange-200/20 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-          {/* Left: Authentic Studio Reference Image - Preserving Natural Aspect Ratio (6 Cols) */}
-          <div className="lg:col-span-6 relative flex items-center justify-center">
-            <div className="relative w-full max-w-[460px] rounded-2xl overflow-hidden shadow-lg bg-white">
-              <img
-                src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
-                alt="Anu Arts & Craft Studio Environment"
-                className="w-full h-auto block object-contain rounded-2xl"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  e.currentTarget.onerror = null
-                  e.currentTarget.src = "/images/anu-studio.jpg"
-                }}
-              />
+          {/* Left: Authentic Studio Reference & Promo Video Reel (6 Cols) */}
+          <div className="lg:col-span-6 relative flex flex-col items-center justify-center">
+            {/* Toggle Between Studio Reel & Studio Photo */}
+            <div className="flex items-center gap-2 mb-4 bg-white/95 backdrop-blur-md p-1.5 rounded-full border border-purple-200/80 shadow-xs z-10">
+              <button
+                type="button"
+                onClick={() => setAboutMediaType("video")}
+                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  aboutMediaType === "video"
+                    ? "bg-[#7c2d8a] text-white shadow-xs"
+                    : "text-stone-600 hover:text-stone-900 hover:bg-purple-50"
+                }`}
+              >
+                <Play className="h-3 w-3 fill-current" />
+                <span>Watch Studio Reel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAboutMediaType("photo")}
+                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  aboutMediaType === "photo"
+                    ? "bg-[#7c2d8a] text-white shadow-xs"
+                    : "text-stone-600 hover:text-stone-900 hover:bg-purple-50"
+                }`}
+              >
+                <Camera className="h-3 w-3" />
+                <span>Studio Photo</span>
+              </button>
             </div>
+
+            {aboutMediaType === "video" ? (
+              <StudioPromoVideo
+                compact
+                videoUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.mp4"
+                posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.jpg"
+                title="Inside Anu Arts & Craft Studio"
+                subtitle="Workshops, craft supplies & creative energy in Indore"
+                badgeText="Official Studio Tour Reel"
+              />
+            ) : (
+              <div className="relative w-full max-w-[460px] rounded-2xl overflow-hidden shadow-lg bg-white">
+                <img
+                  src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
+                  alt="Anu Arts & Craft Studio Environment"
+                  className="w-full h-auto block object-contain rounded-2xl"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null
+                    e.currentTarget.src = "/images/anu-studio.jpg"
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Right: Client-Specified Content & Mission (6 Cols) */}
@@ -1022,6 +1079,86 @@ export function AnuArtsTemplate({
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* PROMO SPOTLIGHT: Experience Anu Arts Studio in Action      */}
+      {/* ========================================================= */}
+      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="rounded-3xl bg-gradient-to-br from-purple-900 via-[#7c2d8a] via-[#5b1f68] to-stone-950 p-6 sm:p-10 lg:p-12 text-white shadow-xl relative overflow-hidden">
+          {/* Ambient glows */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+            {/* Promo Video Reel (5 cols) */}
+            <div className="lg:col-span-5 flex justify-center">
+              <StudioPromoVideo
+                compact
+                videoUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472117/anuarts.vid2_1_qw8cpb.mp4"
+                posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472117/anuarts.vid2_1_qw8cpb.jpg"
+                title="Behind the Craft at Anu Arts"
+                subtitle="Live workshop vibes, masterclass demonstrations & authentic supplies in Indore"
+                badgeText="Studio Video Reel"
+              />
+            </div>
+
+            {/* Narrative & Highlights (7 cols) */}
+            <div className="lg:col-span-7 space-y-5 text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-amber-300 text-xs font-bold tracking-widest uppercase border border-white/20">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>STUDIO IN ACTION • WATCH PROMO</span>
+              </div>
+
+              <h3 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                Watch the Magic of <br />
+                <span className="text-amber-300 italic">Anu Arts &amp; Craft Studio</span>
+              </h3>
+
+              <p className="text-stone-200 text-sm sm:text-base leading-relaxed">
+                Step inside Central India&apos;s most beloved art destination! Whether you want to master Resin Art ocean ripples, sculpt traditional Lippan mirror motifs, or pick up premium DIY kits and craft supplies, experience firsthand the inspiring energy nurtured by master artist Yashaswee Sanghawi.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3.5">
+                  <p className="text-amber-300 font-bold text-xs uppercase">Interactive Classes</p>
+                  <p className="text-purple-150 text-[11px] mt-1">Beginner-friendly offline &amp; online sessions.</p>
+                </div>
+                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3.5">
+                  <p className="text-pink-300 font-bold text-xs uppercase">All Materials Included</p>
+                  <p className="text-purple-150 text-[11px] mt-1">Top-grade resin, mirrors, paints &amp; tools.</p>
+                </div>
+                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3.5">
+                  <p className="text-amber-200 font-bold text-xs uppercase">Central Indore Location</p>
+                  <p className="text-purple-150 text-[11px] mt-1">30, Chandralok Colony, Indore (MP).</p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onOpenBookClass) onOpenBookClass("Studio Masterclass")
+                    else setIsBookModalOpen(true)
+                  }}
+                  className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 text-xs sm:text-sm font-bold px-6 py-3 rounded-full shadow-lg transition-all hover:scale-105 cursor-pointer"
+                >
+                  Book a Workshop Seat
+                </button>
+
+                <a
+                  href="https://wa.me/919425356009?text=Hi%20Anu%20Arts%2C%20I%20watched%20the%20studio%20promo%20video%20and%20want%20to%20know%20more%20about%20your%20classes%20and%20supplies!"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold px-5 py-3 rounded-full shadow-md transition-all hover:scale-105 cursor-pointer"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>Chat on WhatsApp</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -9,15 +9,15 @@ import { ChevronDown } from "lucide-react"
 const FAQS = [
   {
     q: "How long does shipping take across India?",
-    a: "Orders are processed within 24 hours. Delivery takes 2-4 business days for major metro cities and 4-7 days for remaining regions.",
+    a: "Our processing time at Anu Arts ranges from 0 to 2 days, and delivery typically takes 6 to 8 working days. Shipping charges are additional and based on actuals. For express shipping options or specific inquiries, please contact our team via WhatsApp at +91 94253 56009.",
   },
   {
     q: "Are all products guaranteed 100% authentic?",
-    a: "Yes! We source directly from authorized manufacturers including Camel, Brustro, Fevicryl, and Mont Marte.",
+    a: "Yes! All craft and art supplies are studio-verified and sourced directly from reputable manufacturers and artisan distributors.",
   },
   {
-    q: "What is your return & exchange policy?",
-    a: "We offer a 7-day return policy for unopened, undamaged items. If you receive a damaged product during transit, we replace it free of cost instantly.",
+    q: "What is your refund & replacement policy?",
+    a: "We offer refunds or replacements only for goods considered damaged upon receipt, provided they are claimed within a specified period with the package opening video instructions followed. Once goods are sold, exchanges or returns are not accepted.",
   },
   {
     q: "Do you offer cash on delivery (COD)?",

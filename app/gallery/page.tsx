@@ -38,7 +38,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "g1",
     title: "Golden Hour Bloom on Stretched Canvas",
-    artist: "Anu Jain (Studio Master)",
+    artist: "Yashaswee Sanghawi (Studio Master)",
     medium: "Heavy Body Acrylics & 24K Gold Leaf",
     category: "canvas",
     categoryLabel: "Acrylic Canvas",
@@ -103,7 +103,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "g6",
     title: "Misty Mountain Twilight Impasto",
-    artist: "Anu Jain",
+    artist: "Yashaswee Sanghawi",
     medium: "Palette Knife Oil & Heavy Acrylic on Linen",
     category: "canvas",
     categoryLabel: "Acrylic Canvas",
@@ -180,7 +180,7 @@ export default function GalleryPage() {
               The Anu Arts <span className="text-amber-300 italic">Creative Gallery</span>
             </h1>
             <p className="text-sm sm:text-base text-purple-100 max-w-2xl mx-auto font-medium">
-              Explore magnificent artworks handcrafted by Anu Jain and our passionate workshop students across India.
+              Explore magnificent artworks handcrafted by Yashaswee Sanghawi and our passionate workshop students across India.
             </p>
           </div>
         </section>

@@ -111,8 +111,8 @@ export function SiteFooter() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="h-4 w-4 text-[#7c2d8a] shrink-0" />
-                <a href="mailto:anuarts.indore@gmail.com" className="hover:text-[#7c2d8a] transition-colors">
-                  anuarts.indore@gmail.com
+                <a href="mailto:anuarts005@gmail.com" className="hover:text-[#7c2d8a] transition-colors">
+                  anuarts005@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-2.5">

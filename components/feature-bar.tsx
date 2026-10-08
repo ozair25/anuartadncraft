@@ -1,10 +1,10 @@
 import { Truck, ShieldCheck, Award, RotateCcw } from "lucide-react"
 
 const features = [
-  { icon: Truck, title: "Free Shipping", sub: "On orders above ₹999", color: "from-purple-500/20 to-pink-500/20 text-purple-600" },
-  { icon: ShieldCheck, title: "Secure Payment", sub: "100% Protected", color: "from-pink-500/20 to-rose-500/20 text-pink-600" },
-  { icon: Award, title: "Premium Quality", sub: "Trusted by 1M+ Artists", color: "from-amber-500/20 to-yellow-500/20 text-amber-600" },
-  { icon: RotateCcw, title: "Easy Returns", sub: "Hassle free returns", color: "from-emerald-500/20 to-teal-500/20 text-emerald-600" },
+  { icon: Truck, title: "Pan-India Shipping", sub: "6–8 working days delivery", color: "from-purple-500/20 to-pink-500/20 text-purple-400" },
+  { icon: ShieldCheck, title: "Secure Checkout", sub: "100% Protected Payments", color: "from-pink-500/20 to-rose-500/20 text-pink-400" },
+  { icon: Award, title: "Premium Art Supplies", sub: "Authentic & Studio Tested", color: "from-amber-500/20 to-yellow-500/20 text-amber-400" },
+  { icon: RotateCcw, title: "Transit Damage Support", sub: "Covered with opening video", color: "from-emerald-500/20 to-teal-500/20 text-emerald-400" },
 ]
 
 export function FeatureBar() {

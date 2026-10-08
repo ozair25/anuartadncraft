@@ -30,7 +30,7 @@ export default function CartPage() {
   const [couponSuccess, setCouponSuccess] = useState("")
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
-  const shippingFee = subtotal > 499 || subtotal === 0 ? 0 : 50
+  const shippingFee = 0
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault()
@@ -171,9 +171,9 @@ export default function CartPage() {
                   )}
 
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Shipping Fee:</span>
-                    <span className="font-bold text-foreground">
-                      {shippingFee === 0 ? <span className="text-emerald-600">FREE</span> : `₹${shippingFee}`}
+                    <span>Shipping:</span>
+                    <span className="font-semibold text-stone-700 text-xs">
+                      Calculated at checkout
                     </span>
                   </div>
                 </div>

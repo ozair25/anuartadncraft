@@ -86,7 +86,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <p className="text-xs text-emerald-50 leading-relaxed">
-                  Chat directly with Anu Jain and our studio coordinators for fast seat bookings, supply recommendations, and dispatch queries.
+                  Chat directly with Yashaswee Sanghawi and our studio coordinators for fast seat bookings, supply recommendations, and dispatch queries.
                 </p>
                 <a
                   href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%2C%20I%20have%20an%20inquiry%20regarding%20workshops%20and%20supplies!"
@@ -116,8 +116,8 @@ export default function ContactPage() {
                   <Mail className="h-5 w-5 text-[#d92672] shrink-0 mt-0.5" />
                   <div>
                     <h4 className="text-xs font-bold text-stone-900">Email Inquiries</h4>
-                    <a href="mailto:anuarts.indore@gmail.com" className="text-xs text-[#d92672] font-semibold block mt-0.5 hover:underline break-all">
-                      anuarts.indore@gmail.com
+                    <a href="mailto:anuarts005@gmail.com" className="text-xs text-[#d92672] font-semibold block mt-0.5 hover:underline break-all">
+                      anuarts005@gmail.com
                     </a>
                     <p className="text-[11px] text-stone-500">Response within 24 business hours</p>
                   </div>

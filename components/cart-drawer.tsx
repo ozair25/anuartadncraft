@@ -179,11 +179,11 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                 )}
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span className="text-emerald-600 font-bold">{subtotal > 999 ? "FREE" : "₹99"}</span>
+                  <span className="text-stone-600 font-medium text-[11px]">Calculated at checkout</span>
                 </div>
                 <div className="flex justify-between text-sm font-black text-stone-900 border-t border-purple-200 pt-2">
-                  <span>Total</span>
-                  <span className="text-purple-700 font-black">₹{(totalPrice + (subtotal > 999 ? 0 : 99)).toLocaleString("en-IN")}</span>
+                  <span>Estimated Subtotal</span>
+                  <span className="text-purple-700 font-black">₹{totalPrice.toLocaleString("en-IN")}</span>
                 </div>
               </div>
 
