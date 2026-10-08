@@ -154,7 +154,6 @@ export default function AboutPage() {
                   posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.jpg"
                   title="Anu Arts Studio Experience"
                   subtitle="A glimpse of our creative workshops, art supplies & inspiring energy in Indore"
-                  badgeText="Official Studio Reel"
                 />
               </div>
 

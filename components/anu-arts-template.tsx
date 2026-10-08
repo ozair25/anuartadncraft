@@ -768,7 +768,6 @@ export function AnuArtsTemplate({
                 posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.jpg"
                 title="Inside Anu Arts & Craft Studio"
                 subtitle="Workshops, craft supplies & creative energy in Indore"
-                badgeText="Official Studio Tour Reel"
               />
             ) : (
               <div className="relative w-full max-w-[460px] rounded-2xl overflow-hidden shadow-lg bg-white">
@@ -1101,7 +1100,6 @@ export function AnuArtsTemplate({
                 posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472117/anuarts.vid2_1_qw8cpb.jpg"
                 title="Behind the Craft at Anu Arts"
                 subtitle="Live workshop vibes, masterclass demonstrations & authentic supplies in Indore"
-                badgeText="Studio Video Reel"
               />
             </div>
 
