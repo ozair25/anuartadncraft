@@ -20,7 +20,7 @@ let cachedCatalog: {
   timestamp: number
 } | null = null
 
-const CATALOG_CACHE_TTL = 3 * 60 * 1000 // 3 minutes cache
+const CATALOG_CACHE_TTL = 30 * 60 * 1000 // 30 minutes cache
 
 /**
  * Fetch all products from Shopify Storefront API with complete pagination.

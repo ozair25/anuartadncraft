@@ -15,7 +15,21 @@ export function useShopifyProducts(options?: {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (options?.initialProducts && options.initialProducts.length > 0) {
+      setProducts(options.initialProducts)
+      setLoading(false)
+    }
+  }, [options?.initialProducts])
+
+  useEffect(() => {
     let isMounted = true
+
+    // Skip redundant client fetch if initial products already populated and no sub-filters requested
+    if (options?.initialProducts && options.initialProducts.length > 0 && !options.collection && !options.query) {
+      setLoading(false)
+      return
+    }
+
     async function fetchProducts() {
       try {
         if (!options?.initialProducts || options.initialProducts.length === 0) {

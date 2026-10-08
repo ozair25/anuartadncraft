@@ -16,6 +16,7 @@ import {
   MessageCircle,
   Sparkles,
   ChevronRight,
+  ChevronDown,
   PackageCheck,
   LogIn,
   UserPlus,
@@ -36,6 +37,8 @@ import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { useAuth } from "@/lib/context/auth-context"
 import { BrandLogo } from "@/components/brand-logo"
+import { ShopCategoryDrawer } from "@/components/shop-category-drawer"
+import { SHOP_CATEGORIES } from "@/lib/config/shop-categories"
 
 interface SiteHeaderProps {
   onOpenCart?: () => void
@@ -65,6 +68,10 @@ export function SiteHeader({
   const [searchQuery, setSearchQuery] = useState("")
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [shopCategoryDrawerOpen, setShopCategoryDrawerOpen] = useState(false)
+  const [desktopShopMenuOpen, setDesktopShopMenuOpen] = useState(false)
+  const shopMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const desktopShopMenuRef = useRef<HTMLDivElement>(null)
 
   const [isScrolled, setIsScrolled] = useState(false)
 
@@ -115,6 +122,8 @@ export function SiteHeader({
     setUserMenuOpen(false)
     setMoreMenuOpen(false)
     setSearchOpen(false)
+    setDesktopShopMenuOpen(false)
+    setShopCategoryDrawerOpen(false)
   }, [pathname])
 
   // Close dropdowns when clicking outside
@@ -125,6 +134,9 @@ export function SiteHeader({
       }
       if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
         setMoreMenuOpen(false)
+      }
+      if (desktopShopMenuRef.current && !desktopShopMenuRef.current.contains(event.target as Node)) {
+        setDesktopShopMenuOpen(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
@@ -196,6 +208,114 @@ export function SiteHeader({
             const isActive =
               link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)
 
+            if (link.label === "Shop") {
+              return (
+                <div
+                  key={link.label}
+                  ref={desktopShopMenuRef}
+                  className="relative"
+                  onMouseEnter={() => {
+                    if (shopMenuTimeoutRef.current) clearTimeout(shopMenuTimeoutRef.current)
+                    setDesktopShopMenuOpen(true)
+                  }}
+                  onMouseLeave={() => {
+                    shopMenuTimeoutRef.current = setTimeout(() => {
+                      setDesktopShopMenuOpen(false)
+                    }, 180)
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setDesktopShopMenuOpen(false)
+                      setShopCategoryDrawerOpen(true)
+                    }}
+                    className={`relative py-1.5 flex items-center gap-1 transition-colors cursor-pointer ${
+                      isActive
+                        ? "text-[#7c2d8a] font-bold"
+                        : "text-stone-700 hover:text-[#7c2d8a]"
+                    }`}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 text-stone-400 transition-transform duration-200 ${
+                        desktopShopMenuOpen ? "rotate-180 text-[#7c2d8a]" : ""
+                      }`}
+                    />
+                    {isActive && (
+                      <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#7c2d8a] rounded-full" />
+                    )}
+                  </button>
+
+                  {/* Desktop Editorial Mega-Menu */}
+                  {desktopShopMenuOpen && (
+                    <div
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                      onMouseEnter={() => {
+                        if (shopMenuTimeoutRef.current) clearTimeout(shopMenuTimeoutRef.current)
+                        setDesktopShopMenuOpen(true)
+                      }}
+                      onMouseLeave={() => setDesktopShopMenuOpen(false)}
+                    >
+                      <div className="w-[840px] bg-white rounded-2xl shadow-2xl border border-stone-200/90 p-6 text-stone-900">
+                        {/* Mega-menu Header */}
+                        <div className="flex items-center justify-between pb-3.5 border-b border-stone-100">
+                          <div>
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+                              Shop All Categories
+                            </span>
+                            <p className="text-xs text-stone-400">
+                              16 official art &amp; craft collections
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDesktopShopMenuOpen(false)
+                              setShopCategoryDrawerOpen(true)
+                            }}
+                            className="text-xs font-bold text-[#7c2d8a] hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>Open Category Drawer</span>
+                            <ChevronRight className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+
+                        {/* 4 Clean Columns of 4 Categories Each */}
+                        <div className="grid grid-cols-4 gap-6 pt-4 text-left">
+                          {[0, 1, 2, 3].map((colIndex) => {
+                            const colCats = SHOP_CATEGORIES.slice(colIndex * 4, colIndex * 4 + 4)
+                            return (
+                              <div key={colIndex} className="space-y-3">
+                                {colCats.map((cat) => (
+                                  <Link
+                                    key={cat.id}
+                                    href={`/shop/${cat.slug}`}
+                                    onClick={() => setDesktopShopMenuOpen(false)}
+                                    className="block group"
+                                  >
+                                    <div className="text-[13px] font-medium text-stone-800 group-hover:text-[#7c2d8a] group-hover:font-semibold transition-colors">
+                                      {cat.name}
+                                    </div>
+                                    {cat.subcategories && cat.subcategories.length > 0 && (
+                                      <div className="text-[10px] text-stone-400 group-hover:text-stone-500">
+                                        {cat.subcategories.length} subcategories
+                                      </div>
+                                    )}
+                                  </Link>
+                                ))}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            }
+
             return (
               <Link
                 key={link.label}
@@ -215,8 +335,20 @@ export function SiteHeader({
           })}
         </nav>
 
-        {/* Right Section: Cart Button & Mobile Menu Button */}
+        {/* Right Section: Shop Button, Cart Button & Mobile Menu Button */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Quick Mobile Shop Categories Trigger */}
+          <button
+            type="button"
+            onClick={() => setShopCategoryDrawerOpen(true)}
+            className="lg:hidden min-h-[38px] px-3 flex items-center gap-1 text-stone-800 hover:text-[#7c2d8a] cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors shadow-2xs touch-manipulation text-xs font-bold"
+            aria-label="Open Shop categories menu"
+            title="Browse Shop Categories"
+          >
+            <ShoppingBag className="h-3.5 w-3.5 text-[#7c2d8a]" />
+            <span>Shop</span>
+          </button>
+
           {/* Cart Button with Count Badge */}
           <button
             type="button"
@@ -405,6 +537,40 @@ export function SiteHeader({
                     const Icon = item.icon
                     const isCurrent =
                       item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+
+                    if (item.label === "Shop") {
+                      return (
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => {
+                            setMobileOpen(false)
+                            setShopCategoryDrawerOpen(true)
+                          }}
+                          className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation ${
+                            isCurrent
+                              ? "bg-purple-100/90 text-[#7c2d8a] shadow-2xs"
+                              : "text-stone-800 hover:bg-purple-50/80 hover:text-[#7c2d8a]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                                isCurrent
+                                  ? "bg-white text-[#7c2d8a] shadow-2xs"
+                                  : "bg-purple-50 text-[#7c2d8a]"
+                              }`}
+                            >
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            <span>{item.label}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-[11px] font-semibold text-[#7c2d8a]">
+                            <span>Categories</span>
+                          </div>
+                        </button>
+                      )
+                    }
                     return (
                       <Link
                         key={item.label}
@@ -618,6 +784,12 @@ export function SiteHeader({
           </div>,
           document.body
         )}
+
+      {/* Clean Full-Height Shop Category Drawer */}
+      <ShopCategoryDrawer
+        isOpen={shopCategoryDrawerOpen}
+        onClose={() => setShopCategoryDrawerOpen(false)}
+      />
     </header>
   )
 }

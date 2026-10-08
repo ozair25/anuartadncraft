@@ -41,9 +41,12 @@ import {
   Check,
   LayoutList,
   RotateCcw,
+  Plus,
+  Minus,
 } from "lucide-react"
 import { createPortal } from "react-dom"
 import { CartDrawer } from "@/components/cart-drawer"
+import { ShopCategoryDrawer } from "@/components/shop-category-drawer"
 import {
   buildShopifyCategoryHierarchy,
   filterProductsByDynamicCategory,
@@ -484,7 +487,6 @@ export function ShopClient({
                 >
                   <LayoutList className="h-4 w-4" />
                   <span>Browse All</span>
-                  <ChevronRight className="h-3.5 w-3.5 opacity-80" />
                 </button>
               </div>
 
@@ -600,313 +602,19 @@ export function ShopClient({
             </div>
           </div>
 
-          {/* Full-Screen Mobile Category Menu Drawer (Matching WhatsApp Image Design) */}
-          {mounted &&
-            mobileCategoryMenuOpen &&
-            createPortal(
-              <div
-                id="mobile-category-drawer"
-                className="fixed inset-0 z-[999999] lg:hidden flex justify-end"
-                style={{
-                  position: "fixed",
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
-                  left: 0,
-                  zIndex: 999999,
-                  backgroundColor: "rgba(15, 10, 20, 0.75)",
-                }}
-                onClick={() => setMobileCategoryMenuOpen(false)}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    maxWidth: "385px",
-                    height: "100%",
-                    backgroundColor: "#fffaff",
-                    display: "flex",
-                    flexDirection: "column",
-                    overflow: "hidden",
-                    boxShadow: "-4px 0 25px rgba(0,0,0,0.25)",
-                  }}
-                  className="text-stone-900 animate-in slide-in-from-right duration-300"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {/* Drawer Header with Title and Close X Button */}
-                  <div className="flex items-center justify-between px-5 py-4 border-b border-pink-100 bg-white/95 backdrop-blur-md shrink-0 shadow-2xs">
-                    <div>
-                      <h2 className="font-serif text-lg font-bold text-stone-900 leading-tight">
-                        Shop All Categories
-                      </h2>
-                      <p className="text-[11px] text-[#7c2d8a] font-medium">
-                        16 Official Collections &amp; Supplies
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setMobileCategoryMenuOpen(false)}
-                      className="min-w-[42px] min-h-[42px] flex items-center justify-center rounded-full bg-purple-50 hover:bg-purple-100 active:bg-purple-200 text-[#7c2d8a] transition-colors cursor-pointer border border-purple-100 touch-manipulation"
-                      aria-label="Close categories menu"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-
-                  {/* Scrollable Content */}
-                  <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-                    {/* Search Categories Input */}
-                    <div className="relative">
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
-                      <input
-                        type="text"
-                        value={mobileCategorySearch}
-                        onChange={(e) => setMobileCategorySearch(e.target.value)}
-                        placeholder="Search categories (e.g. Resin, Coasters)..."
-                        className="w-full rounded-full border border-pink-200 bg-white py-2.5 pl-10 pr-9 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200/50 shadow-2xs"
-                      />
-                      {mobileCategorySearch && (
-                        <button
-                          type="button"
-                          onClick={() => setMobileCategorySearch("")}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </div>
-
-                    {/* All Supplies Top Banner */}
-                    <button
-                      type="button"
-                      onClick={() => handleSelectCategory("all")}
-                      className={`w-full min-h-[48px] px-3.5 py-3 rounded-2xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation border ${
-                        selectedCategory === "all"
-                          ? "bg-gradient-to-r from-purple-900 via-[#7c2d8a] to-[#d92672] text-white border-purple-900 shadow-md scale-[1.01]"
-                          : "bg-white border-pink-100 text-stone-800 hover:bg-purple-50/80 shadow-2xs"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                            selectedCategory === "all"
-                              ? "bg-white/20 text-white"
-                              : "bg-purple-50 text-[#7c2d8a]"
-                          }`}
-                        >
-                          <ShoppingBag className="h-4 w-4" />
-                        </div>
-                        <div className="text-left">
-                          <div className="leading-tight font-bold">All Art &amp; Craft Supplies</div>
-                          <div
-                            className={`text-[10px] font-medium ${
-                              selectedCategory === "all" ? "text-purple-200" : "text-stone-400"
-                            }`}
-                          >
-                            Complete Store Catalog
-                          </div>
-                        </div>
-                      </div>
-                      <span
-                        className={`text-[10px] font-black px-2.5 py-1 rounded-full ${
-                          selectedCategory === "all"
-                            ? "bg-white text-[#7c2d8a]"
-                            : "bg-purple-100 text-[#7c2d8a]"
-                        }`}
-                      >
-                        {allProducts.length}
-                      </span>
-                    </button>
-
-                    {/* Section Heading matching WhatsApp Image */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between px-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-[#7c2d8a]">
-                          EXPLORE CATEGORIES ({categoriesHierarchy.length})
-                        </span>
-                        {selectedCategory !== "all" && (
-                          <button
-                            type="button"
-                            onClick={() => handleSelectCategory("all")}
-                            className="text-[10px] font-bold text-stone-400 hover:text-stone-700 underline"
-                          >
-                            Clear Selection
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Vertical Menu Card List matching WhatsApp Image design */}
-                      <div className="bg-white rounded-2xl p-2 border border-pink-100 shadow-2xs divide-y divide-pink-50">
-                        {filteredCategories.map((cat) => {
-                          const isSelected = selectedCategory === cat.slug
-                          const isExpanded = expandedMobileCategory === cat.slug
-                          const hasSubs = cat.subcategories.length > 0
-                          const Icon = getCategoryIcon(cat.slug)
-
-                          return (
-                            <div key={cat.id} className="py-1 first:pt-0 last:pb-0">
-                              <div
-                                onClick={() => {
-                                  if (hasSubs) {
-                                    setExpandedMobileCategory(isExpanded ? null : cat.slug)
-                                  } else {
-                                    handleSelectCategory(cat.slug)
-                                  }
-                                }}
-                                className={`w-full min-h-[46px] px-3 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation ${
-                                  isSelected
-                                    ? "bg-purple-100/90 text-[#7c2d8a] shadow-2xs"
-                                    : "text-stone-800 hover:bg-purple-50/70"
-                                }`}
-                              >
-                                <div className="flex items-center gap-3 min-w-0 pr-2">
-                                  <div
-                                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                                      isSelected
-                                        ? "bg-[#7c2d8a] text-white shadow-2xs"
-                                        : "bg-purple-50 text-[#7c2d8a]"
-                                    }`}
-                                  >
-                                    <Icon className="h-4 w-4" />
-                                  </div>
-                                  <div className="min-w-0 text-left">
-                                    <span className="block truncate text-xs font-bold leading-tight">
-                                      {cat.name}
-                                    </span>
-                                    {hasSubs && (
-                                      <span className="block text-[9px] font-normal text-stone-400">
-                                        {cat.subcategories.length} subcategories
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <span
-                                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                                      isSelected
-                                        ? "bg-[#7c2d8a] text-white"
-                                        : "bg-purple-50 text-[#7c2d8a]"
-                                    }`}
-                                  >
-                                    {cat.productCount}
-                                  </span>
-
-                                  {hasSubs ? (
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        setExpandedMobileCategory(isExpanded ? null : cat.slug)
-                                      }}
-                                      className="p-1 text-stone-400 hover:text-[#7c2d8a] transition-transform"
-                                      aria-label={isExpanded ? "Collapse" : "Expand"}
-                                    >
-                                      <ChevronDown
-                                        className={`h-4 w-4 transition-transform duration-200 ${
-                                          isExpanded ? "rotate-180 text-[#7c2d8a]" : ""
-                                        }`}
-                                      />
-                                    </button>
-                                  ) : (
-                                    <ChevronRight className="h-4 w-4 text-stone-400" />
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Accordion Subcategories List (Indented) */}
-                              {hasSubs && isExpanded && (
-                                <div className="ml-4 pl-3.5 pr-1 py-1.5 border-l-2 border-purple-200 space-y-1 animate-fadeIn">
-                                  {/* "All [Category Name]" quick select button */}
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSelectCategory(cat.slug)}
-                                    className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-bold text-left transition-colors cursor-pointer ${
-                                      isSelected && selectedSubcategory === null
-                                        ? "bg-[#7c2d8a] text-white"
-                                        : "text-stone-700 hover:bg-purple-50"
-                                    }`}
-                                  >
-                                    <span>All {cat.name}</span>
-                                    <span className="text-[10px] opacity-80">
-                                      {cat.productCount}
-                                    </span>
-                                  </button>
-
-                                  {cat.subcategories.map((sub) => {
-                                    const isSubActive =
-                                      isSelected && selectedSubcategory === sub.slug
-                                    const hasChildren = sub.children && sub.children.length > 0
-
-                                    return (
-                                      <div key={sub.id} className="space-y-1">
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            setSelectedCategory(cat.slug)
-                                            setSelectedSubcategory(sub.slug)
-                                            setSelectedChildSubcategory(null)
-                                            setMobileCategoryMenuOpen(false)
-                                          }}
-                                          className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-[11px] font-semibold text-left transition-colors cursor-pointer ${
-                                            isSubActive
-                                              ? "bg-purple-100 text-[#7c2d8a] font-bold"
-                                              : "text-stone-600 hover:bg-purple-50 hover:text-[#7c2d8a]"
-                                          }`}
-                                        >
-                                          <span className="truncate">{sub.name}</span>
-                                          {sub.productCount > 0 && (
-                                            <span className="text-[9px] text-stone-400">
-                                              {sub.productCount}
-                                            </span>
-                                          )}
-                                        </button>
-
-                                        {/* 3rd-tier children if any */}
-                                        {isSubActive && hasChildren && (
-                                          <div className="ml-3 pl-2.5 py-1 border-l border-pink-300 space-y-0.5">
-                                            {sub.children!.map((child) => {
-                                              const isChildActive =
-                                                selectedChildSubcategory === child.slug
-                                              return (
-                                                <button
-                                                  key={child.id}
-                                                  type="button"
-                                                  onClick={() => {
-                                                    setSelectedChildSubcategory(child.slug)
-                                                    setMobileCategoryMenuOpen(false)
-                                                  }}
-                                                  className={`w-full flex items-center justify-between px-2 py-1 rounded text-[10px] font-medium text-left cursor-pointer ${
-                                                    isChildActive
-                                                      ? "bg-pink-100 text-[#d92672] font-bold"
-                                                      : "text-stone-500 hover:bg-pink-50"
-                                                  }`}
-                                                >
-                                                  <span className="truncate">{child.name}</span>
-                                                  {child.productCount > 0 && (
-                                                    <span className="text-[8px] text-stone-400">
-                                                      {child.productCount}
-                                                    </span>
-                                                  )}
-                                                </button>
-                                              )
-                                            })}
-                                          </div>
-                                        )}
-                                      </div>
-                                    )
-                                  })}
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>,
-              document.body
-            )}
+          {/* Clean Full-Height Mobile Category Drawer */}
+          <ShopCategoryDrawer
+            isOpen={mobileCategoryMenuOpen}
+            onClose={() => setMobileCategoryMenuOpen(false)}
+            activeCategorySlug={selectedCategory}
+            activeSubcategorySlug={selectedSubcategory || undefined}
+            onSelectCategory={(catSlug, subSlug) => {
+              handleSelectCategory(catSlug)
+              if (subSlug) {
+                setSelectedSubcategory(subSlug)
+              }
+            }}
+          />
 
           {/* Main Grid: Left Category Sidebar + Right Product Area */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

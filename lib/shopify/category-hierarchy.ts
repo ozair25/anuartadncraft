@@ -22,8 +22,10 @@ export interface DynamicShopCategory {
   name: string
   slug: string
   handle: string
+  order: number
   description: string
   image?: string
+  icon?: string
   type: "material" | "merchandising" | "seasonal"
   isShopifyCollection: boolean
   shopifyCollectionId?: string
@@ -60,6 +62,7 @@ export function buildShopifyCategoryHierarchy(
     slug: base.slug,
     handle: base.slug,
     description: base.description,
+    order: base.order || 0,
     type: base.type,
     isShopifyCollection: false,
     subcategories: (base.subcategories || []).map((sub) => ({

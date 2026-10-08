@@ -15,8 +15,12 @@ export interface ShopSubcategoryConfig {
   id: string
   name: string
   slug: string
+  handle?: string
+  order?: number
   description?: string
   keywords?: string[]
+  image?: string
+  icon?: string
   children?: ShopSubcategoryConfig[]
 }
 
@@ -27,9 +31,14 @@ export interface ShopCategoryConfig {
   name: string
   label: string // Alias for backward compatibility
   slug: string
+  handle: string
+  order: number
   description: string
   type: CategoryType
   keywords: string[]
+  shopifyCollectionHandle?: string
+  image?: string
+  icon?: string
   subcategories: ShopSubcategoryConfig[]
 }
 
@@ -63,6 +72,9 @@ export type MainShopCategoryName = (typeof MAIN_SHOP_CATEGORIES)[number]
 export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   {
     id: "new-arrivals",
+    handle: "new-arrivals",
+    order: 1,
+    shopifyCollectionHandle: "new-arrivals",
     name: "New Arrivals",
     label: "New Arrivals",
     slug: "new-arrivals",
@@ -73,6 +85,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "accessories",
+    handle: "accessories",
+    order: 2,
+    shopifyCollectionHandle: "craft-accessories",
     name: "Accessories",
     label: "Accessories",
     slug: "accessories",
@@ -112,6 +127,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "brushes-tools",
+    handle: "brushes-tools",
+    order: 3,
+    shopifyCollectionHandle: "art-supplies",
     name: "Brushes & Tools",
     label: "Brushes & Tools",
     slug: "brushes-tools",
@@ -122,6 +140,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "decoupage-material",
+    handle: "decoupage-material",
+    order: 4,
+    shopifyCollectionHandle: "decoupage",
     name: "Decoupage Material",
     label: "Decoupage Material",
     slug: "decoupage-material",
@@ -184,6 +205,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "papers-cardstocks",
+    handle: "papers-cardstocks",
+    order: 5,
+    shopifyCollectionHandle: "papers",
     name: "Papers & Cardstocks",
     label: "Papers & Cardstocks",
     slug: "papers-cardstocks",
@@ -194,6 +218,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "stencils-templates",
+    handle: "stencils-templates",
+    order: 6,
+    shopifyCollectionHandle: "stencils",
     name: "Stencils & Templates",
     label: "Stencils & Templates",
     slug: "stencils-templates",
@@ -247,6 +274,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "scrapbooking-journaling-supplies",
+    handle: "scrapbooking-journaling-supplies",
+    order: 7,
+    shopifyCollectionHandle: "scrapbooking",
     name: "Scrapbooking & Journaling Supplies",
     label: "Scrapbooking & Journaling Supplies",
     slug: "scrapbooking-journaling-supplies",
@@ -257,6 +287,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "flower-making",
+    handle: "flower-making",
+    order: 8,
+    shopifyCollectionHandle: "flower-making",
     name: "Flower Making",
     label: "Flower Making",
     slug: "flower-making",
@@ -267,6 +300,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "paints-mediums",
+    handle: "paints-mediums",
+    order: 9,
+    shopifyCollectionHandle: "paints",
     name: "Paints & Mediums",
     label: "Paints & Mediums",
     slug: "paints-mediums",
@@ -313,6 +349,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "mdf-acrylic-bases",
+    handle: "mdf-acrylic-bases",
+    order: 10,
+    shopifyCollectionHandle: "mdf",
     name: "MDF & Acrylic Bases",
     label: "MDF & Acrylic Bases",
     slug: "mdf-acrylic-bases",
@@ -394,6 +433,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "resin-art-essentials",
+    handle: "resin-art-essentials",
+    order: 11,
+    shopifyCollectionHandle: "resin",
     name: "Resin Art Essentials",
     label: "Resin Art Essentials",
     slug: "resin-art-essentials",
@@ -454,6 +496,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "diy-kits",
+    handle: "diy-kits",
+    order: 12,
+    shopifyCollectionHandle: "diy-kits",
     name: "DIY Kits",
     label: "DIY Kits",
     slug: "diy-kits",
@@ -507,6 +552,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "candle-making-supplies",
+    handle: "candle-making-supplies",
+    order: 13,
+    shopifyCollectionHandle: "candle-making",
     name: "Candle Making Supplies",
     label: "Candle Making Supplies",
     slug: "candle-making-supplies",
@@ -560,6 +608,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "lippan-art-essentials",
+    handle: "lippan-art-essentials",
+    order: 14,
+    shopifyCollectionHandle: "lippan-art",
     name: "Lippan Art Essentials",
     label: "Lippan Art Essentials",
     slug: "lippan-art-essentials",
@@ -570,6 +621,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "value-packs",
+    handle: "value-packs",
+    order: 15,
+    shopifyCollectionHandle: "value-packs",
     name: "Value Packs",
     label: "Value Packs",
     slug: "value-packs",
@@ -580,6 +634,9 @@ export const SHOP_CATEGORIES: ShopCategoryConfig[] = [
   },
   {
     id: "festive-collection",
+    handle: "festive-collection",
+    order: 16,
+    shopifyCollectionHandle: "festive-diy",
     name: "Festive Collection",
     label: "Festive Collection",
     slug: "festive-collection",
@@ -833,4 +890,11 @@ export function mapProductToMainCategory(product: {
   }
 
   return null
+}
+
+/**
+ * Helper to get all 16 official shop categories sorted by display order
+ */
+export function getShopCategoriesSorted(): ShopCategoryConfig[] {
+  return [...SHOP_CATEGORIES].sort((a, b) => a.order - b.order)
 }
