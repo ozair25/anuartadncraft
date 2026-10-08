@@ -200,7 +200,7 @@ export function ProductDetailClient({
             </button>
 
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-xs text-stone-500">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-stone-500 max-w-full overflow-hidden">
               <Link href="/" className="hover:text-[#7c2d8a]">
                 Home
               </Link>

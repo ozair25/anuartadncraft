@@ -139,6 +139,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
   body {
     @apply bg-[#fffaff] text-stone-900 font-sans;
     font-family: var(--font-jost), 'Jost', sans-serif;
