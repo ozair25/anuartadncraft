@@ -86,7 +86,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <p className="text-xs text-emerald-50 leading-relaxed">
-                  Chat directly with Yashaswee Sanghawi and our studio coordinators for fast seat bookings, supply recommendations, and dispatch queries.
+                  Chat directly with Yashaswee Sanghavi and our studio coordinators for fast seat bookings, supply recommendations, and dispatch queries.
                 </p>
                 <a
                   href="https://wa.me/919425356009?text=Hello%20Anu%20Arts%2C%20I%20have%20an%20inquiry%20regarding%20workshops%20and%20supplies!"

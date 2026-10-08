@@ -117,23 +117,51 @@ export const INITIAL_COUPONS: Coupon[] = [
 export const INITIAL_TESTIMONIALS: Testimonial[] = [
   {
     id: "t1",
-    name: "Pooja Patidar",
-    role: "Mixed Media Artist, Indore",
-    content: "Anu Art & Craft Studio by Yashaswee Sanghawi is a true paradise for craft lovers! From resin art supplies and MDF cutouts to decoupage, everything is top quality and reasonably priced.",
+    name: "Rutika Sahare",
+    role: "11 reviews · 3 photos",
+    content: "We had our 5 year old son’s bday party here. It was the most complimented and praised birthday ever. Really thankful to the team. They were so co-operative , so patient, so smooth and welcoming. All the team members of the studio were very accommodating I must say and everyone helped kids to complete their bday task. Thank you for your warm hospitality and support!!!!! Out of the box concept of parties ever!!!",
     rating: 5
   },
   {
     id: "t2",
-    name: "Surbhi Chordia",
-    role: "Resin & Decoupage Creator",
-    content: "Central India's finest art studio! Yashaswee's workshops are full of practical techniques and deep artistic insights. The guidance is exceptional and materials are 100% authentic.",
+    name: "Fleur Samson",
+    role: "Local Guide · 5 reviews",
+    content: "We had a lovely experience with an art party. The team was warm, well-coordinated and did a great job of guiding the children through making their moon lamps. The activity was fun, well organised, and the children were happy with what they created. A wonderful experience!",
     rating: 5
   },
   {
     id: "t3",
-    name: "Dr. Meenakshi Kulkarni",
-    role: "Studio Customer & Crafter",
-    content: "The best one-stop store for all crafting materials in Indore. The staff is polite, helpful, and parcel delivery is super swift.",
+    name: "Priya Tiwari",
+    role: "12 photos",
+    content: "Had a wonderful experience celebrating my son’s birthday at the anu art & craft studio! The arrangements were lovely, the activities were engaging, and the kids had a great time. The staff was friendly and helpful throughout. Highly recommended for a fun and creative birthday party!🥳",
+    rating: 5
+  },
+  {
+    id: "t4",
+    name: "rounak jain",
+    role: "8 reviews",
+    content: "I am connected with Anu di since long time....I have purchased many art items, learned many techniques from her....she is best at everything....her teaching skills are simple for anyone to understand.....thanks Ma'am",
+    rating: 5
+  },
+  {
+    id: "t5",
+    name: "Sheetal Jain",
+    role: "3 reviews",
+    content: "Purchase many craft materials, they are of top quality. Loved them😍",
+    rating: 5
+  },
+  {
+    id: "t6",
+    name: "Sangeetha Banerjee",
+    role: "Local Guide · 20 reviews · 17 photos",
+    content: "Very happy with my purchases from Anu art and craft. High quality MDF and diy kits. Prompt delivery and very good shopping experience. Highly recommend.",
+    rating: 5
+  },
+  {
+    id: "t7",
+    name: "Avika's Art n Craft by Swati",
+    role: "3 reviews",
+    content: "Finest store with super quality multiple art n craft products under 1 roof. Yashaswee, an amazing creative owner with great team. Quick response n helpful team.",
     rating: 5
   }
 ]

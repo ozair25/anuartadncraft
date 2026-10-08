@@ -51,6 +51,7 @@ const navLinks = [
   { label: "Home", href: "/", icon: Home },
   { label: "About", href: "/about", icon: Info },
   { label: "Workshops", href: "/workshops", icon: Palette },
+  { label: "Tutorials", href: "/tutorials", icon: BookOpen },
   { label: "Shop", href: "/shop", icon: ShoppingBag },
   { label: "Events", href: "/events", icon: Calendar },
   { label: "Contact", href: "/contact", icon: Phone },
@@ -530,8 +531,9 @@ export function SiteHeader({
                     { label: "Home", href: "/", icon: Home },
                     { label: "About Us", href: "/about", icon: Info },
                     { label: "Workshop Classes", href: "/workshops", icon: Palette },
+                    { label: "Tutorials & Guides", href: "/tutorials", icon: BookOpen },
                     { label: "Shop", href: "/shop", icon: ShoppingBag },
-                    { label: "Art Tutorials", href: "/blog", icon: BookOpen },
+                    { label: "Events", href: "/events", icon: Calendar },
                     { label: "Contact Us", href: "/contact", icon: Phone },
                   ].map((item) => {
                     const Icon = item.icon

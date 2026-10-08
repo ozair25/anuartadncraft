@@ -104,49 +104,56 @@ export const diyKitCategories = [
 // Backwards-compatibility alias
 export const workshopCategories = diyKitCategories
 
-// 2. Real Studio Reviews (Central India's Premier Art & Craft Studio by Yashaswee Sanghawi)
+// 2. Real Google Reviews (Anu Art and Craft Studio)
 const testimonials = [
   {
     quote:
-      "“Anu Art & Craft Studio by Yashaswee Sanghawi is a true paradise for craft lovers! From resin art supplies and MDF cutouts to decoupage and scrapbooking materials, everything is top quality and reasonably priced.”",
-    author: "Pooja Patidar",
+      "“We had our 5 year old son’s bday party here. It was the most complimented and praised birthday ever. Really thankful to the team. They were so co-operative , so patient, so smooth and welcoming. All the team members of the studio were very accommodating I must say and everyone helped kids to complete their bday task. Thank you for your warm hospitality and support!!!!! Out of the box concept of parties ever!!!”",
+    author: "Rutika Sahare",
     rating: 5,
-    role: "Mixed Media Artist, Indore",
+    role: "11 reviews · 3 photos",
   },
   {
     quote:
-      "“Central India's finest art studio! Yashaswee's workshops are full of practical techniques and deep artistic insights. The guidance is exceptional and materials are 100% authentic.”",
-    author: "Surbhi Chordia",
+      "“We had a lovely experience with an art party. The team was warm, well-coordinated and did a great job of guiding the children through making their moon lamps. The activity was fun, well organised, and the children were happy with what they created. A wonderful experience!”",
+    author: "Fleur Samson",
     rating: 5,
-    role: "Resin & Decoupage Creator",
+    role: "Local Guide · 5 reviews",
   },
   {
     quote:
-      "“Attended the offline workshop at their Chandralok Colony studio. Yashaswee Ma'am personally guides every single step. The complete DIY kits provided had everything needed!”",
-    author: "Anjali Agrawal",
+      "“Had a wonderful experience celebrating my son’s birthday at the anu art & craft studio! The arrangements were lovely, the activities were engaging, and the kids had a great time. The staff was friendly and helpful throughout. Highly recommended for a fun and creative birthday party!🥳”",
+    author: "Priya Tiwari",
     rating: 5,
-    role: "Lippan Art Workshop Student",
+    role: "12 photos",
   },
   {
     quote:
-      "“The best one-stop store for all crafting materials in Indore. The staff is so polite and prompt, and parcel delivery is super swift. Truly grateful to have this creative space.”",
-    author: "Dr. Meenakshi Kulkarni",
+      "“I am connected with Anu di since long time....I have purchased many art items, learned many techniques from her....she is best at everything....her teaching skills are simple for anyone to understand.....thanks Ma'am”",
+    author: "rounak jain",
     rating: 5,
-    role: "Studio Customer & Crafter",
+    role: "8 reviews",
   },
   {
     quote:
-      "“Extremely inspiring atmosphere and phenomenal collection of art mediums. Whether you are into fluid art, alcohol inks, or mixed media, Yashaswee Ma'am's studio has it all.”",
-    author: "Divya Rathore",
+      "“Purchase many craft materials, they are of top quality. Loved them😍”",
+    author: "Sheetal Jain",
     rating: 5,
-    role: "Fine Arts Enthusiast",
+    role: "3 reviews",
   },
   {
     quote:
-      "“Ordered online through their catalogue and got prompt assistance on WhatsApp. Every mold, resin bottle, and MDF base arrived safely packed. 10/10 experience!”",
-    author: "Ritika Solanki",
+      "“Very happy with my purchases from Anu art and craft. High quality MDF and diy kits. Prompt delivery and very good shopping experience. Highly recommend.”",
+    author: "Sangeetha Banerjee",
     rating: 5,
-    role: "Verified Crafting Client",
+    role: "Local Guide · 20 reviews · 17 photos",
+  },
+  {
+    quote:
+      "“Finest store with super quality multiple art n craft products under 1 roof. Yashaswee, an amazing creative owner with great team. Quick response n helpful team.”",
+    author: "Avika's Art n Craft by Swati",
+    rating: 5,
+    role: "3 reviews",
   },
 ]
 
@@ -1083,85 +1090,6 @@ export function AnuArtsTemplate({
       </section>
 
       {/* ========================================================= */}
-      {/* PROMO SPOTLIGHT: Experience Anu Arts Studio in Action      */}
-      {/* ========================================================= */}
-      <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="rounded-3xl bg-gradient-to-br from-purple-900 via-[#7c2d8a] via-[#5b1f68] to-stone-950 p-6 sm:p-10 lg:p-12 text-white shadow-xl relative overflow-hidden">
-          {/* Ambient glows */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
-            {/* Promo Video Reel (5 cols) */}
-            <div className="lg:col-span-5 flex justify-center">
-              <StudioPromoVideo
-                compact
-                videoUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472117/anuarts.vid2_1_qw8cpb.mp4"
-                posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472117/anuarts.vid2_1_qw8cpb.jpg"
-                title="Behind the Craft at Anu Arts"
-                subtitle="Live workshop vibes, masterclass demonstrations & authentic supplies in Indore"
-              />
-            </div>
-
-            {/* Narrative & Highlights (7 cols) */}
-            <div className="lg:col-span-7 space-y-5 text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-amber-300 text-xs font-bold tracking-widest uppercase border border-white/20">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>STUDIO IN ACTION • WATCH PROMO</span>
-              </div>
-
-              <h3 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                Watch the Magic of <br />
-                <span className="text-amber-300 italic">Anu Arts &amp; Craft Studio</span>
-              </h3>
-
-              <p className="text-stone-200 text-sm sm:text-base leading-relaxed">
-                Step inside Central India&apos;s most beloved art destination! Whether you want to master Resin Art ocean ripples, sculpt traditional Lippan mirror motifs, or pick up premium DIY kits and craft supplies, experience firsthand the inspiring energy nurtured by master artist Yashaswee Sanghawi.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3.5">
-                  <p className="text-amber-300 font-bold text-xs uppercase">Interactive Classes</p>
-                  <p className="text-purple-150 text-[11px] mt-1">Beginner-friendly offline &amp; online sessions.</p>
-                </div>
-                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3.5">
-                  <p className="text-pink-300 font-bold text-xs uppercase">All Materials Included</p>
-                  <p className="text-purple-150 text-[11px] mt-1">Top-grade resin, mirrors, paints &amp; tools.</p>
-                </div>
-                <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3.5">
-                  <p className="text-amber-200 font-bold text-xs uppercase">Central Indore Location</p>
-                  <p className="text-purple-150 text-[11px] mt-1">30, Chandralok Colony, Indore (MP).</p>
-                </div>
-              </div>
-
-              <div className="pt-2 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onOpenBookClass) onOpenBookClass("Studio Masterclass")
-                    else setIsBookModalOpen(true)
-                  }}
-                  className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 text-xs sm:text-sm font-bold px-6 py-3 rounded-full shadow-lg transition-all hover:scale-105 cursor-pointer"
-                >
-                  Book a Workshop Seat
-                </button>
-
-                <a
-                  href="https://wa.me/919425356009?text=Hi%20Anu%20Arts%2C%20I%20watched%20the%20studio%20promo%20video%20and%20want%20to%20know%20more%20about%20your%20classes%20and%20supplies!"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold px-5 py-3 rounded-full shadow-md transition-all hover:scale-105 cursor-pointer"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  <span>Chat on WhatsApp</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================= */}
       {/* SECTION 4: "What Our Students Say" (TESTIMONIALS)         */}
       {/* ========================================================= */}
       <section className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -1226,14 +1154,26 @@ export function AnuArtsTemplate({
                 </p>
 
                 {/* Author & Star Rating */}
-                <div className="pt-2 border-t border-pink-50 space-y-1.5">
-                  <div className="font-serif font-bold text-stone-900 text-sm">
-                    – {item.author}
+                <div className="pt-3 border-t border-pink-100/80 space-y-2">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <div className="font-serif font-bold text-stone-900 text-sm">
+                      {item.author}
+                    </div>
+                    {item.role && (
+                      <span className="text-[10px] text-stone-400 font-medium shrink-0">
+                        {item.role}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(item.rating)].map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                    ))}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-amber-500">
+                      {[...Array(item.rating)].map((_, i) => (
+                        <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 inline-flex items-center gap-1">
+                      <span>★</span> Google Review
+                    </span>
                   </div>
                 </div>
               </div>

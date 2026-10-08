@@ -71,9 +71,14 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a href="/#workshops-section" className="hover:text-[#7c2d8a] transition-colors">
+                <Link href="/workshops" className="hover:text-[#7c2d8a] transition-colors">
                   Workshops
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/tutorials" className="hover:text-[#7c2d8a] transition-colors">
+                  Tutorials &amp; Guides
+                </Link>
               </li>
               <li>
                 <Link href="/shop" className="hover:text-[#7c2d8a] transition-colors">

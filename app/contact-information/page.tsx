@@ -100,7 +100,7 @@ export default function ContactInformationPage() {
                   </div>
                   <div className="pt-2 flex justify-between gap-2">
                     <span className="text-stone-500 font-medium">Proprietor:</span>
-                    <span className="font-semibold text-stone-900 text-right">YASHASWEE SANGHAWI</span>
+                    <span className="font-semibold text-stone-900 text-right">YASHASWEE SANGHAVI</span>
                   </div>
                   <div className="pt-2 flex justify-between gap-2">
                     <span className="text-stone-500 font-medium">Jurisdiction:</span>
@@ -195,7 +195,7 @@ export default function ContactInformationPage() {
               
               <div className="pt-2 border-t border-stone-200 text-xs text-stone-600">
                 <span className="font-bold text-stone-900">Grievance &amp; Escalation Officer: </span>
-                YASHASWEE SANGHAWI, 30, Chandralok Colony, Indore, MP 452001. Email: <a href="mailto:anuarts005@gmail.com" className="text-[#7c2d8a] font-semibold underline">anuarts005@gmail.com</a>. Grievances are acknowledged within 24 hours and redressed within 15 business days.
+                YASHASWEE SANGHAVI, 30, Chandralok Colony, Indore, MP 452001. Email: <a href="mailto:anuarts005@gmail.com" className="text-[#7c2d8a] font-semibold underline">anuarts005@gmail.com</a>. Grievances are acknowledged within 24 hours and redressed within 15 business days.
               </div>
             </div>
 
@@ -217,7 +217,7 @@ export default function ContactInformationPage() {
                   </div>
                   <h4 className="font-serif font-bold text-stone-900 text-base">Message Sent Successfully!</h4>
                   <p className="text-xs text-stone-600 max-w-md mx-auto">
-                    Thank you for reaching out to Anu Art &amp; Craft Studio. YASHASWEE SANGHAWI and our team will get back to you shortly.
+                    Thank you for reaching out to Anu Art &amp; Craft Studio. YASHASWEE SANGHAVI and our team will get back to you shortly.
                   </p>
                   <button
                     type="button"

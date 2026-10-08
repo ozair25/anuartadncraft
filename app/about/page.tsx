@@ -51,7 +51,7 @@ export default function AboutPage() {
               Fueling Creativity for <span className="text-amber-300 italic">Every Artist</span>
             </h1>
             <p className="text-sm sm:text-base text-purple-100 max-w-2xl mx-auto font-medium">
-              Led by proprietor and master artist Yashaswee Sanghawi, Anu Arts &amp; Craft Studio is Central India&apos;s sanctuary for fine art education, curated premium materials, and heartfelt craftsmanship.
+              Led by proprietor and master artist Yashaswee Sanghavi, Anu Arts &amp; Craft Studio is Central India&apos;s sanctuary for fine art education, curated premium materials, and heartfelt craftsmanship.
             </p>
           </div>
         </section>
@@ -169,7 +169,7 @@ export default function AboutPage() {
                 </h2>
 
                 <p className="text-sm sm:text-base text-purple-100 leading-relaxed font-normal">
-                  Watch the magic unfold! Located at 30, Chandralok Colony in Indore, Anu Arts &amp; Craft Studio is a thriving community hub where curiosity turns into mastery. From masterclasses with Yashaswee Sanghawi to curated DIY kits and top-grade resin and decoupage essentials, every corner inspires your next masterpiece.
+                  Watch the magic unfold! Located at 30, Chandralok Colony in Indore, Anu Arts &amp; Craft Studio is a thriving community hub where curiosity turns into mastery. From masterclasses with Yashaswee Sanghavi to curated DIY kits and top-grade resin and decoupage essentials, every corner inspires your next masterpiece.
                 </p>
 
                 {/* Highlights Grid */}

@@ -239,7 +239,7 @@ export default function PrivacyPolicyPage() {
                 In compliance with the Information Technology Act, 2000 and the DPDP Act, 2023, the details of our Data Grievance Officer are:
               </p>
               <div className="rounded-xl border border-stone-200 bg-stone-50 p-4 text-xs space-y-1">
-                <p className="font-bold text-stone-900">YASHASWEE SANGHAWI (Proprietor &amp; Grievance Officer)</p>
+                <p className="font-bold text-stone-900">YASHASWEE SANGHAVI (Proprietor &amp; Grievance Officer)</p>
                 <p>Anu Art &amp; Craft Studio</p>
                 <p>30, Chandralok Colony, Khajrana Main Road, Indore, Madhya Pradesh 452001, India</p>
                 <p>Email: <a href="mailto:anuarts005@gmail.com" className="text-[#7c2d8a] font-bold underline">anuarts005@gmail.com</a></p>

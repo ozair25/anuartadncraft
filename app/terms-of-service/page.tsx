@@ -184,7 +184,7 @@ export default function TermsOfServicePage() {
                 All content published on this website, including but not limited to brand logos, trademarks, artwork photographs, instructional articles, workshop video teasers, design templates, and software code, is the exclusive intellectual property of <strong>Anu Art &amp; Craft Studio</strong> and protected under Indian and international copyright laws.
               </p>
               <p>
-                No portion of this website or our creative curricula may be reproduced, duplicated, copied, sold, resold, or exploited for commercial purposes without express written permission from YASHASWEE SANGHAWI.
+                No portion of this website or our creative curricula may be reproduced, duplicated, copied, sold, resold, or exploited for commercial purposes without express written permission from YASHASWEE SANGHAVI.
               </p>
             </section>
 
