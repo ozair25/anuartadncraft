@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
@@ -64,6 +65,7 @@ export const diyKitCategories = [
     title: "Candle Making Kits",
     desc: "Complete DIY kits with pure soy wax, soothing aromas, cotton wicks & aesthetic jars.",
     icon: Flame,
+    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791483128/DIY_Candle_Making_Kit_Collection_o6v40a.png",
     iconBg: "bg-amber-100 text-amber-700 border border-amber-200/60",
     badgeBg: "from-amber-500/20 via-orange-400/10 to-transparent",
   },
@@ -72,6 +74,7 @@ export const diyKitCategories = [
     title: "Resin Art Kits",
     desc: "Crystal epoxy ocean waves, glossy geode coasters, art trays & preservation materials.",
     icon: Sparkles,
+    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791485871/Resin_Craft_Kits_and_Floral_Creations_mgnlho.png",
     iconBg: "bg-purple-100 text-[#7c2d8a] border border-purple-200/60",
     badgeBg: "from-purple-500/20 via-purple-400/10 to-transparent",
   },
@@ -80,6 +83,7 @@ export const diyKitCategories = [
     title: "Mandala Art Kits",
     desc: "Dotting tools, pre-marked MDF boards, vibrant acrylic paints & practice sheets.",
     icon: CircleDot,
+    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791485787/Vibrant_Mandala_Craft_Kit_Showcase_wr7jl5.png",
     iconBg: "bg-pink-100 text-[#d92672] border border-pink-200/60",
     badgeBg: "from-pink-500/20 via-pink-400/10 to-transparent",
   },
@@ -88,6 +92,7 @@ export const diyKitCategories = [
     title: "Flower Making Kits",
     desc: "Fine Italian crepe papers, floral wire, shaping tools & templates for lifelike everlasting blooms.",
     icon: Flower2,
+    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791483127/i_craft_Chenille_Stems_Collection_kuqwxy.png",
     iconBg: "bg-rose-100 text-rose-700 border border-rose-200/60",
     badgeBg: "from-rose-500/20 via-pink-400/10 to-transparent",
   },
@@ -96,6 +101,7 @@ export const diyKitCategories = [
     title: "Kids Paint Kits",
     desc: "Exciting, non-toxic guided art kits with canvas boards, washable paints & creative brushes.",
     icon: Smile,
+    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791485787/Colourful_Kids_DIY_Craft_Kit_Collage_ngsgkt.png",
     iconBg: "bg-gradient-to-br from-amber-100 to-orange-100 text-amber-800 border border-amber-200/60",
     badgeBg: "from-amber-500/20 via-orange-400/10 to-transparent",
   },
@@ -615,7 +621,7 @@ export function AnuArtsTemplate({
                       <span className="text-base font-black text-stone-900">
                         ₹{prod.price}
                       </span>
-                      {prod.originalPrice && (
+                      {Boolean(prod.originalPrice && prod.originalPrice > prod.price) && (
                         <span className="text-xs text-stone-400 line-through ml-2">
                           ₹{prod.originalPrice}
                         </span>
@@ -696,10 +702,23 @@ export function AnuArtsTemplate({
 
                 {/* Top Watercolor Halo / Icon Badge */}
                 <div className="relative mb-5 flex items-center justify-center">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-pink-100/60 via-purple-100/50 to-amber-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <div className={`w-14 h-14 rounded-full ${cat.iconBg} flex items-center justify-center shadow-xs`}>
-                      <Icon className="h-7 w-7" />
-                    </div>
+                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-pink-100/70 via-purple-100/60 to-amber-100/60 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-2xs">
+                    {"imageUrl" in cat && cat.imageUrl ? (
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white border-2 border-pink-200/80 p-1 flex items-center justify-center shadow-md overflow-hidden relative group-hover:border-[#7c2d8a]/40 transition-colors">
+                        <Image
+                          src={cat.imageUrl}
+                          alt={cat.title}
+                          width={112}
+                          height={112}
+                          className="w-full h-full object-contain rounded-full group-hover:scale-110 transition-transform duration-300"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                    ) : (
+                      <div className={`w-22 h-22 sm:w-24 sm:h-24 rounded-full ${cat.iconBg} flex items-center justify-center shadow-xs`}>
+                        <Icon className="h-10 w-10 sm:h-11 sm:w-11" />
+                      </div>
+                    )}
                   </div>
                 </div>
 

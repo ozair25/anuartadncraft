@@ -101,7 +101,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ slu
                     </Link>
                     <div className="flex items-center justify-between">
                       <p className="font-serif text-lg font-black text-primary">₹{p.price}</p>
-                      {p.originalPrice && (
+                      {Boolean(p.originalPrice && p.originalPrice > p.price) && (
                         <span className="text-xs text-muted-foreground line-through">₹{p.originalPrice}</span>
                       )}
                     </div>

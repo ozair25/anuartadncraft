@@ -99,9 +99,11 @@ export function normalizeShopifyProduct(node: ShopifyProductNode): Product {
   const rawCompareAtPrice =
     node.compareAtPriceRange?.minVariantPrice?.amount ||
     primaryVariantNode?.compareAtPrice?.amount
-  const originalPrice = rawCompareAtPrice
+  const parsedCompareAt = rawCompareAtPrice
     ? Math.round(parseFloat(rawCompareAtPrice))
     : undefined
+  const originalPrice =
+    parsedCompareAt && parsedCompareAt > price ? parsedCompareAt : undefined
 
   let discount: string | undefined = undefined
   if (originalPrice && originalPrice > price) {
@@ -164,9 +166,11 @@ export function normalizeShopifyProduct(node: ShopifyProductNode): Product {
     node.variants?.edges?.map((e) => {
       const v = e.node!
       const vPrice = Math.round(parseFloat(v.price?.amount || "0")) || price
-      const vOrig = v.compareAtPrice
+      const parsedVOrig = v.compareAtPrice
         ? Math.round(parseFloat(v.compareAtPrice.amount))
         : undefined
+      const vOrig =
+        parsedVOrig && parsedVOrig > vPrice ? parsedVOrig : undefined
       return {
         id: v.id,
         title: v.title,

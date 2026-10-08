@@ -169,9 +169,11 @@ function mapShopifyCartToCartItems(cart: any): CartItem[] {
       }
     }
     const priceNum = Math.round(parseFloat(m?.price?.amount || "0"))
-    const originalPriceNum = m?.compareAtPrice?.amount
+    const parsedOriginal = m?.compareAtPrice?.amount
       ? Math.round(parseFloat(m.compareAtPrice.amount))
       : undefined
+    const originalPriceNum =
+      parsedOriginal && parsedOriginal > priceNum ? parsedOriginal : undefined
 
     const product: Product = {
       id: m?.product?.id || m?.id || line.id,

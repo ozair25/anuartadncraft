@@ -317,7 +317,7 @@ export function ProductDetailClient({
                 <span className="font-serif text-3xl font-black text-[#7c2d8a]">
                   ₹{currentPrice}
                 </span>
-                {currentOriginalPrice && (
+                {Boolean(currentOriginalPrice && currentOriginalPrice > currentPrice) && (
                   <span className="text-base text-stone-400 line-through">
                     ₹{currentOriginalPrice}
                   </span>

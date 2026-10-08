@@ -355,7 +355,7 @@ export default function WorkshopsPage() {
                         <span className="font-serif text-xl font-black text-[#7c2d8a]">
                           ₹{ws.price}
                         </span>
-                        {ws.originalPrice && (
+                        {Boolean(ws.originalPrice && ws.originalPrice > ws.price) && (
                           <span className="text-xs text-stone-400 line-through">
                             ₹{ws.originalPrice}
                           </span>

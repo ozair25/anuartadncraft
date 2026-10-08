@@ -996,7 +996,7 @@ export function ShopClient({
                               <span className="font-serif text-base sm:text-lg font-black text-[#7c2d8a]">
                                 ₹{p.price}
                               </span>
-                              {p.originalPrice && p.originalPrice > p.price && (
+                              {Boolean(p.originalPrice && p.originalPrice > p.price) && (
                                 <span className="text-[11px] text-stone-400 line-through">
                                   ₹{p.originalPrice}
                                 </span>
