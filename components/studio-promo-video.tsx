@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Play } from "lucide-react"
+import { useState, useRef, useEffect, useCallback } from "react"
+import { Play, Volume2, VolumeX } from "lucide-react"
 
 const DEFAULT_VIDEO_URL =
   "https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.mp4"
@@ -29,39 +29,52 @@ export function StudioPromoVideo({
   const containerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(true)
+  const [isMuted, setIsMuted] = useState(true)
   const isInViewRef = useRef(false)
-  const userInteractedRef = useRef(false)
+  const userWantsAudioRef = useRef(false)
 
-  // Listen for initial user interaction (click/touch/scroll) to unlock audio playback in browser
+  // Autoplay muted on mount (standard browser compliance)
   useEffect(() => {
-    const handleUserGesture = () => {
-      userInteractedRef.current = true
-      // If currently on this screen in viewport, activate sound now!
-      if (isInViewRef.current && videoRef.current) {
-        videoRef.current.muted = false
-        videoRef.current.volume = 1.0
-        if (videoRef.current.paused) {
-          videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {})
-        }
-      }
+    const video = videoRef.current
+    if (!video) return
+
+    video.muted = true
+    video.defaultMuted = true
+    const playPromise = video.play()
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false))
     }
+  }, [videoUrl])
 
-    window.addEventListener("click", handleUserGesture, { passive: true })
-    window.addEventListener("touchstart", handleUserGesture, { passive: true })
-    window.addEventListener("keydown", handleUserGesture, { passive: true })
-    window.addEventListener("scroll", handleUserGesture, { passive: true })
+  // Single Mute / Unmute Icon Toggle Handler
+  const toggleMute = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const video = videoRef.current
+    if (!video) return
 
-    return () => {
-      window.removeEventListener("click", handleUserGesture)
-      window.removeEventListener("touchstart", handleUserGesture)
-      window.removeEventListener("keydown", handleUserGesture)
-      window.removeEventListener("scroll", handleUserGesture)
+    if (video.muted || video.volume === 0) {
+      video.muted = false
+      video.defaultMuted = false
+      video.volume = 1.0
+      setIsMuted(false)
+      userWantsAudioRef.current = true
+      if (video.paused) {
+        video.play().then(() => setIsPlaying(true)).catch(() => {})
+      }
+    } else {
+      video.muted = true
+      video.defaultMuted = true
+      setIsMuted(true)
+      userWantsAudioRef.current = false
     }
   }, [])
 
   // Viewport intersection observer:
-  // Sound is audible ONLY when the user is on this very screen!
-  // Upon scrolling away, it IMMEDIATELY mutes!
+  // When scrolling away, IMMEDIATELY mute!
+  // When scrolling back into screen, restore audio if user turned sound on.
   useEffect(() => {
     const container = containerRef.current
     const video = videoRef.current
@@ -70,35 +83,26 @@ export function StudioPromoVideo({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Consider "on screen" if >= 30% visible in viewport
           const isOnScreen = entry.isIntersecting && entry.intersectionRatio >= 0.3
           isInViewRef.current = isOnScreen
 
           if (isOnScreen) {
-            // USER IS ON THIS VERY SCREEN:
-            // Ensure video is playing
+            // Video is visible on screen
             if (video.paused) {
               video.play().then(() => setIsPlaying(true)).catch(() => {})
             }
 
-            // Unmute sound
-            video.muted = false
-            video.volume = 1.0
-
-            // If browser autoplay policy blocks unmuted audio before user interaction,
-            // fall back to muted until the first gesture (handled by the window listener)
-            const playPromise = video.play()
-            if (playPromise !== undefined) {
-              playPromise.catch(() => {
-                video.muted = true
-                video.play().catch(() => {})
-              })
+            // Restore sound if user turned sound on
+            if (userWantsAudioRef.current) {
+              video.muted = false
+              video.volume = 1.0
+              setIsMuted(false)
             }
           } else {
-            // USER HAS SCROLLED AWAY:
-            // Immediately mute sound!
+            // Scrolled away from screen: IMMEDIATELY MUTE!
             video.muted = true
             video.volume = 0
+            setIsMuted(true)
           }
         })
       },
@@ -109,15 +113,17 @@ export function StudioPromoVideo({
 
     observer.observe(container)
 
-    // Handle tab switching / page visibility: mute if user changes tabs
+    // Handle tab switching / page visibility
     const handleVisibilityChange = () => {
       if (document.hidden) {
         if (videoRef.current) {
           videoRef.current.muted = true
+          setIsMuted(true)
         }
-      } else if (isInViewRef.current && videoRef.current) {
+      } else if (isInViewRef.current && userWantsAudioRef.current && videoRef.current) {
         videoRef.current.muted = false
         videoRef.current.volume = 1.0
+        setIsMuted(false)
       }
     }
 
@@ -133,13 +139,7 @@ export function StudioPromoVideo({
     const video = videoRef.current
     if (!video) return
 
-    userInteractedRef.current = true
-
     if (video.paused) {
-      if (isInViewRef.current) {
-        video.muted = false
-        video.volume = 1.0
-      }
       video.play().then(() => setIsPlaying(true)).catch(() => {})
     } else {
       video.pause()
@@ -173,10 +173,26 @@ export function StudioPromoVideo({
           poster={posterUrl}
           playsInline
           loop
+          muted={isMuted}
           autoPlay
           preload="metadata"
           className="w-full h-full object-cover object-center"
         />
+
+        {/* ONLY ONE OPTION: An Icon to Mute and Unmute in Top-Right Corner */}
+        <button
+          onClick={toggleMute}
+          type="button"
+          className="absolute top-3 right-3 sm:top-3.5 sm:right-3.5 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/65 hover:bg-black/85 backdrop-blur-md flex items-center justify-center text-white border border-white/20 shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer pointer-events-auto"
+          title={isMuted ? "Unmute sound" : "Mute sound"}
+          aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+        >
+          {isMuted ? (
+            <VolumeX className="w-4 h-4 text-white" />
+          ) : (
+            <Volume2 className="w-4 h-4 text-white" />
+          )}
+        </button>
 
         {/* Play Icon Overlay Feedback when paused */}
         {!isPlaying && (
