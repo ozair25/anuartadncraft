@@ -44,6 +44,7 @@ export function BrandLogo({
   return (
     <Link
       href="/"
+      prefetch={true}
       className={`group inline-flex items-center select-none transition-transform hover:scale-[1.02] duration-200 ${className}`}
       aria-label="Anu Arts & Craft Home"
     >

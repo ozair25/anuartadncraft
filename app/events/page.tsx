@@ -199,6 +199,8 @@ export default function EventsPage() {
                 <img
                   src={event.image}
                   alt={event.title}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold bg-[#7c2d8a] text-white shadow-xs">

@@ -36,6 +36,10 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
             alt="Anu Arts & Craft Studio Hero Banner"
             className="w-full h-auto max-h-[85vh] sm:max-h-[720px] object-cover object-center block"
             referrerPolicy="no-referrer"
+            loading="eager"
+            // @ts-expect-error React 19 fetchPriority
+            fetchPriority="high"
+            decoding="async"
             onError={(e) => {
               e.currentTarget.onerror = null
               e.currentTarget.src = "/images/hero-banner-bg.png"
@@ -44,13 +48,13 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
         </picture>
       </Link>
 
-      {/* Hero CTA Buttons - placed between Hero Background and Special Welcome Offer */}
-      <div className="relative z-10 w-full pt-4 pb-6 sm:pt-7 sm:pb-8 lg:pt-9 lg:pb-12 px-4 bg-gradient-to-b from-[#fffbf5] via-[#fff8fc] to-[#fffaff]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 md:gap-6">
+      {/* Hero CTA Buttons - placed directly below Hero Banner one by one in mobile view */}
+      <div className="relative z-10 w-full pt-3 pb-3 sm:pt-7 sm:pb-8 lg:pt-9 lg:pb-12 px-4 bg-gradient-to-b from-[#fffbf5] via-[#fff8fc] to-[#fffaff]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-5 md:gap-6">
           <Link
             href="/workshops"
             prefetch={true}
-            className="w-full max-w-xs sm:max-w-none sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#250a2e] hover:from-[#351240] hover:via-[#521b63] hover:to-[#2c0e35] text-[#f5e2b3] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border-[1.5px] border-[#dfb76c] hover:border-[#ebd59b] shadow-[0_4px_16px_rgba(44,14,53,0.25)] hover:shadow-[0_6px_24px_rgba(223,183,108,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
+            className="w-full max-w-[320px] sm:max-w-none sm:w-auto min-h-[48px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#250a2e] hover:from-[#351240] hover:via-[#521b63] hover:to-[#2c0e35] text-[#f5e2b3] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border-[1.5px] border-[#dfb76c] hover:border-[#ebd59b] shadow-[0_4px_16px_rgba(44,14,53,0.25)] hover:shadow-[0_6px_24px_rgba(223,183,108,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
           >
             <span>EXPLORE WORKSHOPS</span>
             <ArrowRight className="h-4 w-4 text-[#f5e2b3] group-hover:translate-x-1 transition-transform" />
@@ -58,7 +62,7 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
           <Link
             href="/shop"
             prefetch={true}
-            className="w-full max-w-xs sm:max-w-none sm:w-auto min-h-[46px] inline-flex items-center justify-center gap-2.5 bg-[#fcf5eb] hover:bg-white text-[#3b1548] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#eddcc4] hover:border-[#dfc8a7] shadow-[0_4px_14px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
+            className="w-full max-w-[320px] sm:max-w-none sm:w-auto min-h-[48px] inline-flex items-center justify-center gap-2.5 bg-[#fcf5eb] hover:bg-white text-[#3b1548] font-serif font-semibold text-xs sm:text-sm uppercase tracking-[0.18em] px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#eddcc4] hover:border-[#dfc8a7] shadow-[0_4px_14px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer group whitespace-nowrap touch-manipulation"
           >
             <span>VISIT OUR STORE</span>
             <Store className="h-4 w-4 stroke-[1.8] text-[#3b1548] group-hover:scale-105 transition-transform" />

@@ -7,11 +7,11 @@ export const metadata: Metadata = {
   description: "Browse premium craft supplies, tools, resin art, MDF bases, paints, and DIY kits from Anu Art & Craft Studio.",
 }
 
-export const dynamic = "force-dynamic"
+export const revalidate = 60
 
 export default async function ShopPage() {
   const [initialProducts, initialCollections] = await Promise.all([
-    getAllProducts().catch(() => []),
+    getAllProducts({ first: 100 }).catch(() => []),
     getCollections().catch(() => []),
   ])
 

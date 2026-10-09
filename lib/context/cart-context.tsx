@@ -515,10 +515,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }
 
   const redirectToCheckout = () => {
-    if (checkoutUrl) {
-      window.location.href = checkoutUrl
-    } else {
-      window.location.href = "/cart"
+    if (typeof window !== "undefined") {
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl
+      } else {
+        window.location.href = "/cart"
+      }
     }
   }
 

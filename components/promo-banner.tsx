@@ -19,8 +19,7 @@ export function PromoBanner() {
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-2 sm:mt-5 lg:mt-8 mb-8 sm:mb-12 z-20">
       <div
-        className="relative rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#7c2d8a] text-white p-4 sm:p-5 lg:p-6 shadow-xl border border-pink-300/30 overflow-hidden mt-[33px]"
-        style={{ marginTop: "33px" }}
+        className="relative rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#2c0e35] via-[#481757] to-[#7c2d8a] text-white p-4 sm:p-5 lg:p-6 shadow-xl border border-pink-300/30 overflow-hidden"
       >
         {/* Subtle Ambient Glow */}
         <div className="absolute top-0 right-0 -mr-12 -mt-12 w-48 h-48 bg-amber-400/15 rounded-full blur-2xl pointer-events-none" />

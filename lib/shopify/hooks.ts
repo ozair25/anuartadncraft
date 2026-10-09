@@ -117,6 +117,13 @@ export function useShopifyProduct(handleOrSlug: string, initialProduct?: Product
     if (!handleOrSlug) return
     let isMounted = true
 
+    // If initialProduct is provided and matches the requested handle or slug, use it and avoid redundant fetch
+    if (initialProduct && (initialProduct.slug === handleOrSlug || initialProduct.id === handleOrSlug)) {
+      setProduct(initialProduct)
+      setLoading(false)
+      return
+    }
+
     async function fetchProduct() {
       try {
         if (!initialProduct) {

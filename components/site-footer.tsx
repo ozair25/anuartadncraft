@@ -66,32 +66,27 @@ export function SiteFooter() {
             </h3>
             <ul className="space-y-2 text-xs sm:text-sm font-medium text-stone-600">
               <li>
-                <Link href="/about" className="hover:text-[#7c2d8a] transition-colors">
+                <Link href="/about" prefetch={true} className="hover:text-[#7c2d8a] transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/workshops" className="hover:text-[#7c2d8a] transition-colors">
+                <Link href="/workshops" prefetch={true} className="hover:text-[#7c2d8a] transition-colors">
                   Workshops
                 </Link>
               </li>
               <li>
-                <Link href="/tutorials" className="hover:text-[#7c2d8a] transition-colors">
+                <Link href="/tutorials" prefetch={true} className="hover:text-[#7c2d8a] transition-colors">
                   Tutorials &amp; Guides
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="hover:text-[#7c2d8a] transition-colors">
+                <Link href="/shop" prefetch={true} className="hover:text-[#7c2d8a] transition-colors">
                   DIY Kits &amp; Supplies
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="hover:text-[#7c2d8a] transition-colors">
-                  Shop
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-[#7c2d8a] transition-colors">
+                <Link href="/contact" prefetch={true} className="hover:text-[#7c2d8a] transition-colors">
                   Contact Us
                 </Link>
               </li>

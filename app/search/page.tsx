@@ -60,7 +60,7 @@ function SearchResultsContent() {
                 className="group flex flex-col overflow-hidden rounded-lg border border-border/60 bg-card shadow-[3px_3px_0_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1"
               >
                 <div className="relative aspect-square overflow-hidden bg-secondary/40">
-                  <Link href={`/product/${p.slug}`}>
+                  <Link href={`/product/${p.slug}`} prefetch={true}>
                     <img
                       src={p.thumbnail}
                       alt={p.name}
@@ -81,7 +81,7 @@ function SearchResultsContent() {
                   </button>
                 </div>
                 <div className="flex flex-1 flex-col gap-2 p-3">
-                  <Link href={`/product/${p.slug}`}>
+                  <Link href={`/product/${p.slug}`} prefetch={true}>
                     <h3 className="line-clamp-2 min-h-[2.5rem] text-xs font-semibold leading-snug text-foreground hover:text-primary transition-colors">
                       {p.name}
                     </h3>

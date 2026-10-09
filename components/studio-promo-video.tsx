@@ -174,9 +174,8 @@ export function StudioPromoVideo({
           playsInline
           loop
           muted={isMuted}
-          autoPlay
-          preload="metadata"
-          className="w-full h-full object-cover object-center"
+          preload="none"
+          className="w-full h-full object-contain object-center bg-black"
         />
 
         {/* ONLY ONE OPTION: An Icon to Mute and Unmute in Top-Right Corner */}

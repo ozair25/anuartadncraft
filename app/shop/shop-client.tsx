@@ -104,6 +104,12 @@ export function ShopClient({
   const [mobileCategorySearch, setMobileCategorySearch] = useState<string>("")
   const [expandedMobileCategory, setExpandedMobileCategory] = useState<string | null>(null)
   const [mounted, setMounted] = useState<boolean>(false)
+  const [visibleCount, setVisibleCount] = useState<number>(24)
+
+  // Reset pagination on filter or category change for high performance
+  useEffect(() => {
+    setVisibleCount(24)
+  }, [selectedCategory, selectedSubcategory, selectedChildSubcategory, searchQuery, sortBy, priceRange])
 
   // Track hydration mount for react portal
   useEffect(() => {
@@ -905,38 +911,42 @@ export function ShopClient({
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-3.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredProducts.map((p) => {
-                    const inWishlist = isInWishlist(p.id)
-                    const productUrl = `/product/${encodeURIComponent(p.slug)}`
-                    return (
-                      <div
-                        key={p.id}
-                        className="group relative flex flex-col overflow-hidden rounded-2xl border border-pink-100/80 bg-white shadow-2xs hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                      >
-                        {/* Stretched Link for 100% reliable instant navigation on entire card */}
-                        <Link
-                          href={productUrl}
-                          className="absolute inset-0 z-1 cursor-pointer"
-                          aria-label={p.name}
-                        />
-
-                        {/* Image & Wishlist Container */}
-                        <div className="relative aspect-square overflow-hidden bg-purple-50/30">
-                          <img
-                            src={
-                              p.thumbnail ||
-                              "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
-                            }
-                            alt={p.name}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null
-                              e.currentTarget.src =
-                                "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
-                            }}
+                <>
+                  <div className="grid grid-cols-2 gap-3.5 sm:gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                    {filteredProducts.slice(0, visibleCount).map((p, idx) => {
+                      const inWishlist = isInWishlist(p.id)
+                      const productUrl = `/product/${encodeURIComponent(p.slug)}`
+                      return (
+                        <div
+                          key={p.id}
+                          className="group relative flex flex-col overflow-hidden rounded-2xl border border-pink-100/80 bg-white shadow-2xs hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                        >
+                          {/* Stretched Link for 100% reliable instant navigation on entire card */}
+                          <Link
+                            href={productUrl}
+                            prefetch={true}
+                            className="absolute inset-0 z-1 cursor-pointer"
+                            aria-label={p.name}
                           />
+
+                          {/* Image & Wishlist Container */}
+                          <div className="relative aspect-square overflow-hidden bg-purple-50/30">
+                            <img
+                              src={
+                                p.thumbnail ||
+                                "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
+                              }
+                              alt={p.name}
+                              loading={idx < 4 ? "eager" : "lazy"}
+                              decoding="async"
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null
+                                e.currentTarget.src =
+                                  "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600&auto=format&fit=crop"
+                              }}
+                            />
 
                           {/* Wishlist Button - elevated above stretched link */}
                           <button
@@ -1023,7 +1033,24 @@ export function ShopClient({
                     )
                   })}
                 </div>
-              )}
+
+                {/* Load More Button for Scalable Rendering */}
+                {filteredProducts.length > visibleCount && (
+                  <div className="mt-8 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setVisibleCount((prev) => prev + 24)}
+                      className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#7c2d8a] to-[#d92672] text-white px-7 py-3 text-xs sm:text-sm font-bold shadow-md hover:opacity-95 active:scale-95 transition-all cursor-pointer"
+                    >
+                      <span>
+                        Load More Art Supplies ({visibleCount} of {filteredProducts.length})
+                      </span>
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
             </div>
           </div>
         </div>

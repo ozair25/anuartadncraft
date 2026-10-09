@@ -108,8 +108,7 @@ export async function shopifyFetch<TData, TVariables = Record<string, unknown>>(
   }
 
   try {
-    const nextOptions = revalidate !== undefined ? { next: { revalidate } } : {}
-    const response = await fetch(config.endpoint, {
+    const fetchInit: RequestInit = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -117,9 +116,17 @@ export async function shopifyFetch<TData, TVariables = Record<string, unknown>>(
         "X-Shopify-Storefront-Access-Token": config.accessToken,
       },
       body: JSON.stringify({ query, variables }),
-      cache,
-      ...nextOptions,
-    })
+      signal: AbortSignal.timeout(8000),
+    }
+
+    if (revalidate !== undefined) {
+      // @ts-expect-error Next.js extended RequestInit
+      fetchInit.next = { revalidate }
+    } else if (cache) {
+      fetchInit.cache = cache
+    }
+
+    const response = await fetch(config.endpoint, fetchInit)
 
     if (!response.ok) {
       const errorText = await response.text()

@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { Product, Collection } from "@/types/ecommerce"
 import { shopifyFetch, getShopifyConfig } from "./client"
 import {
@@ -21,16 +22,71 @@ let cachedCatalog: {
 } | null = null
 
 const CATALOG_CACHE_TTL = 30 * 60 * 1000 // 30 minutes cache
+let isRefreshingCatalog = false
+
+async function refreshFullCatalogInBackground() {
+  if (isRefreshingCatalog) return
+  isRefreshingCatalog = true
+  try {
+    const allProducts: Product[] = []
+    let cursor: string | null = null
+    let hasNextPage = true
+    let safetyLimit = 15
+
+    while (hasNextPage && safetyLimit > 0) {
+      safetyLimit--
+      const response = await shopifyFetch<{
+        products: {
+          pageInfo: {
+            hasNextPage: boolean
+            endCursor: string | null
+          }
+          edges: Array<{
+            node: ShopifyProductNode
+          }>
+        }
+      }>({
+        query: GET_ALL_PRODUCTS_PAGINATED_QUERY,
+        variables: {
+          first: 250,
+          cursor,
+        },
+        revalidate: 180,
+      })
+
+      if (response.errors && response.errors.length > 0) break
+
+      const edges = response.data?.products?.edges || []
+      for (const edge of edges) {
+        allProducts.push(normalizeShopifyProduct(edge.node))
+      }
+
+      hasNextPage = response.data?.products?.pageInfo?.hasNextPage ?? false
+      cursor = response.data?.products?.pageInfo?.endCursor ?? null
+    }
+
+    if (allProducts.length > 0) {
+      cachedCatalog = {
+        products: allProducts,
+        timestamp: Date.now(),
+      }
+    }
+  } catch (err) {
+    console.error("Background catalog refresh failed:", err)
+  } finally {
+    isRefreshingCatalog = false
+  }
+}
 
 /**
  * Fetch all products from Shopify Storefront API with complete pagination.
  * Shopify is the single source of truth for product catalog data.
  */
-export async function getAllProducts(options?: {
+export const getAllProducts = cache(async (options?: {
   query?: string
   first?: number
   fetchAll?: boolean
-}): Promise<Product[]> {
+}): Promise<Product[]> => {
   const config = getShopifyConfig()
   if (!config.isConfigured) {
     if (process.env.NODE_ENV !== "production") {
@@ -71,68 +127,60 @@ export async function getAllProducts(options?: {
     return []
   }
 
-  // Return cached full catalog if fresh
-  if (cachedCatalog && Date.now() - cachedCatalog.timestamp < CATALOG_CACHE_TTL) {
+  // Return cached full catalog if available (stale-while-revalidate)
+  if (cachedCatalog) {
+    const age = Date.now() - cachedCatalog.timestamp
+    if (age > CATALOG_CACHE_TTL) {
+      refreshFullCatalogInBackground()
+    }
     return cachedCatalog.products
   }
 
-  // Paginated fetch to retrieve the full multi-thousand catalog across all 16 categories
-  const allProducts: Product[] = []
-  let cursor: string | null = null
-  let hasNextPage = true
-  let safetyLimit = 15 // Up to 3,750 products (250 per page)
-
-  while (hasNextPage && safetyLimit > 0) {
-    safetyLimit--
-    const response = await shopifyFetch<{
-      products: {
-        pageInfo: {
-          hasNextPage: boolean
-          endCursor: string | null
-        }
-        edges: Array<{
-          node: ShopifyProductNode
-        }>
+  // Fast first page fetch to immediately populate catalog without blocking 15 serial roundtrips
+  const firstPageResponse = await shopifyFetch<{
+    products: {
+      pageInfo: {
+        hasNextPage: boolean
+        endCursor: string | null
       }
-    }>({
-      query: GET_ALL_PRODUCTS_PAGINATED_QUERY,
-      variables: {
-        first: 250,
-        cursor,
-      },
-      revalidate: 180,
-    })
-
-    if (response.errors && response.errors.length > 0) {
-      const errorMsg = response.errors.map((e) => e.message).join("; ")
-      console.error("Shopify GraphQL pagination error:", errorMsg)
-      break
+      edges: Array<{
+        node: ShopifyProductNode
+      }>
     }
+  }>({
+    query: GET_ALL_PRODUCTS_PAGINATED_QUERY,
+    variables: {
+      first: 250,
+      cursor: null,
+    },
+    revalidate: 180,
+  })
 
-    const edges = response.data?.products?.edges || []
-    for (const edge of edges) {
-      allProducts.push(normalizeShopifyProduct(edge.node))
-    }
+  const firstPageEdges = firstPageResponse.data?.products?.edges || []
+  const initialProducts = firstPageEdges.map((edge) => normalizeShopifyProduct(edge.node))
 
-    hasNextPage = response.data?.products?.pageInfo?.hasNextPage ?? false
-    cursor = response.data?.products?.pageInfo?.endCursor ?? null
-  }
-
-  if (allProducts.length > 0) {
+  if (initialProducts.length > 0) {
     cachedCatalog = {
-      products: allProducts,
+      products: initialProducts,
       timestamp: Date.now(),
     }
-    return allProducts
+
+    // If there are more pages, background-populate the rest
+    if (firstPageResponse.data?.products?.pageInfo?.hasNextPage) {
+      refreshFullCatalogInBackground()
+    }
+
+    return initialProducts
   }
 
   return []
-}
+})
 
 /**
  * Fetch a single product by handle/slug from Shopify.
+ * Wrapped with React cache() to deduplicate metadata & page server component requests.
  */
-export async function getProductByHandle(handle: string): Promise<Product | undefined> {
+export const getProductByHandle = cache(async (handle: string): Promise<Product | undefined> => {
   const config = getShopifyConfig()
 
   if (!config.isConfigured) {
@@ -159,15 +207,16 @@ export async function getProductByHandle(handle: string): Promise<Product | unde
 
   // Product not found in Shopify
   return undefined
-}
+})
 
 /**
  * Fetch products in a collection by handle.
+ * Wrapped with React cache() for per-render deduplication.
  */
-export async function getProductsByCollection(
+export const getProductsByCollection = cache(async (
   collectionHandle: string,
   first = 50
-): Promise<Product[]> {
+): Promise<Product[]> => {
   const config = getShopifyConfig()
 
   if (!config.isConfigured) {
@@ -204,12 +253,13 @@ export async function getProductsByCollection(
   }
 
   return []
-}
+})
 
 /**
  * Fetch collections from Shopify.
+ * Wrapped with React cache() for per-render deduplication.
  */
-export async function getCollections(first = 100): Promise<Collection[]> {
+export const getCollections = cache(async (first = 100): Promise<Collection[]> => {
   const config = getShopifyConfig()
 
   if (!config.isConfigured) {
@@ -242,4 +292,4 @@ export async function getCollections(first = 100): Promise<Collection[]> {
   }
 
   return []
-}
+})

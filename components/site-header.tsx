@@ -91,13 +91,17 @@ export function SiteHeader({
     setMounted(true)
   }, [])
 
-  // Track scroll for smooth sticky header styling
+  // Track scroll with requestAnimationFrame throttle to eliminate layout thrashing & scroll jank
   useEffect(() => {
+    let ticking = false
     const handleScroll = () => {
-      if (window.scrollY > 15) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 15
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev))
+          ticking = false
+        })
+        ticking = true
       }
     }
     handleScroll()
@@ -321,6 +325,7 @@ export function SiteHeader({
               <Link
                 key={link.label}
                 href={link.href}
+                prefetch={true}
                 className={`relative py-1.5 transition-colors cursor-pointer ${
                   isActive
                     ? "text-[#7c2d8a] font-bold"
@@ -542,20 +547,20 @@ export function SiteHeader({
 
                     if (item.label === "Shop") {
                       return (
-                        <button
+                        <div
                           key={item.label}
-                          type="button"
-                          onClick={() => {
-                            setMobileOpen(false)
-                            setShopCategoryDrawerOpen(true)
-                          }}
-                          className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation ${
+                          className={`w-full min-h-[44px] px-3.5 py-2 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all ${
                             isCurrent
                               ? "bg-purple-100/90 text-[#7c2d8a] shadow-2xs"
                               : "text-stone-800 hover:bg-purple-50/80 hover:text-[#7c2d8a]"
                           }`}
                         >
-                          <div className="flex items-center gap-3">
+                          <Link
+                            href="/shop"
+                            prefetch={true}
+                            onClick={() => setMobileOpen(false)}
+                            className="flex items-center gap-3 flex-1 py-1"
+                          >
                             <div
                               className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                                 isCurrent
@@ -566,17 +571,26 @@ export function SiteHeader({
                               <Icon className="h-4 w-4" />
                             </div>
                             <span>{item.label}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-[11px] font-semibold text-[#7c2d8a]">
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMobileOpen(false)
+                              setShopCategoryDrawerOpen(true)
+                            }}
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-[#7c2d8a] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-lg border border-purple-200 transition-colors cursor-pointer"
+                          >
                             <span>Categories</span>
-                          </div>
-                        </button>
+                            <ChevronRight className="h-3 w-3" />
+                          </button>
+                        </div>
                       )
                     }
                     return (
                       <Link
                         key={item.label}
                         href={item.href}
+                        prefetch={true}
                         onClick={() => setMobileOpen(false)}
                         className={`w-full min-h-[44px] px-3.5 py-2.5 rounded-xl font-bold flex items-center justify-between text-xs sm:text-sm transition-all cursor-pointer touch-manipulation ${
                           isCurrent

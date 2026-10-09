@@ -676,17 +676,17 @@ export default function TutorialsPage() {
                 </div>
               )}
 
-              {/* TAB 1: VIDEO MASTERCLASS */}
+              {/* TAB 1: VIDEO MASTERCLASS (Native 9:16 Aspect Ratio, No Cropping) */}
               {activeTab === "video" && activeTutorial.videoUrl && (
                 <div className="space-y-4">
-                  <div className="relative rounded-2xl overflow-hidden bg-black aspect-video max-w-3xl mx-auto shadow-xl border border-stone-800">
+                  <div className="relative rounded-3xl overflow-hidden bg-black aspect-[9/16] max-w-[320px] sm:max-w-[380px] mx-auto shadow-2xl border-2 sm:border-4 border-stone-800">
                     <video
                       src={activeTutorial.videoUrl}
                       poster={activeTutorial.posterUrl}
                       controls
                       autoPlay
                       playsInline
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain bg-black"
                     />
                   </div>
                   <p className="text-center text-xs text-stone-500 font-medium">

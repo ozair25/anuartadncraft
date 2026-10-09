@@ -60,9 +60,9 @@ export function TutorialCardVideo({
 
   return (
     <article className="group bg-white rounded-2xl border border-pink-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-300 flex flex-col overflow-hidden">
-      {/* 1. Playable Video Media Header (Replaces static picture) */}
+      {/* 1. Playable Video Media Header (Native 9:16 Aspect Ratio, No Cropping) */}
       <div
-        className="relative aspect-[16/10] overflow-hidden bg-stone-950 select-none cursor-pointer group/media"
+        className="relative aspect-[9/16] overflow-hidden bg-stone-950 select-none cursor-pointer group/media"
         onClick={handleTogglePlay}
         role="region"
         aria-label={`${tutorial.title} video player`}
@@ -74,16 +74,16 @@ export function TutorialCardVideo({
           playsInline
           loop
           muted={isMuted}
-          preload="metadata"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover/media:scale-102"
+          preload="none"
+          className="w-full h-full object-contain bg-black"
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />
 
-        {/* Ambient Dark Gradient for Legibility */}
+        {/* Clean Overlay: visible when paused for text legibility, fades out completely when playing for 100% original video quality */}
         <div
-          className={`absolute inset-0 bg-gradient-to-t from-stone-950/75 via-transparent to-stone-950/30 transition-opacity duration-300 pointer-events-none ${
-            isPlaying ? "opacity-40 hover:opacity-75" : "opacity-85"
+          className={`absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-stone-950/20 transition-opacity duration-300 pointer-events-none ${
+            isPlaying ? "opacity-0" : "opacity-60"
           }`}
         />
 

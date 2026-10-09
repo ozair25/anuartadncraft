@@ -1,6 +1,26 @@
 import type { Metadata, Viewport } from 'next'
+import { Jost, Playfair_Display, Alex_Brush } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import './globals.css'
+
+const jost = Jost({
+  subsets: ['latin'],
+  variable: '--font-jost',
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+})
+
+const alexBrush = Alex_Brush({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-script',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Anu Arts & Craft | Art Supplies, Creative Workshops & DIY Kits',
@@ -36,25 +56,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="light w-full">
-      <head>
-        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-title" content="Anu Arts" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Jost:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" className={`light w-full ${jost.variable} ${playfair.variable} ${alexBrush.variable}`}>
       <body className="bg-[#fffaff] font-sans text-[16px] leading-[1.5] text-[#1c1917] antialiased w-full max-w-full selection:bg-pink-200 selection:text-purple-900">
         <Providers>{children}</Providers>
       </body>
     </html>
   )
 }
-

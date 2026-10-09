@@ -470,6 +470,7 @@ export function AnuArtsTemplate({
               </button>
               <Link
                 href="/shop"
+                prefetch={true}
                 className="inline-flex items-center justify-center gap-2 bg-white hover:bg-purple-50 text-stone-800 text-xs sm:text-sm font-bold px-6 py-3 rounded-full border border-pink-200 shadow-2xs transition-all cursor-pointer"
               >
                 <span>Browse Full Store</span>
@@ -491,6 +492,7 @@ export function AnuArtsTemplate({
           </div>
           <Link
             href="/shop"
+            prefetch={true}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#7c2d8a] hover:text-[#5c1c68] bg-white hover:bg-purple-50 px-4 py-2 rounded-full border border-purple-200/80 shadow-2xs hover:shadow-xs transition-all cursor-pointer self-start md:self-auto"
           >
             <span>Explore All Products</span>
@@ -558,6 +560,7 @@ export function AnuArtsTemplate({
                 {/* Stretched Link covering card */}
                 <Link
                   href={productUrl}
+                  prefetch={true}
                   className="absolute inset-0 z-1 cursor-pointer"
                   aria-label={prod.name}
                 />
@@ -651,6 +654,7 @@ export function AnuArtsTemplate({
         <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center text-center gap-3">
           <Link
             href="/shop"
+            prefetch={true}
             className="inline-flex items-center justify-center gap-2.5 bg-[#7c2d8a] hover:bg-[#682274] active:scale-[0.98] text-white text-sm sm:text-base font-bold px-8 sm:px-10 py-3.5 rounded-full shadow-md hover:shadow-lg shadow-purple-900/15 hover:shadow-purple-900/25 transition-all cursor-pointer group"
           >
             <span>Explore All Products</span>
@@ -735,6 +739,7 @@ export function AnuArtsTemplate({
                 {/* Action CTA Button */}
                 <Link
                   href="/shop"
+                  prefetch={true}
                   className="w-full inline-flex items-center justify-center gap-1.5 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs font-bold py-2.5 px-4 rounded-full shadow-xs group-hover:shadow-md transition-all cursor-pointer relative z-10"
                 >
                   <span>Explore Kit</span>
@@ -876,6 +881,7 @@ export function AnuArtsTemplate({
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
                 href="/about"
+                prefetch={true}
                 className="inline-flex items-center gap-2 bg-[#7c2d8a] hover:bg-[#682274] text-white text-xs sm:text-sm font-bold px-7 py-3 rounded-full shadow-md hover:shadow-purple-900/20 hover:scale-[1.02] transition-all cursor-pointer"
               >
                 <span>Know More About Us</span>
@@ -884,6 +890,7 @@ export function AnuArtsTemplate({
 
               <Link
                 href="/workshops"
+                prefetch={true}
                 className="inline-flex items-center gap-2 bg-white hover:bg-purple-50 text-stone-800 text-xs sm:text-sm font-bold px-6 py-3 rounded-full border border-pink-200 shadow-2xs transition-all cursor-pointer"
               >
                 <span>Explore Workshops</span>

@@ -8,6 +8,10 @@ import {
 
 export const dynamic = "force-dynamic"
 
+const CACHE_HEADERS = {
+  "Cache-Control": "public, s-maxage=120, stale-while-revalidate=600",
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -18,7 +22,7 @@ export async function GET(req: NextRequest) {
 
     if (fetchCollections) {
       const collections = await getCollections()
-      return NextResponse.json({ collections })
+      return NextResponse.json({ collections }, { headers: CACHE_HEADERS })
     }
 
     if (handle) {
@@ -26,16 +30,16 @@ export async function GET(req: NextRequest) {
       if (!product) {
         return NextResponse.json({ error: "Product not found" }, { status: 404 })
       }
-      return NextResponse.json({ product })
+      return NextResponse.json({ product }, { headers: CACHE_HEADERS })
     }
 
     if (collection) {
       const products = await getProductsByCollection(collection)
-      return NextResponse.json({ products })
+      return NextResponse.json({ products }, { headers: CACHE_HEADERS })
     }
 
-    const products = await getAllProducts({ query: query || undefined })
-    return NextResponse.json({ products })
+    const products = await getAllProducts({ query: query || undefined, first: 100 })
+    return NextResponse.json({ products }, { headers: CACHE_HEADERS })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch products"
     console.error("Shopify Products API error:", error)

@@ -1,46 +1,48 @@
-"use client"
-
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
-import { RibbonLabel } from "@/components/ribbon-label"
 import { ArrowLeft, ArrowRight, Paintbrush } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
 
 export default function NotFound() {
-  const router = useRouter()
-
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
-      <SiteHeader />
-      <main className="flex-1 py-20 flex items-center justify-center text-center">
-        <div className="max-w-md px-4">
-          <Paintbrush className="mx-auto h-12 w-12 text-primary animate-bounce" />
-          <RibbonLabel>Page Not Found</RibbonLabel>
-          <h1 className="mt-4 font-serif text-4xl font-black text-foreground">
-            404 <span className="italic text-primary">Masterpiece Missing</span>
+    <div className="min-h-screen bg-[#fffaff] flex flex-col">
+      <header className="border-b border-pink-100 bg-white/80 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between">
+        <BrandLogo />
+        <Link
+          href="/"
+          className="text-xs font-bold text-stone-700 hover:text-[#7c2d8a] transition-colors"
+        >
+          Return Home
+        </Link>
+      </header>
+      <main className="flex-1 py-20 flex items-center justify-center text-center px-4">
+        <div className="max-w-md">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pink-100 text-[#7c2d8a] mb-4">
+            <Paintbrush className="h-8 w-8 text-[#7c2d8a]" />
+          </div>
+          <h1 className="font-serif text-3xl sm:text-4xl font-black text-stone-900">
+            404 <span className="italic text-[#7c2d8a]">Page Not Found</span>
           </h1>
-          <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-            The page or art product you are searching for might have been moved or renamed.
+          <p className="mt-3 text-xs sm:text-sm text-stone-600 leading-relaxed">
+            The masterpiece, craft supply, or workshop you are looking for might have been moved or is currently unavailable.
           </p>
           <div className="mt-6 flex items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-5 py-2.5 text-xs font-bold text-foreground shadow hover:border-primary hover:text-primary transition-colors cursor-pointer"
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-5 py-2.5 text-xs font-bold text-stone-800 shadow-sm hover:border-[#7c2d8a] hover:text-[#7c2d8a] transition-colors"
             >
-              <ArrowLeft className="h-4 w-4 text-primary" /> Go Back
-            </button>
+              <ArrowLeft className="h-4 w-4" /> Go Home
+            </Link>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-primary-foreground shadow hover:opacity-90 transition-opacity"
+              prefetch={true}
+              className="inline-flex items-center gap-2 rounded-full bg-[#7c2d8a] px-6 py-2.5 text-xs font-bold text-white shadow hover:bg-purple-900 transition-colors"
             >
-              Back to Art Shop <ArrowRight className="h-4 w-4" />
+              Explore Shop <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </main>
-      <SiteFooter />
     </div>
   )
 }
+

@@ -4,7 +4,8 @@ import { Product, Collection } from "@/types/ecommerce"
 import { getCategoryBySlug } from "@/lib/config/shop-categories"
 import { Metadata } from "next"
 
-export const dynamic = "force-dynamic"
+// Revalidate every 60 seconds (Incremental Static Regeneration)
+export const revalidate = 60
 
 interface SubcategoryPageProps {
   params: Promise<{ category: string; subcategory: string }>
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: SubcategoryPageProps): Promis
 export default async function SubcategoryPage({ params }: SubcategoryPageProps) {
   const resolvedParams = await params
   const [initialProducts, initialCollections] = await Promise.all([
-    getAllProducts().catch(() => []),
+    getAllProducts({ first: 100 }).catch(() => []),
     getCollections().catch(() => []),
   ])
 

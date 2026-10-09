@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
-import { useShopifyProduct, useShopifyProducts } from "@/lib/shopify/hooks"
+import { useShopifyProduct } from "@/lib/shopify/hooks"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
 import { Product } from "@/types/ecommerce"
@@ -24,11 +24,13 @@ import { CartDrawer } from "@/components/cart-drawer"
 
 interface ProductDetailClientProps {
   initialProduct?: Product
+  initialRelatedProducts?: Product[]
   slug: string
 }
 
 export function ProductDetailClient({
   initialProduct,
+  initialRelatedProducts = [],
   slug,
 }: ProductDetailClientProps) {
   const router = useRouter()
@@ -38,9 +40,6 @@ export function ProductDetailClient({
     loading: isProductLoading,
     error: productError,
   } = useShopifyProduct(slug, initialProduct)
-  const { products: allProducts } = useShopifyProducts({
-    initialProducts: initialProduct ? [initialProduct] : [],
-  })
 
   const product = shopifyProduct || initialProduct
 
@@ -128,7 +127,7 @@ export function ProductDetailClient({
     }
   }
 
-  const relatedProducts = allProducts
+  const relatedProducts = initialRelatedProducts
     .filter((p) => p.id !== product?.id)
     .slice(0, 4)
 
