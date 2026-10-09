@@ -8,6 +8,7 @@ import { RibbonLabel } from "@/components/ribbon-label"
 import { BookClassModal } from "@/components/book-class-modal"
 import { CartDrawer } from "@/components/cart-drawer"
 import { StudioPromoVideo } from "@/components/studio-promo-video"
+import { TutorialCardVideo } from "@/components/tutorial-card-video"
 import {
   TUTORIALS_DATA,
   TUTORIAL_CATEGORIES,
@@ -37,20 +38,22 @@ import {
 } from "lucide-react"
 
 export default function TutorialsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Crafts")
+  const [selectedCategory, setSelectedCategory] = useState<string>("All Tutorials")
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All Levels")
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTutorial, setActiveTutorial] = useState<TutorialItem | null>(null)
   const [isBookModalOpen, setIsBookModalOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<"steps" | "materials" | "video">("steps")
+  const [activeTab, setActiveTab] = useState<"video" | "steps" | "materials">("video")
   const [checkedMaterials, setCheckedMaterials] = useState<Record<string, boolean>>({})
 
   // Filtered tutorials
   const filteredTutorials = useMemo(() => {
     return TUTORIALS_DATA.filter((tut) => {
       const matchesCategory =
-        selectedCategory === "All Crafts" || tut.category === selectedCategory
+        selectedCategory === "All Tutorials" ||
+        selectedCategory === "All Crafts" ||
+        tut.category === selectedCategory
       const matchesDifficulty =
         selectedDifficulty === "All Levels" || tut.difficulty === selectedDifficulty
       const matchesSearch =
@@ -76,7 +79,7 @@ export default function TutorialsPage() {
   // Handle opening tutorial
   const openTutorial = (tut: TutorialItem) => {
     setActiveTutorial(tut)
-    setActiveTab("steps")
+    setActiveTab("video")
     setCheckedMaterials({})
   }
 
@@ -117,7 +120,7 @@ export default function TutorialsPage() {
               <div className="mt-6 flex flex-wrap items-center gap-y-2 text-xs font-semibold text-stone-600">
                 <div className="flex items-center gap-1.5 text-[#7c2d8a]">
                   <CheckCircle2 className="h-4 w-4 text-[#7c2d8a]" />
-                  <span>8+ In-Depth Masterclasses</span>
+                  <span>6+ Video Masterclasses</span>
                 </div>
                 <span className="mx-3 text-stone-300" aria-hidden="true">·</span>
                 <div className="flex items-center gap-1.5 text-stone-700">
@@ -323,89 +326,11 @@ export default function TutorialsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {filteredTutorials.map((tut) => (
-                <article
+                <TutorialCardVideo
                   key={tut.id}
-                  className="group bg-white rounded-2xl border border-pink-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-300 flex flex-col overflow-hidden"
-                >
-                  {/* Card Thumbnail */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
-                    <img
-                      src={tut.coverImage}
-                      alt={tut.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-transparent to-transparent opacity-80" />
-
-                    {/* Top Overlay Badge */}
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-white/95 backdrop-blur-sm text-stone-800 text-[11px] font-bold px-2.5 py-1 rounded-md shadow-2xs">
-                        {tut.category}
-                      </span>
-                    </div>
-
-                    {/* Bottom Metadata Overlay */}
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-semibold">
-                      <span className="flex items-center gap-1 bg-stone-900/60 backdrop-blur-sm px-2 py-0.5 rounded">
-                        <Clock className="h-3 w-3 text-amber-300" />
-                        {tut.duration}
-                      </span>
-                      <span className="bg-stone-900/60 backdrop-blur-sm px-2 py-0.5 rounded text-stone-200">
-                        {tut.difficulty}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      {/* Quiet Unboxed Metadata */}
-                      <div className="flex items-center gap-2 text-[11px] font-medium text-stone-500 mb-1.5">
-                        <span className="flex items-center gap-1 text-amber-600 font-bold">
-                          <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-                          {tut.rating}
-                        </span>
-                        <span aria-hidden="true">·</span>
-                        <span>{tut.viewsCount}</span>
-                        <span aria-hidden="true">·</span>
-                        <span>{tut.steps.length} Steps</span>
-                      </div>
-
-                      <h3
-                        onClick={() => openTutorial(tut)}
-                        className="font-serif text-lg font-bold text-stone-900 group-hover:text-[#7c2d8a] transition-colors cursor-pointer leading-snug line-clamp-2"
-                      >
-                        {tut.title}
-                      </h3>
-
-                      <p className="mt-2 text-xs text-stone-600 font-medium leading-relaxed line-clamp-2">
-                        {tut.shortDescription}
-                      </p>
-
-                      {/* Materials Count Pill */}
-                      <div className="mt-3.5 flex items-center gap-2 text-[11px] text-stone-500">
-                        <Palette className="h-3.5 w-3.5 text-[#7c2d8a] shrink-0" />
-                        <span>Requires {tut.materials.length} tools &amp; materials</span>
-                      </div>
-                    </div>
-
-                    {/* Card Actions */}
-                    <div className="mt-5 pt-3.5 border-t border-pink-100/80 flex items-center justify-between">
-                      <span className="text-[11px] font-semibold text-stone-500">
-                        By {tut.instructor.split(" ")[0]} {tut.instructor.split(" ")[1]}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() => openTutorial(tut)}
-                        className="inline-flex items-center gap-1 text-xs font-bold text-[#7c2d8a] hover:text-[#d92672] transition-colors cursor-pointer group-hover:translate-x-0.5 duration-200"
-                      >
-                        <span>View Guide</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </article>
+                  tutorial={tut}
+                  onOpenTutorial={openTutorial}
+                />
               ))}
             </div>
           )}
@@ -590,6 +515,21 @@ export default function TutorialsPage() {
 
             {/* Modal Navigation Tabs */}
             <div className="flex items-center px-6 border-b border-pink-100 bg-white gap-2 overflow-x-auto text-xs font-bold">
+              {activeTutorial.videoUrl && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("video")}
+                  className={`py-3 px-3 border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    activeTab === "video"
+                      ? "border-[#7c2d8a] text-[#7c2d8a]"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
+                  }`}
+                >
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                  <span>Video Masterclass</span>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={() => setActiveTab("steps")}
@@ -615,21 +555,6 @@ export default function TutorialsPage() {
                 <Palette className="h-3.5 w-3.5" />
                 <span>Materials Checklist ({activeTutorial.materials.length})</span>
               </button>
-
-              {activeTutorial.videoUrl && (
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("video")}
-                  className={`py-3 px-3 border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
-                    activeTab === "video"
-                      ? "border-[#7c2d8a] text-[#7c2d8a]"
-                      : "border-transparent text-stone-600 hover:text-stone-900"
-                  }`}
-                >
-                  <Play className="h-3.5 w-3.5" />
-                  <span>Video Demonstration</span>
-                </button>
-              )}
             </div>
 
             {/* Modal Content Body */}
@@ -751,19 +676,21 @@ export default function TutorialsPage() {
                 </div>
               )}
 
-              {/* TAB 3: VIDEO */}
+              {/* TAB 1: VIDEO MASTERCLASS */}
               {activeTab === "video" && activeTutorial.videoUrl && (
                 <div className="space-y-4">
-                  <div className="relative rounded-2xl overflow-hidden bg-black aspect-video max-w-2xl mx-auto shadow-lg">
+                  <div className="relative rounded-2xl overflow-hidden bg-black aspect-video max-w-3xl mx-auto shadow-xl border border-stone-800">
                     <video
                       src={activeTutorial.videoUrl}
+                      poster={activeTutorial.posterUrl}
                       controls
+                      autoPlay
                       playsInline
                       className="w-full h-full object-contain"
                     />
                   </div>
                   <p className="text-center text-xs text-stone-500 font-medium">
-                    Filmed on location at Anu Arts &amp; Craft Studio, 30, Chandralok Colony, Indore.
+                    Masterclass demonstration filmed at Anu Arts &amp; Craft Studio, 30, Chandralok Colony, Indore.
                   </p>
                 </div>
               )}
