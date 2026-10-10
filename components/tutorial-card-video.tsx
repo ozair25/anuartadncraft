@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useRef, useCallback } from "react"
-import { Play, Pause, Volume2, VolumeX, Clock, Star, Palette, ArrowRight } from "lucide-react"
+import Link from "next/link"
+import { Play, Pause, Volume2, VolumeX, Star, Palette, ArrowRight } from "lucide-react"
 import { TutorialItem } from "@/lib/data/tutorials-data"
 
 interface TutorialCardVideoProps {
@@ -139,7 +140,7 @@ export function TutorialCardVideo({
       {/* 2. Card Body Details */}
       <div className="p-5 flex-1 flex flex-col justify-between">
         <div>
-          {/* Metadata: Rating · Views · Steps */}
+          {/* Metadata: Rating · Views · Steps (Hidden for Tutorials 1-3) */}
           <div className="flex items-center gap-2 text-[11px] font-medium text-stone-500 mb-1.5">
             <span className="flex items-center gap-1 text-amber-600 font-bold">
               <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
@@ -147,8 +148,12 @@ export function TutorialCardVideo({
             </span>
             <span aria-hidden="true">·</span>
             <span>{tutorial.viewsCount}</span>
-            <span aria-hidden="true">·</span>
-            <span>{tutorial.steps.length} Steps</span>
+            {!tutorial.hideSteps && tutorial.steps.length > 0 && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{tutorial.steps.length} Steps</span>
+              </>
+            )}
           </div>
 
           {/* Title */}
@@ -164,10 +169,93 @@ export function TutorialCardVideo({
             {tutorial.shortDescription}
           </p>
 
-          {/* Materials Count */}
-          <div className="mt-3.5 flex items-center gap-2 text-[11px] text-stone-500">
-            <Palette className="h-3.5 w-3.5 text-[#7c2d8a] shrink-0" />
-            <span>Requires {tutorial.materials.length} tools &amp; materials</span>
+          {/* Material Checklist Section */}
+          <div className="mt-3.5 pt-3 border-t border-pink-100/60">
+            <div className="flex items-center justify-between text-[11px] font-bold text-stone-700 mb-1.5">
+              <span className="flex items-center gap-1.5 text-[#7c2d8a]">
+                <Palette className="h-3.5 w-3.5 text-[#7c2d8a] shrink-0" />
+                <span>Material Checklist {tutorial.materials.length > 0 ? `(${tutorial.materials.length})` : ""}</span>
+              </span>
+            </div>
+
+            {tutorial.materials.length === 0 ? (
+              <p className="text-[11px] text-stone-400 italic bg-purple-50/40 p-2 rounded-lg border border-purple-100/40">
+                Material checklist pending client supply
+              </p>
+            ) : (
+              <ul className="space-y-1.5 text-xs">
+                {tutorial.materials.map((mat) => {
+                  const hasLink = Boolean(mat.shopLink)
+                  const isExternal = Boolean(mat.shopLink?.startsWith("http"))
+
+                  return (
+                    <li
+                      key={mat.name}
+                      className="flex items-center justify-between gap-2 text-[11px] bg-stone-50/70 hover:bg-purple-50/60 p-1.5 rounded-lg border border-stone-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#7c2d8a] shrink-0" />
+                        {hasLink ? (
+                          isExternal ? (
+                            <a
+                              href={mat.shopLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="font-semibold text-stone-800 hover:text-[#7c2d8a] hover:underline truncate"
+                              title={`View ${mat.name}`}
+                            >
+                              {mat.name}
+                            </a>
+                          ) : (
+                            <Link
+                              href={mat.shopLink!}
+                              onClick={(e) => e.stopPropagation()}
+                              className="font-semibold text-stone-800 hover:text-[#7c2d8a] hover:underline truncate"
+                              title={`View ${mat.name}`}
+                            >
+                              {mat.name}
+                            </Link>
+                          )
+                        ) : (
+                          <span className="font-semibold text-stone-700 truncate" title={mat.name}>
+                            {mat.name}
+                          </span>
+                        )}
+                      </div>
+
+                      {hasLink ? (
+                        isExternal ? (
+                          <a
+                            href={mat.shopLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 text-[10px] font-bold text-[#7c2d8a] hover:text-[#d92672] shrink-0 bg-white px-2 py-0.5 rounded shadow-2xs border border-pink-100"
+                          >
+                            <span>Shop</span>
+                            <ArrowRight className="h-2.5 w-2.5" />
+                          </a>
+                        ) : (
+                          <Link
+                            href={mat.shopLink!}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 text-[10px] font-bold text-[#7c2d8a] hover:text-[#d92672] shrink-0 bg-white px-2 py-0.5 rounded shadow-2xs border border-pink-100"
+                          >
+                            <span>Shop</span>
+                            <ArrowRight className="h-2.5 w-2.5" />
+                          </Link>
+                        )
+                      ) : (
+                        <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded shrink-0 border border-amber-200/60">
+                          Link Pending
+                        </span>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
           </div>
         </div>
 

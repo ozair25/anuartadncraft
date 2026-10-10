@@ -530,18 +530,21 @@ export default function TutorialsPage() {
                 </button>
               )}
 
-              <button
-                type="button"
-                onClick={() => setActiveTab("steps")}
-                className={`py-3 px-3 border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === "steps"
-                    ? "border-[#7c2d8a] text-[#7c2d8a]"
-                    : "border-transparent text-stone-600 hover:text-stone-900"
-                }`}
-              >
-                <BookOpen className="h-3.5 w-3.5" />
-                <span>Step-by-Step Instructions ({activeTutorial.steps.length})</span>
-              </button>
+              {/* Steps Tab - ONLY for Tutorials 4, 5, 6 (Hidden completely for Tutorials 1, 2, 3) */}
+              {!activeTutorial.hideSteps && activeTutorial.steps.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("steps")}
+                  className={`py-3 px-3 border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    activeTab === "steps"
+                      ? "border-[#7c2d8a] text-[#7c2d8a]"
+                      : "border-transparent text-stone-600 hover:text-stone-900"
+                  }`}
+                >
+                  <BookOpen className="h-3.5 w-3.5" />
+                  <span>Step-by-Step Instructions ({activeTutorial.steps.length})</span>
+                </button>
+              )}
 
               <button
                 type="button"
@@ -553,14 +556,16 @@ export default function TutorialsPage() {
                 }`}
               >
                 <Palette className="h-3.5 w-3.5" />
-                <span>Materials Checklist ({activeTutorial.materials.length})</span>
+                <span>
+                  Materials Checklist {activeTutorial.materials.length > 0 ? `(${activeTutorial.materials.length})` : "(Pending)"}
+                </span>
               </button>
             </div>
 
             {/* Modal Content Body */}
             <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6">
-              {/* TAB 1: STEPS */}
-              {activeTab === "steps" && (
+              {/* TAB 1: STEPS (Displayed only for Tutorials 4, 5, 6) */}
+              {activeTab === "steps" && !activeTutorial.hideSteps && activeTutorial.steps.length > 0 && (
                 <div className="space-y-6">
                   {/* Safety Note if present */}
                   {activeTutorial.safetyNotes && (
@@ -616,63 +621,131 @@ export default function TutorialsPage() {
                         Interactive Supply Checklist
                       </h4>
                       <p className="text-xs text-stone-600 mt-0.5">
-                        Tick the items you already have at home to see what you need to order.
+                        {activeTutorial.materials.length > 0
+                          ? "Tick the items you have at home or click directly to view and shop supplies."
+                          : "Material checklist and product links are configurable and will be updated upon supply."}
                       </p>
                     </div>
                     <Link
                       href="/shop"
-                      className="bg-[#7c2d8a] hover:bg-purple-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-2xs"
+                      className="bg-[#7c2d8a] hover:bg-purple-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shadow-2xs shrink-0 ml-3"
                     >
                       <ShoppingBag className="h-3 w-3" />
                       <span>Browse Shop</span>
                     </Link>
                   </div>
 
-                  <div className="space-y-2.5">
-                    {activeTutorial.materials.map((mat) => {
-                      const isChecked = !!checkedMaterials[mat.name]
-                      return (
-                        <div
-                          key={mat.name}
-                          onClick={() => toggleMaterial(mat.name)}
-                          className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                            isChecked
-                              ? "bg-emerald-50/60 border-emerald-200 text-stone-500"
-                              : "bg-white border-pink-100 text-stone-900 hover:border-purple-200"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
-                                isChecked
-                                  ? "bg-emerald-600 border-emerald-600 text-white"
-                                  : "border-stone-300 bg-white"
-                              }`}
-                            >
-                              {isChecked && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                  {activeTutorial.materials.length === 0 ? (
+                    <div className="p-8 text-center bg-stone-50 rounded-2xl border border-stone-200">
+                      <Palette className="h-8 w-8 text-[#7c2d8a] mx-auto mb-2 opacity-60" />
+                      <h5 className="text-sm font-bold text-stone-800">Material Checklist Pending Client Supply</h5>
+                      <p className="text-xs text-stone-500 mt-1 max-w-md mx-auto">
+                        The specific material list and product links for <strong>{activeTutorial.title}</strong> will be added as soon as they are provided. Follow along with the video and step instructions!
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {activeTutorial.materials.map((mat) => {
+                        const isChecked = !!checkedMaterials[mat.name]
+                        const hasLink = Boolean(mat.shopLink)
+                        const isExternal = Boolean(mat.shopLink?.startsWith("http"))
+
+                        return (
+                          <div
+                            key={mat.name}
+                            onClick={() => toggleMaterial(mat.name)}
+                            className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                              isChecked
+                                ? "bg-emerald-50/60 border-emerald-200 text-stone-500"
+                                : "bg-white border-pink-100 text-stone-900 hover:border-purple-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 ${
+                                  isChecked
+                                    ? "bg-emerald-600 border-emerald-600 text-white"
+                                    : "border-stone-300 bg-white"
+                                }`}
+                              >
+                                {isChecked && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                              </div>
+                              <div>
+                                {hasLink ? (
+                                  isExternal ? (
+                                    <a
+                                      href={mat.shopLink}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      className={`text-xs sm:text-sm font-bold text-[#7c2d8a] hover:underline ${
+                                        isChecked ? "line-through text-stone-400" : ""
+                                      }`}
+                                    >
+                                      {mat.name}
+                                    </a>
+                                  ) : (
+                                    <Link
+                                      href={mat.shopLink!}
+                                      onClick={(e) => e.stopPropagation()}
+                                      className={`text-xs sm:text-sm font-bold text-[#7c2d8a] hover:underline ${
+                                        isChecked ? "line-through text-stone-400" : ""
+                                      }`}
+                                    >
+                                      {mat.name}
+                                    </Link>
+                                  )
+                                ) : (
+                                  <div
+                                    className={`text-xs sm:text-sm font-semibold ${
+                                      isChecked ? "line-through text-stone-400" : ""
+                                    }`}
+                                  >
+                                    {mat.name}
+                                  </div>
+                                )}
+                                {mat.amount && (
+                                  <div className="text-[11px] text-stone-500 font-medium">
+                                    Quantity: {mat.amount}
+                                  </div>
+                                )}
+                              </div>
                             </div>
+
                             <div>
-                              <div className={`text-xs sm:text-sm font-semibold ${isChecked ? "line-through text-stone-400" : ""}`}>
-                                {mat.name}
-                              </div>
-                              <div className="text-[11px] text-stone-500 font-medium">
-                                Quantity: {mat.amount}
-                              </div>
+                              {hasLink ? (
+                                isExternal ? (
+                                  <a
+                                    href={mat.shopLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-xs font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-2xs transition-colors shrink-0"
+                                  >
+                                    <ShoppingBag className="h-3 w-3" />
+                                    <span>Shop Product</span>
+                                  </a>
+                                ) : (
+                                  <Link
+                                    href={mat.shopLink!}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-xs font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-2xs transition-colors shrink-0"
+                                  >
+                                    <ShoppingBag className="h-3 w-3" />
+                                    <span>Shop Product</span>
+                                  </Link>
+                                )
+                              ) : (
+                                <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
+                                  Shopify Link Pending
+                                </span>
+                              )}
                             </div>
                           </div>
-
-                          <Link
-                            href="/shop"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-[11px] font-bold text-[#7c2d8a] hover:underline flex items-center gap-1"
-                          >
-                            <span>Find in Shop</span>
-                            <ChevronRight className="h-3 w-3" />
-                          </Link>
-                        </div>
-                      )
-                    })}
-                  </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 
