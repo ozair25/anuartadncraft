@@ -179,14 +179,21 @@ export function TutorialCardVideo({
             </div>
 
             {tutorial.materials.length === 0 ? (
-              <p className="text-[11px] text-stone-400 italic bg-purple-50/40 p-2 rounded-lg border border-purple-100/40">
-                Material checklist pending client supply
-              </p>
+              <div className="text-[11px] text-stone-600 bg-purple-50/50 p-2 rounded-lg border border-purple-100/50 flex items-center justify-between">
+                <span className="font-medium">Curated upcycling craft supplies</span>
+                <Link
+                  href="/shop"
+                  onClick={(e) => e.stopPropagation()}
+                  className="font-bold text-[#7c2d8a] hover:underline ml-2 shrink-0"
+                >
+                  Shop →
+                </Link>
+              </div>
             ) : (
               <ul className="space-y-1.5 text-xs">
                 {tutorial.materials.map((mat) => {
-                  const hasLink = Boolean(mat.shopLink)
-                  const isExternal = Boolean(mat.shopLink?.startsWith("http"))
+                  const targetLink = mat.shopLink
+                  const isExternal = Boolean(targetLink && targetLink.startsWith("http"))
 
                   return (
                     <li
@@ -195,10 +202,10 @@ export function TutorialCardVideo({
                     >
                       <div className="flex items-center gap-1.5 min-w-0">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#7c2d8a] shrink-0" />
-                        {hasLink ? (
+                        {targetLink ? (
                           isExternal ? (
                             <a
-                              href={mat.shopLink}
+                              href={targetLink}
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
@@ -209,7 +216,7 @@ export function TutorialCardVideo({
                             </a>
                           ) : (
                             <Link
-                              href={mat.shopLink!}
+                              href={targetLink}
                               onClick={(e) => e.stopPropagation()}
                               className="font-semibold text-stone-800 hover:text-[#7c2d8a] hover:underline truncate"
                               title={`View ${mat.name}`}
@@ -218,36 +225,36 @@ export function TutorialCardVideo({
                             </Link>
                           )
                         ) : (
-                          <span className="font-semibold text-stone-700 truncate" title={mat.name}>
+                          <span className="font-semibold text-stone-800 truncate" title={mat.name}>
                             {mat.name}
                           </span>
                         )}
                       </div>
 
-                      {hasLink ? (
+                      {targetLink ? (
                         isExternal ? (
                           <a
-                            href={mat.shopLink}
+                            href={targetLink}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-[10px] font-bold text-[#7c2d8a] hover:text-[#d92672] shrink-0 bg-white px-2 py-0.5 rounded shadow-2xs border border-pink-100"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-2.5 py-1 rounded-md shadow-2xs transition-colors shrink-0"
                           >
-                            <span>Shop</span>
+                            <span>Buy Product</span>
                             <ArrowRight className="h-2.5 w-2.5" />
                           </a>
                         ) : (
                           <Link
-                            href={mat.shopLink!}
+                            href={targetLink}
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-[10px] font-bold text-[#7c2d8a] hover:text-[#d92672] shrink-0 bg-white px-2 py-0.5 rounded shadow-2xs border border-pink-100"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-2.5 py-1 rounded-md shadow-2xs transition-colors shrink-0"
                           >
-                            <span>Shop</span>
+                            <span>Buy Product</span>
                             <ArrowRight className="h-2.5 w-2.5" />
                           </Link>
                         )
                       ) : (
-                        <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded shrink-0 border border-amber-200/60">
+                        <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded shrink-0">
                           Link Pending
                         </span>
                       )}

@@ -17,7 +17,6 @@ export interface TutorialMaterial {
   amount?: string
   shopCategory?: string
   shopLink?: string
-  isPendingUrl?: boolean
 }
 
 export interface TutorialItem {
@@ -66,7 +65,7 @@ export const TUTORIALS_DATA: TutorialItem[] = [
         name: "Mandala Canvas Painting Kit",
         amount: "1 kit",
         shopCategory: "diy-kits",
-        isPendingUrl: true,
+        shopLink: "/product/mini-mandala-kit-sma-01",
       },
     ],
   },
@@ -91,8 +90,8 @@ export const TUTORIALS_DATA: TutorialItem[] = [
       {
         name: "Lippan Art Kits",
         amount: "1 kit",
-        shopCategory: "diy-kits",
-        isPendingUrl: true,
+        shopCategory: "lippan-art-essentials",
+        shopLink: "/product/evil-eye-lippan-art-kit",
       },
     ],
   },
@@ -119,7 +118,6 @@ export const TUTORIALS_DATA: TutorialItem[] = [
         amount: "1 all-inclusive kit",
         shopCategory: "diy-kits",
         shopLink: "/product/6-in-1-mandala-art-home-decor-kit",
-        isPendingUrl: false,
       },
     ],
   },
@@ -140,11 +138,36 @@ export const TUTORIALS_DATA: TutorialItem[] = [
     featured: false,
     hideSteps: false,
     materials: [
-      { name: "3 Tile MDF Tray", amount: "1 piece", isPendingUrl: true },
-      { name: "Mini Transfer Sheet", amount: "1 pack", isPendingUrl: true },
-      { name: "Chalk Paints", amount: "Selected shades", isPendingUrl: true },
-      { name: "Lapox Resin", amount: "2:1 ratio kit", isPendingUrl: true },
-      { name: "Varnish", amount: "1 bottle", isPendingUrl: true },
+      {
+        name: "3 Tile MDF Tray",
+        amount: "1 piece",
+        shopCategory: "mdf-acrylic-bases",
+        shopLink: "/search?q=MDF+Tray",
+      },
+      {
+        name: "Mini Transfer Sheet",
+        amount: "1 pack",
+        shopCategory: "decoupage-material",
+        shopLink: "/product/10x15-6023",
+      },
+      {
+        name: "Chalk Paints",
+        amount: "Selected shades",
+        shopCategory: "paints-mediums",
+        shopLink: "/product/combo-10",
+      },
+      {
+        name: "Lapox Resin",
+        amount: "2:1 ratio kit",
+        shopCategory: "resin-art-essentials",
+        shopLink: "/search?q=Resin",
+      },
+      {
+        name: "Varnish",
+        amount: "1 bottle",
+        shopCategory: "paints-mediums",
+        shopLink: "/product/glossy-varnish-100-ml",
+      },
     ],
     steps: [
       {
@@ -192,12 +215,42 @@ export const TUTORIALS_DATA: TutorialItem[] = [
     featured: false,
     hideSteps: false,
     materials: [
-      { name: "Trinket Tray Base", amount: "1 piece", isPendingUrl: true },
-      { name: "Mini Transfer Sheet", amount: "1 pack", isPendingUrl: true },
-      { name: "Chalk Paints", amount: "Shading colors", isPendingUrl: true },
-      { name: "Matt Varnish", amount: "1 bottle", isPendingUrl: true },
-      { name: "Beads", amount: "Decorative pack", isPendingUrl: true },
-      { name: "Lapox Resin", amount: "2:1 ratio kit", isPendingUrl: true },
+      {
+        name: "Trinket Tray Base",
+        amount: "1 piece",
+        shopCategory: "mdf-acrylic-bases",
+        shopLink: "/search?q=Trinket+Tray",
+      },
+      {
+        name: "Mini Transfer Sheet",
+        amount: "1 pack",
+        shopCategory: "decoupage-material",
+        shopLink: "/product/10x15-6023",
+      },
+      {
+        name: "Chalk Paints",
+        amount: "Shading colors",
+        shopCategory: "paints-mediums",
+        shopLink: "/product/combo-10",
+      },
+      {
+        name: "Matt Varnish",
+        amount: "1 bottle",
+        shopCategory: "paints-mediums",
+        shopLink: "/product/matt-varnish-100-ml",
+      },
+      {
+        name: "Beads",
+        amount: "Decorative pack",
+        shopCategory: "accessories",
+        shopLink: "/product/glass-beads-yellow",
+      },
+      {
+        name: "Lapox Resin",
+        amount: "2:1 ratio kit",
+        shopCategory: "resin-art-essentials",
+        shopLink: "/search?q=Resin",
+      },
     ],
     steps: [
       {
@@ -249,8 +302,26 @@ export const TUTORIALS_DATA: TutorialItem[] = [
     reviewsCount: 24,
     featured: false,
     hideSteps: false,
-    // Material checklist kept configurable so client can provide materials & URLs separately
-    materials: [],
+    materials: [
+      {
+        name: "Cream Pie Chalk Paint — 100 ml",
+        amount: "100 ml",
+        shopCategory: "paints-mediums",
+        shopLink: "/product/cream-pie-100-ml",
+      },
+      {
+        name: "Mini Transfer Sheet",
+        amount: "1 pack",
+        shopCategory: "decoupage-material",
+        shopLink: "/product/10x15-6023",
+      },
+      {
+        name: "Matt Varnish",
+        amount: "1 bottle",
+        shopCategory: "paints-mediums",
+        shopLink: "/product/matt-varnish-100-ml",
+      },
+    ],
     steps: [
       {
         stepNumber: 1,

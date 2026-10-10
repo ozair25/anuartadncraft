@@ -7,6 +7,7 @@ interface BookClassModalProps {
   isOpen: boolean
   onClose: () => void
   initialCategory?: string
+  initialWorkshopId?: string
 }
 
 const workshopOptions = [
@@ -65,13 +66,25 @@ const workshopOptions = [
     dates: ["Sunday, 2:30 PM", "Thursday, 3:00 PM"],
     highlights: ["2:1 Crystal Resin, pigments & mica powders", "4 Coasters + 1 Large Round Clock Base", "Blowtorch & heat gun safety training"],
   },
+  {
+    id: "koi-pond",
+    name: "Koi Fish and Resin Lotus Pond — Online Workshop",
+    category: "Online Workshop",
+    instructor: "Anu Arts & Craft Studio",
+    duration: "Lifetime Access",
+    fee: "Inquire for details",
+    kitIncluded: true,
+    dates: ["Private Facebook Secret Group (Lifetime Access)"],
+    highlights: ["Lotus pond from scratch", "Clay embellishments & painting", "Resin pour & workshop kit guidance"],
+  },
 ]
 
-export function BookClassModal({ isOpen, onClose, initialCategory }: BookClassModalProps) {
+export function BookClassModal({ isOpen, onClose, initialCategory, initialWorkshopId }: BookClassModalProps) {
   const [selectedWorkshopId, setSelectedWorkshopId] = useState(
-    initialCategory
+    initialWorkshopId ||
+    (initialCategory
       ? workshopOptions.find((w) => w.category.toLowerCase().includes(initialCategory.toLowerCase()))?.id || "painting"
-      : "painting"
+      : "painting")
   )
   const [selectedSlot, setSelectedSlot] = useState(0)
   const [fullName, setFullName] = useState("")

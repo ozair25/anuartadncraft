@@ -557,7 +557,7 @@ export default function TutorialsPage() {
               >
                 <Palette className="h-3.5 w-3.5" />
                 <span>
-                  Materials Checklist {activeTutorial.materials.length > 0 ? `(${activeTutorial.materials.length})` : "(Pending)"}
+                  Materials Checklist {activeTutorial.materials.length > 0 ? `(${activeTutorial.materials.length})` : ""}
                 </span>
               </button>
             </div>
@@ -621,9 +621,7 @@ export default function TutorialsPage() {
                         Interactive Supply Checklist
                       </h4>
                       <p className="text-xs text-stone-600 mt-0.5">
-                        {activeTutorial.materials.length > 0
-                          ? "Tick the items you have at home or click directly to view and shop supplies."
-                          : "Material checklist and product links are configurable and will be updated upon supply."}
+                        Tick the items you already have at home or click directly to view and shop supplies from our studio collection.
                       </p>
                     </div>
                     <Link
@@ -638,17 +636,24 @@ export default function TutorialsPage() {
                   {activeTutorial.materials.length === 0 ? (
                     <div className="p-8 text-center bg-stone-50 rounded-2xl border border-stone-200">
                       <Palette className="h-8 w-8 text-[#7c2d8a] mx-auto mb-2 opacity-60" />
-                      <h5 className="text-sm font-bold text-stone-800">Material Checklist Pending Client Supply</h5>
+                      <h5 className="text-sm font-bold text-stone-800">Curated Craft Supplies for {activeTutorial.title}</h5>
                       <p className="text-xs text-stone-500 mt-1 max-w-md mx-auto">
-                        The specific material list and product links for <strong>{activeTutorial.title}</strong> will be added as soon as they are provided. Follow along with the video and step instructions!
+                        Explore our complete studio collection of chalk paints, transfer sheets, and finishing varnishes, or follow along with the step-by-step masterclass video above.
                       </p>
+                      <Link
+                        href="/shop"
+                        className="mt-4 inline-flex items-center gap-1.5 bg-[#7c2d8a] hover:bg-purple-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-2xs"
+                      >
+                        <ShoppingBag className="h-3.5 w-3.5" />
+                        <span>Explore Studio Supplies in Shop</span>
+                      </Link>
                     </div>
                   ) : (
                     <div className="space-y-2.5">
                       {activeTutorial.materials.map((mat) => {
                         const isChecked = !!checkedMaterials[mat.name]
-                        const hasLink = Boolean(mat.shopLink)
-                        const isExternal = Boolean(mat.shopLink?.startsWith("http"))
+                        const targetLink = mat.shopLink
+                        const isExternal = Boolean(targetLink && targetLink.startsWith("http"))
 
                         return (
                           <div
@@ -671,10 +676,10 @@ export default function TutorialsPage() {
                                 {isChecked && <Check className="h-3.5 w-3.5 stroke-[3]" />}
                               </div>
                               <div>
-                                {hasLink ? (
+                                {targetLink ? (
                                   isExternal ? (
                                     <a
-                                      href={mat.shopLink}
+                                      href={targetLink}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       onClick={(e) => e.stopPropagation()}
@@ -686,7 +691,7 @@ export default function TutorialsPage() {
                                     </a>
                                   ) : (
                                     <Link
-                                      href={mat.shopLink!}
+                                      href={targetLink}
                                       onClick={(e) => e.stopPropagation()}
                                       className={`text-xs sm:text-sm font-bold text-[#7c2d8a] hover:underline ${
                                         isChecked ? "line-through text-stone-400" : ""
@@ -696,13 +701,13 @@ export default function TutorialsPage() {
                                     </Link>
                                   )
                                 ) : (
-                                  <div
-                                    className={`text-xs sm:text-sm font-semibold ${
+                                  <span
+                                    className={`text-xs sm:text-sm font-bold text-stone-900 ${
                                       isChecked ? "line-through text-stone-400" : ""
                                     }`}
                                   >
                                     {mat.name}
-                                  </div>
+                                  </span>
                                 )}
                                 {mat.amount && (
                                   <div className="text-[11px] text-stone-500 font-medium">
@@ -713,31 +718,31 @@ export default function TutorialsPage() {
                             </div>
 
                             <div>
-                              {hasLink ? (
+                              {targetLink ? (
                                 isExternal ? (
                                   <a
-                                    href={mat.shopLink}
+                                    href={targetLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="text-xs font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-2xs transition-colors shrink-0"
+                                    className="text-xs font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all hover:scale-105 shrink-0"
                                   >
-                                    <ShoppingBag className="h-3 w-3" />
-                                    <span>Shop Product</span>
+                                    <ShoppingBag className="h-3.5 w-3.5" />
+                                    <span>View &amp; Buy Product</span>
                                   </a>
                                 ) : (
                                   <Link
-                                    href={mat.shopLink!}
+                                    href={targetLink}
                                     onClick={(e) => e.stopPropagation()}
-                                    className="text-xs font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-2xs transition-colors shrink-0"
+                                    className="text-xs font-bold text-white bg-[#7c2d8a] hover:bg-purple-900 px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all hover:scale-105 shrink-0"
                                   >
-                                    <ShoppingBag className="h-3 w-3" />
-                                    <span>Shop Product</span>
+                                    <ShoppingBag className="h-3.5 w-3.5" />
+                                    <span>View &amp; Buy Product</span>
                                   </Link>
                                 )
                               ) : (
-                                <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
-                                  Shopify Link Pending
+                                <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg shrink-0">
+                                  Link Pending
                                 </span>
                               )}
                             </div>
