@@ -21,7 +21,7 @@ interface CartContextType {
   shopifyCartId: string | null
   checkoutUrl: string | null
   isLoadingCart: boolean
-  redirectToCheckout: () => void
+  redirectToCheckout: () => Promise<void>
   // Drawer & UI feedback
   isCartOpen: boolean
   openCart: () => void
@@ -515,13 +515,40 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCouponDiscountPercent(0)
   }
 
-  const redirectToCheckout = () => {
-    if (typeof window !== "undefined") {
-      if (checkoutUrl && isSafeShopifyCheckoutUrl(checkoutUrl)) {
-        window.location.href = checkoutUrl
-      } else {
-        window.location.href = "/cart"
+  const redirectToCheckout = async () => {
+    setIsLoadingCart(true)
+    setCartError(null)
+    console.log("[Cart] Initiating checkout redirect. Current checkoutUrl:", checkoutUrl)
+
+    if (shopifyCartId) {
+      try {
+        const res = await fetch("/api/shopify/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "get", cartId: shopifyCartId }),
+        })
+        const data = await res.json()
+        console.log("[Cart] Refreshed cart data for checkout:", data)
+
+        if (data.cart && data.cart.checkoutUrl && isSafeShopifyCheckoutUrl(data.cart.checkoutUrl)) {
+          console.log("[Cart] Redirecting to valid Shopify checkout:", data.cart.checkoutUrl)
+          window.location.href = data.cart.checkoutUrl
+          return
+        }
+      } catch (err) {
+        console.error("[Cart] Failed to refresh cart for checkout:", err)
       }
+    }
+
+    if (checkoutUrl && isSafeShopifyCheckoutUrl(checkoutUrl)) {
+      console.log("[Cart] Redirecting to existing checkoutUrl:", checkoutUrl)
+      window.location.href = checkoutUrl
+    } else {
+      console.warn("[Cart] No valid checkoutUrl found. Redirecting to /cart.")
+      setCartError("Checkout is not available at this moment. Please try again.")
+      setIsLoadingCart(false)
+      // router.push("/cart") // router is not available here, using window
+      window.location.href = "/cart"
     }
   }
 
