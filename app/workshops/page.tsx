@@ -83,157 +83,9 @@ const ALL_WORKSHOPS: WorkshopItem[] = [
     ],
     includesKit: true,
   },
-  {
-    id: "ws-lippan-art",
-    title: "Traditional Kutch Lippan Mud & Mirror Masterclass",
-    category: "specialty",
-    categoryLabel: "Specialty Art",
-    ageGroup: "12+ Years & Adults",
-    duration: "3 Hours (Weekend Intensive)",
-    level: "All Levels",
-    date: "This Saturday, 23 Aug 2026",
-    time: "4:00 PM - 7:00 PM IST",
-    mode: "Studio (In-Person)",
-    price: 1499,
-    originalPrice: 1999,
-    seatsLeft: 4,
-    totalSeats: 12,
-    instructor: "Yashaswee Sanghavi (Proprietor & Master Artist)",
-    image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=800&auto=format&fit=crop",
-    description: "Learn the authentic Gujarati mud-relief clay craft with convex mirrors, relief paste cones, and acrylic varnishes to take home your own 12x12 wall panel.",
-    highlights: ["Complete 12x12 MDF board & craft kit included", "Step-by-step dough preparation & piping", "Mirror placement patterns & sealing"],
-    includesKit: true,
-  },
-  {
-    id: "ws-resin-ocean",
-    title: "Ocean Wave Resin Geode & Clock Workshop",
-    category: "specialty",
-    categoryLabel: "Resin Craft",
-    ageGroup: "16+ Years & Adults",
-    duration: "2.5 Hours",
-    level: "Beginner",
-    date: "Sunday, 24 Aug 2026",
-    time: "11:00 AM - 1:30 PM IST",
-    mode: "Studio (In-Person)",
-    price: 1899,
-    originalPrice: 2499,
-    seatsLeft: 3,
-    totalSeats: 10,
-    instructor: "Yashaswee Sanghavi & Guest Specialist",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800&auto=format&fit=crop",
-    description: "Master 2:1 epoxy resin pouring, cellular lacing wave effects, crystal quartz embedding, and golden pigment powder blending on a luxury wooden base.",
-    highlights: ["Safety masks, gloves, and heat-gun guidance", "Crystal embellishments & gold mica pigments", "Take home a finished 14\" resin clock/tray"],
-    includesKit: true,
-  },
-  {
-    id: "ws-watercolor-botanicals",
-    title: "Loose Floral Watercolors & Botanical Illustration",
-    category: "painting",
-    categoryLabel: "Painting",
-    ageGroup: "10+ Years & Adults",
-    duration: "2 Hours",
-    level: "Beginner",
-    date: "Wednesday, 27 Aug 2026",
-    time: "5:00 PM - 7:00 PM IST",
-    mode: "Studio & Online (Live Zoom)",
-    price: 999,
-    originalPrice: 1299,
-    seatsLeft: 6,
-    totalSeats: 15,
-    instructor: "Yashaswee Sanghavi",
-    image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop",
-    description: "Discover wet-on-wet watercolor washes, color bleeding, leaf stroke controls, and expressive rose & peony floral compositions on 300 GSM cold-pressed paper.",
-    highlights: ["300 GSM 100% cotton paper practice sheets", "Brush pressure & water control fundamentals", "Framed keepsake floral art piece"],
-    includesKit: true,
-  },
-  {
-    id: "ws-acrylic-landscape",
-    title: "Textured Acrylic Impasto Landscape on Canvas",
-    category: "painting",
-    categoryLabel: "Painting",
-    ageGroup: "12+ Years & Adults",
-    duration: "3 Hours",
-    level: "All Levels",
-    date: "Saturday, 30 Aug 2026",
-    time: "3:00 PM - 6:00 PM IST",
-    mode: "Studio (In-Person)",
-    price: 1299,
-    originalPrice: 1699,
-    seatsLeft: 5,
-    totalSeats: 14,
-    instructor: "Yashaswee Sanghavi",
-    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=800&auto=format&fit=crop",
-    description: "Create dramatic mountain vistas and twilight skies using heavy-body acrylic paints, modeling paste textures, and palette knife layering techniques.",
-    highlights: ["10x12 stretched cotton canvas included", "Palette knife blending & impasto modeling", "Studio easel & acrylic tools provided"],
-    includesKit: true,
-  },
-  {
-    id: "ws-kids-fun-craft",
-    title: "Junior Artists: Magic Clay & Acrylic Canvas Fun",
-    category: "kids",
-    categoryLabel: "Kids Art",
-    ageGroup: "5 to 12 Years",
-    duration: "2 Hours",
-    level: "Beginner",
-    date: "Every Sunday Morning",
-    time: "10:30 AM - 12:30 PM IST",
-    mode: "Studio (In-Person)",
-    price: 699,
-    originalPrice: 899,
-    seatsLeft: 8,
-    totalSeats: 16,
-    instructor: "Senior Studio Mentor",
-    image: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?q=80&w=800&auto=format&fit=crop",
-    description: "A joyful creative sensory session where kids explore air-dry sculpting clay, vibrant non-toxic finger and acrylic paints, and cartoon character creation.",
-    highlights: ["100% non-toxic, child-safe art supplies", "Juice & healthy snack break included", "Certificate of Creative Achievement & craft toy"],
-    includesKit: true,
-  },
-  {
-    id: "ws-calligraphy-lettering",
-    title: "Brush Calligraphy & Flourished Hand-Lettering",
-    category: "calligraphy",
-    categoryLabel: "Calligraphy",
-    ageGroup: "12+ Years & Adults",
-    duration: "2.5 Hours",
-    level: "Beginner",
-    date: "Friday, 29 Aug 2026",
-    time: "4:30 PM - 7:00 PM IST",
-    mode: "Studio & Online",
-    price: 1199,
-    originalPrice: 1499,
-    seatsLeft: 5,
-    totalSeats: 12,
-    instructor: "Guest Calligraphy Artist",
-    image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=800&auto=format&fit=crop",
-    description: "Learn stroke weight control, thin upstrokes, thick downstrokes, alphabet anatomy, bouncy modern lettering, and greeting card design.",
-    highlights: ["Tombow/Brustro brush pen starter set", "40-page guided calligraphy workbook", "Custom bookmark & quotes project"],
-    includesKit: true,
-  },
-  {
-    id: "ws-mandala-therapy",
-    title: "Sacred Geometry Mandala & Dot Art Therapy",
-    category: "crafting",
-    categoryLabel: "Crafting & Meditation",
-    ageGroup: "All Ages (10+)",
-    duration: "2.5 Hours",
-    level: "All Levels",
-    date: "Next Sunday, 31 Aug 2026",
-    time: "4:00 PM - 6:30 PM IST",
-    mode: "Studio (In-Person)",
-    price: 999,
-    originalPrice: 1299,
-    seatsLeft: 7,
-    totalSeats: 15,
-    instructor: "Yashaswee Sanghavi",
-    image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=800&auto=format&fit=crop",
-    description: "Experience deep relaxation and mindfulness through precision geometric grids, dotting tools, gradient acrylic layers, and mandala symmetry.",
-    highlights: ["Dotting tool stylus set + grid guide", "Black wooden display plate included", "Mindful tea & soothing studio ambient music"],
-    includesKit: true,
-  },
 ]
 
 export default function WorkshopsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [bookingModalOpen, setBookingModalOpen] = useState(false)
   const [activeWorkshop, setActiveWorkshop] = useState<WorkshopItem | null>(null)
   const [detailWorkshop, setDetailWorkshop] = useState<WorkshopItem | null>(null)
@@ -241,10 +93,7 @@ export default function WorkshopsPage() {
   const [cardImageOverride, setCardImageOverride] = useState<Record<string, string>>({})
   const [cartOpen, setCartOpen] = useState(false)
 
-  const filteredWorkshops =
-    selectedCategory === "all"
-      ? ALL_WORKSHOPS
-      : ALL_WORKSHOPS.filter((w) => w.category === selectedCategory)
+  const filteredWorkshops = ALL_WORKSHOPS
 
   const handleBookClick = (ws: WorkshopItem) => {
     setActiveWorkshop(ws)
@@ -296,35 +145,17 @@ export default function WorkshopsPage() {
           </div>
         </section>
 
-        {/* Filter Categories */}
-        <section className="py-8 px-4 sm:px-6 max-w-7xl mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            {[
-              { id: "all", label: "All Workshops" },
-              { id: "painting", label: "🎨 Painting & Watercolor" },
-              { id: "specialty", label: "✨ Resin & Lippan Art" },
-              { id: "crafting", label: "✂️ Craft & Mandala" },
-              { id: "kids", label: "👶 Kids Art (5-12 Yrs)" },
-              { id: "calligraphy", label: "✒️ Calligraphy & Lettering" },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedCategory(tab.id)}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  selectedCategory === tab.id
-                    ? "bg-[#7c2d8a] text-white shadow-md shadow-purple-300/50 scale-105"
-                    : "bg-white text-stone-700 border border-pink-100 hover:border-purple-300 hover:bg-purple-50"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+        {/* Section Tag */}
+        <section className="pt-8 pb-4 px-4 sm:px-6 max-w-7xl mx-auto flex justify-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-100 text-[#7c2d8a] text-xs font-bold shadow-xs">
+            <Sparkles className="h-3.5 w-3.5 text-[#7c2d8a]" />
+            <span>Featured Online Art Masterclass</span>
           </div>
         </section>
 
         {/* Workshop Cards Grid */}
         <section className="pb-20 px-4 sm:px-6 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="max-w-2xl mx-auto">
             {filteredWorkshops.map((ws) => (
               <div
                 key={ws.id}

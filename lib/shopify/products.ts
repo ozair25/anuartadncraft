@@ -15,67 +15,69 @@ import {
   ShopifyCollectionNode,
 } from "./normalizers"
 
-// In-memory catalog cache for high performance & instant responses across all 16 categories
+// In-memory catalog cache for high performance & instant responses across all categories
 let cachedCatalog: {
   products: Product[]
   timestamp: number
 } | null = null
 
-const CATALOG_CACHE_TTL = 30 * 60 * 1000 // 30 minutes cache
-let isRefreshingCatalog = false
+const CATALOG_CACHE_TTL = 15 * 60 * 1000 // 15 minutes cache
+let activeFetchPromise: Promise<Product[]> | null = null
 
-async function refreshFullCatalogInBackground() {
-  if (isRefreshingCatalog) return
-  isRefreshingCatalog = true
-  try {
-    const allProducts: Product[] = []
-    let cursor: string | null = null
-    let hasNextPage = true
-    let safetyLimit = 15
+/**
+ * Fetch all products from Shopify Storefront API with full cursor-based pagination.
+ * Fetches all pages until hasNextPage is false.
+ */
+async function fetchAllProductsFromShopify(query?: string): Promise<Product[]> {
+  const allProducts: Product[] = []
+  let cursor: string | null = null
+  let hasNextPage = true
+  let page = 0
+  const maxPages = 40 // supports up to 4000 products
 
-    while (hasNextPage && safetyLimit > 0) {
-      safetyLimit--
-      const response = await shopifyFetch<{
-        products: {
-          pageInfo: {
-            hasNextPage: boolean
-            endCursor: string | null
-          }
-          edges: Array<{
-            node: ShopifyProductNode
-          }>
+  while (hasNextPage && page < maxPages) {
+    page++
+    const response = await shopifyFetch<{
+      products: {
+        pageInfo: {
+          hasNextPage: boolean
+          endCursor: string | null
         }
-      }>({
-        query: GET_ALL_PRODUCTS_PAGINATED_QUERY,
-        variables: {
-          first: 250,
-          cursor,
-        },
-        revalidate: 180,
-      })
-
-      if (response.errors && response.errors.length > 0) break
-
-      const edges = response.data?.products?.edges || []
-      for (const edge of edges) {
-        allProducts.push(normalizeShopifyProduct(edge.node))
+        edges: Array<{
+          node: ShopifyProductNode
+        }>
       }
+    }>({
+      query: GET_ALL_PRODUCTS_PAGINATED_QUERY,
+      variables: {
+        first: 100,
+        cursor,
+        query: query || undefined,
+      },
+      revalidate: 180,
+    })
 
-      hasNextPage = response.data?.products?.pageInfo?.hasNextPage ?? false
-      cursor = response.data?.products?.pageInfo?.endCursor ?? null
+    if (response.errors && response.errors.length > 0) {
+      const errorMsg = response.errors.map((e) => e.message).join("; ")
+      console.error(`[Shopify Pagination] Error on page ${page}:`, errorMsg)
+      break
     }
 
-    if (allProducts.length > 0) {
-      cachedCatalog = {
-        products: allProducts,
-        timestamp: Date.now(),
-      }
+    const edges = response.data?.products?.edges || []
+    if (edges.length === 0) break
+
+    for (const edge of edges) {
+      allProducts.push(normalizeShopifyProduct(edge.node))
     }
-  } catch (err) {
-    console.error("Background catalog refresh failed:", err)
-  } finally {
-    isRefreshingCatalog = false
+
+    hasNextPage = Boolean(response.data?.products?.pageInfo?.hasNextPage)
+    cursor = response.data?.products?.pageInfo?.endCursor || null
+    console.log(
+      `[Shopify Catalog] Page ${page}: retrieved ${edges.length} products (cumulative: ${allProducts.length}, hasNextPage: ${hasNextPage})`
+    )
   }
+
+  return allProducts
 }
 
 /**
@@ -95,85 +97,48 @@ export const getAllProducts = cache(async (options?: {
     return []
   }
 
-  // If a search query is passed or small slice is requested specifically
-  if (options?.query || (options?.first && !options?.fetchAll && options.first <= 100)) {
-    const response = await shopifyFetch<{
-      products: {
-        edges: Array<{
-          node: ShopifyProductNode
-        }>
-      }
-    }>({
-      query: GET_ALL_PRODUCTS_QUERY,
-      variables: {
-        first: options?.first || 100,
-        query: options?.query,
-      },
-      revalidate: 60,
-    })
-
-    if (response.errors && response.errors.length > 0) {
-      const errorMsg = response.errors.map((e) => e.message).join("; ")
-      console.error("Shopify GraphQL errors:", errorMsg)
-      throw new Error(`Shopify API Error: ${errorMsg}`)
+  // If a specific search query is provided, query directly
+  if (options?.query) {
+    const products = await fetchAllProductsFromShopify(options.query)
+    if (options.first && options.first > 0 && !options.fetchAll) {
+      return products.slice(0, options.first)
     }
-
-    if (response.data?.products?.edges) {
-      return response.data.products.edges.map((edge) =>
-        normalizeShopifyProduct(edge.node)
-      )
-    }
-
-    return []
+    return products
   }
 
-  // Return cached full catalog if available (stale-while-revalidate)
+  // Check valid in-memory cache
   if (cachedCatalog) {
     const age = Date.now() - cachedCatalog.timestamp
-    if (age > CATALOG_CACHE_TTL) {
-      refreshFullCatalogInBackground()
-    }
-    return cachedCatalog.products
-  }
-
-  // Fast first page fetch to immediately populate catalog without blocking 15 serial roundtrips
-  const firstPageResponse = await shopifyFetch<{
-    products: {
-      pageInfo: {
-        hasNextPage: boolean
-        endCursor: string | null
+    if (age < CATALOG_CACHE_TTL && cachedCatalog.products.length > 0) {
+      if (options?.first && options.first > 0 && !options.fetchAll) {
+        return cachedCatalog.products.slice(0, options.first)
       }
-      edges: Array<{
-        node: ShopifyProductNode
-      }>
+      return cachedCatalog.products
     }
-  }>({
-    query: GET_ALL_PRODUCTS_PAGINATED_QUERY,
-    variables: {
-      first: 250,
-      cursor: null,
-    },
-    revalidate: 180,
-  })
-
-  const firstPageEdges = firstPageResponse.data?.products?.edges || []
-  const initialProducts = firstPageEdges.map((edge) => normalizeShopifyProduct(edge.node))
-
-  if (initialProducts.length > 0) {
-    cachedCatalog = {
-      products: initialProducts,
-      timestamp: Date.now(),
-    }
-
-    // If there are more pages, background-populate the rest
-    if (firstPageResponse.data?.products?.pageInfo?.hasNextPage) {
-      refreshFullCatalogInBackground()
-    }
-
-    return initialProducts
   }
 
-  return []
+  // Deduplicate concurrent fetch requests using a shared promise
+  if (!activeFetchPromise) {
+    activeFetchPromise = fetchAllProductsFromShopify().then((products) => {
+      if (products.length > 0) {
+        cachedCatalog = {
+          products,
+          timestamp: Date.now(),
+        }
+      }
+      return products
+    }).finally(() => {
+      activeFetchPromise = null
+    })
+  }
+
+  const allProducts = await activeFetchPromise
+
+  if (options?.first && options.first > 0 && !options.fetchAll) {
+    return allProducts.slice(0, options.first)
+  }
+
+  return allProducts
 })
 
 /**

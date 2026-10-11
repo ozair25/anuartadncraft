@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const resolvedParams = await params
   const [initialProducts, initialCollections] = await Promise.all([
-    getAllProducts({ first: 100 }).catch(() => []),
+    getAllProducts({ fetchAll: true }).catch(() => []),
     getCollections().catch(() => []),
   ])
 

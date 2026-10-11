@@ -11,7 +11,7 @@ export const revalidate = 60
 
 export default async function ShopPage() {
   const [initialProducts, initialCollections] = await Promise.all([
-    getAllProducts({ first: 100 }).catch(() => []),
+    getAllProducts({ fetchAll: true }).catch(() => []),
     getCollections().catch(() => []),
   ])
 

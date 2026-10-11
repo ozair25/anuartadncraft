@@ -12,61 +12,6 @@ interface BookClassModalProps {
 
 const workshopOptions = [
   {
-    id: "painting",
-    name: "Watercolor & Acrylic Painting Masterclass",
-    category: "Painting",
-    instructor: "Anu Sharma (Lead Artist)",
-    duration: "2.5 Hours",
-    fee: "₹899",
-    kitIncluded: true,
-    dates: ["Saturday, 11:00 AM", "Sunday, 3:00 PM", "Wednesday, 4:00 PM"],
-    highlights: ["Live step-by-step guidance", "Watercolor paper & artist paints provided", "Take home your finished framed painting"],
-  },
-  {
-    id: "crafting",
-    name: "DIY Lippan & Mixed Media Paper Craft",
-    category: "Crafting",
-    instructor: "Pooja Verma",
-    duration: "3 Hours",
-    fee: "₹999",
-    kitIncluded: true,
-    dates: ["Sunday, 11:00 AM", "Friday, 4:00 PM"],
-    highlights: ["Traditional mud & mirror work", "Complete MDF board & mirror kit included", "Varnish sealing techniques"],
-  },
-  {
-    id: "kids-art",
-    name: "Junior Creators Art & Sensory Camp",
-    category: "Kids Art",
-    instructor: "Anu Arts Kids Team",
-    duration: "2 Hours",
-    fee: "₹699",
-    kitIncluded: true,
-    dates: ["Saturday, 10:00 AM", "Sunday, 10:00 AM"],
-    highlights: ["Ages 5 to 14", "Non-toxic finger paints, clay & canvases", "Certificate of Creativity"],
-  },
-  {
-    id: "calligraphy",
-    name: "Modern Brush Calligraphy & Lettering",
-    category: "Calligraphy",
-    instructor: "Radhika Dave",
-    duration: "2.5 Hours",
-    fee: "₹799",
-    kitIncluded: true,
-    dates: ["Saturday, 4:00 PM", "Tuesday, 5:00 PM"],
-    highlights: ["Brush pens & practice guidebooks included", "Flourishing & bounce lettering", "Custom name tag design"],
-  },
-  {
-    id: "specialty",
-    name: "Resin Art Ocean Waves & Coaster Studio",
-    category: "Specialty",
-    instructor: "Anu Sharma & Guest Resin Master",
-    duration: "3.5 Hours",
-    fee: "₹1,499",
-    kitIncluded: true,
-    dates: ["Sunday, 2:30 PM", "Thursday, 3:00 PM"],
-    highlights: ["2:1 Crystal Resin, pigments & mica powders", "4 Coasters + 1 Large Round Clock Base", "Blowtorch & heat gun safety training"],
-  },
-  {
     id: "koi-pond",
     name: "Koi Fish and Resin Lotus Pond — Online Workshop",
     category: "Online Workshop",
@@ -81,10 +26,7 @@ const workshopOptions = [
 
 export function BookClassModal({ isOpen, onClose, initialCategory, initialWorkshopId }: BookClassModalProps) {
   const [selectedWorkshopId, setSelectedWorkshopId] = useState(
-    initialWorkshopId ||
-    (initialCategory
-      ? workshopOptions.find((w) => w.category.toLowerCase().includes(initialCategory.toLowerCase()))?.id || "painting"
-      : "painting")
+    initialWorkshopId || "koi-pond"
   )
   const [selectedSlot, setSelectedSlot] = useState(0)
   const [fullName, setFullName] = useState("")
@@ -165,32 +107,34 @@ export function BookClassModal({ isOpen, onClose, initialCategory, initialWorksh
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               
-              {/* 1. Workshop Category Selector */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
-                  Select Workshop Topic
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {workshopOptions.map((opt) => (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedWorkshopId(opt.id)
-                        setSelectedSlot(0)
-                      }}
-                      className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                        selectedWorkshopId === opt.id
-                          ? "border-[#7c2d8a] bg-purple-50/80 text-[#7c2d8a] ring-2 ring-purple-300/40 shadow-xs font-bold"
-                          : "border-stone-200 bg-stone-50/50 hover:bg-stone-50 text-stone-700 text-xs font-medium"
-                      }`}
-                    >
-                      <div className="text-xs font-bold">{opt.category}</div>
-                      <div className="text-[11px] text-stone-500 truncate mt-0.5">{opt.fee}</div>
-                    </button>
-                  ))}
+              {/* 1. Workshop Category Selector (when multiple options exist) */}
+              {workshopOptions.length > 1 && (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
+                    Select Workshop Topic
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {workshopOptions.map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedWorkshopId(opt.id)
+                          setSelectedSlot(0)
+                        }}
+                        className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                          selectedWorkshopId === opt.id
+                            ? "border-[#7c2d8a] bg-purple-50/80 text-[#7c2d8a] ring-2 ring-purple-300/40 shadow-xs font-bold"
+                            : "border-stone-200 bg-stone-50/50 hover:bg-stone-50 text-stone-700 text-xs font-medium"
+                        }`}
+                      >
+                        <div className="text-xs font-bold">{opt.category}</div>
+                        <div className="text-[11px] text-stone-500 truncate mt-0.5">{opt.fee}</div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 2. Selected Workshop Summary Card */}
               <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50/60 to-pink-50/60 border border-pink-200/60 space-y-2.5">

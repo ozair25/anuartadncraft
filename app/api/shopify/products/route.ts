@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ products }, { headers: CACHE_HEADERS })
     }
 
-    const products = await getAllProducts({ query: query || undefined, first: 100 })
+    const products = await getAllProducts({ query: query || undefined, fetchAll: true })
     return NextResponse.json({ products }, { headers: CACHE_HEADERS })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch products"
