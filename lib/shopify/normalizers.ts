@@ -5,6 +5,7 @@ export interface ShopifyProductNode {
   id: string
   title: string
   handle: string
+  updatedAt?: string
   description?: string
   descriptionHtml?: string
   vendor?: string
@@ -234,7 +235,7 @@ export function normalizeShopifyProduct(node: ShopifyProductNode): Product {
     variantId,
     variants,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    updatedAt: node.updatedAt || new Date().toISOString(),
   }
 }
 

@@ -7,6 +7,7 @@ export const PRODUCT_FRAGMENT = `
     id
     title
     handle
+    updatedAt
     description
     descriptionHtml
     vendor
