@@ -518,7 +518,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const redirectToCheckout = async () => {
     setIsLoadingCart(true)
     setCartError(null)
-    console.log("[Cart] Initiating checkout redirect. Current checkoutUrl:", checkoutUrl)
+    console.log("[Cart] Initiating checkout redirect.")
 
     if (shopifyCartId) {
       try {
@@ -530,24 +530,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const data = await res.json()
         console.log("[Cart] Refreshed cart data for checkout:", data)
 
-        if (data.cart && data.cart.checkoutUrl && isSafeShopifyCheckoutUrl(data.cart.checkoutUrl)) {
-          console.log("[Cart] Redirecting to valid Shopify checkout:", data.cart.checkoutUrl)
-          window.location.href = data.cart.checkoutUrl
-          return
+        if (data.cart && data.cart.checkoutUrl) {
+          const isValid = isSafeShopifyCheckoutUrl(data.cart.checkoutUrl)
+          console.log("[Cart] Checkout URL validity:", isValid, "URL:", data.cart.checkoutUrl)
+          if (isValid) {
+            window.location.href = data.cart.checkoutUrl
+            return
+          } else {
+            console.error("[Cart] Checkout URL failed safety check:", data.cart.checkoutUrl)
+          }
         }
       } catch (err) {
         console.error("[Cart] Failed to refresh cart for checkout:", err)
       }
     }
 
-    if (checkoutUrl && isSafeShopifyCheckoutUrl(checkoutUrl)) {
-      console.log("[Cart] Redirecting to existing checkoutUrl:", checkoutUrl)
-      window.location.href = checkoutUrl
+    if (checkoutUrl) {
+      const isValid = isSafeShopifyCheckoutUrl(checkoutUrl)
+      console.log("[Cart] Existing checkoutUrl validity:", isValid, "URL:", checkoutUrl)
+      if (isValid) {
+        window.location.href = checkoutUrl
+      } else {
+        console.error("[Cart] Existing checkoutUrl failed safety check:", checkoutUrl)
+        setCartError("Checkout is not available at this moment. Please try again.")
+        setIsLoadingCart(false)
+        window.location.href = "/cart"
+      }
     } else {
-      console.warn("[Cart] No valid checkoutUrl found. Redirecting to /cart.")
+      console.warn("[Cart] No checkoutUrl found. Redirecting to /cart.")
       setCartError("Checkout is not available at this moment. Please try again.")
       setIsLoadingCart(false)
-      // router.push("/cart") // router is not available here, using window
       window.location.href = "/cart"
     }
   }
