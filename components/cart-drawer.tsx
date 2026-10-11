@@ -16,6 +16,7 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () =
     removeCoupon,
     discountAmount,
     checkoutUrl,
+    redirectToCheckout,
     isLoadingCart,
     cartError,
     clearCartError,
@@ -191,11 +192,7 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () =
               <button
                 onClick={() => {
                   onClose()
-                  if (checkoutUrl) {
-                    window.location.href = checkoutUrl
-                  } else {
-                    router.push("/cart")
-                  }
+                  redirectToCheckout()
                 }}
                 className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
               >

@@ -47,9 +47,9 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
         </picture>
       </Link>
 
-      {/* Hero CTA Buttons - placed directly below Hero Banner one by one in mobile view */}
-      <div className="relative z-10 w-full pt-3 pb-3 sm:pt-7 sm:pb-8 lg:pt-9 lg:pb-12 px-4 bg-gradient-to-b from-[#fffbf5] via-[#fff8fc] to-[#fffaff]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-5 md:gap-6">
+      {/* Hero CTA Buttons - placed directly below Hero Banner with ~1 inch offset */}
+      <div className="relative z-10 w-full pt-6 sm:pt-10 lg:pt-12 pb-5 sm:pb-8 lg:pb-12 px-4 bg-gradient-to-b from-[#fffbf5] via-[#fff8fc] to-[#fffaff]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-5 md:gap-6 mt-3 sm:mt-6">
           <Link
             href="/workshops"
             prefetch={true}

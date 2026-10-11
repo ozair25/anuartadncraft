@@ -909,8 +909,8 @@ export function AnuArtsTemplate({
               </div>
             </div>
 
-            {/* CTA Button */}
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            {/* CTA Button - shifted ~1 inch below bullet point icons */}
+            <div className="pt-6 sm:pt-8 mt-2 flex flex-wrap items-center gap-4">
               <Link
                 href="/about"
                 prefetch={true}
