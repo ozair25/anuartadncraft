@@ -13,13 +13,15 @@ export default function CheckoutPage() {
   const [redirecting, setRedirecting] = useState(false)
 
   useEffect(() => {
-    if (items.length > 0 && checkoutUrl && !redirecting) {
-      if (isSafeShopifyCheckoutUrl(checkoutUrl)) {
+    if (items.length > 0 && !redirecting) {
+      if (checkoutUrl && isSafeShopifyCheckoutUrl(checkoutUrl)) {
         setRedirecting(true)
         window.location.href = checkoutUrl
+      } else if (!isLoadingCart) {
+        redirectToCheckout()
       }
     }
-  }, [items.length, checkoutUrl, redirecting])
+  }, [items.length, checkoutUrl, redirecting, isLoadingCart, redirectToCheckout])
 
   if (items.length === 0) {
     return (

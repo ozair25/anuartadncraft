@@ -8,6 +8,15 @@ export function isSafeShopifyCheckoutUrl(url: string | null | undefined): boolea
   if (!url || typeof url !== "string") return false
   const trimmed = url.trim()
 
+  // Allow relative checkout paths if returned by Shopify
+  if (
+    trimmed.startsWith("/cart/c/") ||
+    trimmed.startsWith("/checkouts/") ||
+    trimmed.startsWith("/cart/")
+  ) {
+    return true
+  }
+
   try {
     const parsed = new URL(trimmed)
     if (parsed.protocol !== "https:") return false
@@ -22,7 +31,17 @@ export function isSafeShopifyCheckoutUrl(url: string | null | undefined): boolea
       host === "anuarts.in" ||
       host.endsWith(".anuarts.in")
 
-    return isShopifyDomain
+    if (isShopifyDomain) return true
+
+    // Also match against any store domain configured in environment
+    if (typeof process !== "undefined" && process.env?.SHOPIFY_STORE_DOMAIN) {
+      const configuredHost = process.env.SHOPIFY_STORE_DOMAIN.replace(/^https?:\/\//, "").replace(/\/.*$/, "").toLowerCase()
+      if (configuredHost && (host === configuredHost || host.endsWith("." + configuredHost))) {
+        return true
+      }
+    }
+
+    return false
   } catch {
     return false
   }

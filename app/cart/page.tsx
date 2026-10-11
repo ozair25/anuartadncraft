@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { RibbonLabel } from "@/components/ribbon-label"
 import { useCart } from "@/lib/context/cart-context"
 import { getCouponByCode } from "@/lib/services/db-service"
-import { Trash2, ArrowRight, ShoppingBag, ArrowLeft, Tag } from "lucide-react"
+import { Trash2, ArrowRight, ShoppingBag, ArrowLeft, Tag, Loader2 } from "lucide-react"
 
 export default function CartPage() {
   const router = useRouter()
@@ -23,6 +23,8 @@ export default function CartPage() {
     removeCoupon,
     checkoutUrl,
     redirectToCheckout,
+    isLoadingCart,
+    cartError,
   } = useCart()
 
   const [couponInput, setCouponInput] = useState("")
@@ -215,12 +217,27 @@ export default function CartPage() {
                   <span className="font-serif text-2xl font-black text-primary">₹{totalPrice + shippingFee}</span>
                 </div>
 
+                {cartError && (
+                  <div className="rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
+                    <p className="font-semibold">{cartError}</p>
+                  </div>
+                )}
+
                 <button
                   type="button"
+                  disabled={isLoadingCart}
                   onClick={redirectToCheckout}
-                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-3 text-xs font-bold text-primary-foreground shadow transition-opacity hover:opacity-90 cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-3 text-xs font-bold text-primary-foreground shadow transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-60"
                 >
-                  Proceed To Checkout <ArrowRight className="h-4 w-4" />
+                  {isLoadingCart ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Connecting to Shopify Checkout...
+                    </>
+                  ) : (
+                    <>
+                      Proceed To Checkout <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
                 </button>
               </div>
             </div>

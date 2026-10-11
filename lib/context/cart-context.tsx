@@ -520,6 +520,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCartError(null)
     console.log("[Cart] Initiating checkout redirect.")
 
+    // 1. Fast-path: If we already have a valid checkoutUrl for the current cart, redirect immediately
+    if (checkoutUrl && isSafeShopifyCheckoutUrl(checkoutUrl)) {
+      window.location.href = checkoutUrl
+      return
+    }
+
+    // 2. If we have a shopifyCartId, refresh cart data from Shopify to get fresh checkoutUrl
     if (shopifyCartId) {
       try {
         const res = await fetch("/api/shopify/cart", {
@@ -533,6 +540,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (data.cart && data.cart.checkoutUrl) {
           const isValid = isSafeShopifyCheckoutUrl(data.cart.checkoutUrl)
           if (isValid) {
+            setCheckoutUrl(data.cart.checkoutUrl)
             window.location.href = data.cart.checkoutUrl
             return
           } else {
@@ -545,20 +553,46 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
+    // 3. Fallback: If no valid checkoutUrl yet or cart was expired/lost, create a fresh Shopify cart from current items
+    if (items.length > 0) {
+      try {
+        const lineItems = items
+          .map((item) => {
+            const variantId = item.variantId || resolveShopifyVariantId(item.product, item.selectedOptions)
+            return variantId ? { merchandiseId: variantId, quantity: item.quantity } : null
+          })
+          .filter(Boolean)
+
+        if (lineItems.length > 0) {
+          const createRes = await fetch("/api/shopify/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "create", lines: lineItems }),
+          })
+          const createData = await createRes.json()
+
+          if (createData.cart?.checkoutUrl && isSafeShopifyCheckoutUrl(createData.cart.checkoutUrl)) {
+            setShopifyCartId(createData.cart.id)
+            setCheckoutUrl(createData.cart.checkoutUrl)
+            window.location.href = createData.cart.checkoutUrl
+            return
+          }
+        }
+      } catch (createErr) {
+        console.error("[Cart] Failed to create cart during checkout redirect:", createErr)
+      }
+    }
+
+    // 4. Secondary fallback: check existing checkoutUrl
     if (checkoutUrl) {
       const isValid = isSafeShopifyCheckoutUrl(checkoutUrl)
       if (isValid) {
         window.location.href = checkoutUrl
         return
-      } else {
-        console.error("[Cart] Existing checkoutUrl failed safety check:", checkoutUrl)
-        setCartError("Checkout is not available at this moment. Please try again.")
       }
-    } else {
-      console.warn("[Cart] No checkoutUrl found. Redirecting to /cart.")
-      setCartError("Checkout is not available at this moment. Please try again.")
     }
-    
+
+    setCartError("Checkout is temporarily unavailable. Please try again or contact support.")
     setIsLoadingCart(false)
   }
 

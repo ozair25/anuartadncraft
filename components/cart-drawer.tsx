@@ -1,7 +1,7 @@
 "use client"
 
 import { useCart } from "@/lib/context/cart-context"
-import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight, Tag } from "lucide-react"
+import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight, Tag, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -190,14 +190,23 @@ export function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () =
 
               {/* Checkout Button */}
               <button
+                disabled={isLoadingCart}
                 onClick={() => {
-                  onClose()
                   redirectToCheckout()
                 }}
-                className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
+                className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all disabled:opacity-60"
               >
-                Proceed To Checkout
-                <ArrowRight className="h-4 w-4" />
+                {isLoadingCart ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Connecting to Shopify Checkout...
+                  </>
+                ) : (
+                  <>
+                    Proceed To Checkout
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
               </button>
             </div>
           )}

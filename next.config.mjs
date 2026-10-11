@@ -30,6 +30,18 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'motion'],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/cart/c/:path*',
+        destination: 'https://e08d97-2b.myshopify.com/cart/c/:path*',
+      },
+      {
+        source: '/checkouts/:path*',
+        destination: 'https://e08d97-2b.myshopify.com/checkouts/:path*',
+      },
+    ]
+  },
   async headers() {
     return [
       {
