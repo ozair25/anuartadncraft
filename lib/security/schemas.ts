@@ -18,7 +18,9 @@ export function isSafeShopifyCheckoutUrl(url: string | null | undefined): boolea
     const isShopifyDomain =
       host.endsWith(".myshopify.com") ||
       host === "shopify.com" ||
-      host.endsWith(".shopify.com")
+      host.endsWith(".shopify.com") ||
+      host === "anuarts.in" ||
+      host.endsWith(".anuarts.in")
 
     return isShopifyDomain
   } catch {

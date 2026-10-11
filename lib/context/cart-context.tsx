@@ -532,12 +532,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         if (data.cart && data.cart.checkoutUrl) {
           const isValid = isSafeShopifyCheckoutUrl(data.cart.checkoutUrl)
-          console.log("[Cart] Checkout URL validity:", isValid, "URL:", data.cart.checkoutUrl)
           if (isValid) {
             window.location.href = data.cart.checkoutUrl
             return
           } else {
             console.error("[Cart] Checkout URL failed safety check:", data.cart.checkoutUrl)
+            setCartError("Checkout error. Please contact support.")
           }
         }
       } catch (err) {
@@ -547,21 +547,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     if (checkoutUrl) {
       const isValid = isSafeShopifyCheckoutUrl(checkoutUrl)
-      console.log("[Cart] Existing checkoutUrl validity:", isValid, "URL:", checkoutUrl)
       if (isValid) {
         window.location.href = checkoutUrl
+        return
       } else {
         console.error("[Cart] Existing checkoutUrl failed safety check:", checkoutUrl)
         setCartError("Checkout is not available at this moment. Please try again.")
-        setIsLoadingCart(false)
-        window.location.href = "/cart"
       }
     } else {
       console.warn("[Cart] No checkoutUrl found. Redirecting to /cart.")
       setCartError("Checkout is not available at this moment. Please try again.")
-      setIsLoadingCart(false)
-      window.location.href = "/cart"
     }
+    
+    setIsLoadingCart(false)
   }
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0)
