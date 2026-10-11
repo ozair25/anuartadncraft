@@ -14,8 +14,8 @@ export default function OrderSuccessPage({ params }: { params: Promise<{ orderId
 
   const order = getOrderById(orderNumber)
 
-  const savedPhone = typeof window !== "undefined" ? localStorage.getItem("anu_arts_whatsapp_phone") || "919000000000" : "919000000000"
-  const cleanPhone = savedPhone.replace(/[^0-9]/g, "")
+  const rawPhone = typeof window !== "undefined" ? localStorage.getItem("anu_arts_whatsapp_phone") : null
+  const cleanPhone = (rawPhone ? rawPhone.replace(/[^0-9]/g, "") : "") || "919425356009"
   const messageText = encodeURIComponent(
     `Hello Anu Arts & Craft Store!\n\nI have placed order #${orderNumber} for ₹${order?.total || 0}.\nItems: ${order?.items?.map((i) => `${i.name} (x${i.quantity})`).join(", ")}\nCustomer: ${order?.userName || "Customer"}`
   )

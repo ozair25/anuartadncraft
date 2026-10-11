@@ -790,24 +790,33 @@ export function ShopClient({
               {/* Search, Sort & Price Filter Bar */}
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border border-pink-100/90 bg-white p-4 shadow-sm">
                 {/* Search Input */}
-                <div className="relative flex-1 max-w-md">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    if (searchQuery.trim()) {
+                      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+                    }
+                  }}
+                  className="relative flex-1 max-w-md"
+                >
                   <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="Search in this collection..."
+                    placeholder="Search supplies (or press Enter to search entire store)..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-full border border-pink-100 bg-[#fffaff] pl-9 pr-4 py-2 text-xs text-foreground focus:outline-none focus:border-[#7c2d8a] transition-colors"
+                    className="w-full rounded-full border border-pink-100 bg-[#fffaff] pl-9 pr-9 py-2 text-xs text-foreground focus:outline-none focus:border-[#7c2d8a] transition-colors"
                   />
                   {searchQuery && (
                     <button
+                      type="button"
                       onClick={() => setSearchQuery("")}
                       className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
                   )}
-                </div>
+                </form>
 
                 {/* Sort & Price Filter Controls */}
                 <div className="flex flex-wrap items-center gap-4">
@@ -888,6 +897,16 @@ export function ShopClient({
                       : "Try adjusting your search query, price filter, or choose a different category."}
                   </p>
                   <div className="mt-6 flex flex-wrap justify-center gap-3">
+                    {searchQuery.trim() && (
+                      <button
+                        type="button"
+                        onClick={() => router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)}
+                        className="rounded-full bg-[#7c2d8a] hover:bg-[#682274] text-white px-6 py-2.5 text-xs font-bold shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+                      >
+                        <Search className="h-3.5 w-3.5" />
+                        Search Entire Store for &quot;{searchQuery}&quot;
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => {
@@ -895,11 +914,11 @@ export function ShopClient({
                         setSearchQuery("")
                         setPriceRange(2000)
                       }}
-                      className="rounded-full bg-[#7c2d8a] hover:bg-[#682274] text-white px-6 py-2.5 text-xs font-bold shadow-md transition-all cursor-pointer"
+                      className="rounded-full bg-purple-50 hover:bg-purple-100 text-[#7c2d8a] border border-purple-200 px-6 py-2.5 text-xs font-bold transition-all cursor-pointer"
                     >
                       View All Supplies ({allProducts.length})
                     </button>
-                    {activeCategory && (
+                    {activeCategory && !searchQuery.trim() && (
                       <button
                         type="button"
                         onClick={() => handleSelectCategory("diy-kits")}

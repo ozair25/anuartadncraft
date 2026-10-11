@@ -5,6 +5,7 @@ import Link from "next/link"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { useCart } from "@/lib/context/cart-context"
+import { isSafeShopifyCheckoutUrl } from "@/lib/security/schemas"
 import { ShoppingBag, ArrowRight, ShieldCheck, Loader2, ExternalLink } from "lucide-react"
 
 export default function CheckoutPage() {
@@ -13,8 +14,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (items.length > 0 && checkoutUrl && !redirecting) {
-      setRedirecting(true)
-      window.location.href = checkoutUrl
+      if (isSafeShopifyCheckoutUrl(checkoutUrl)) {
+        setRedirecting(true)
+        window.location.href = checkoutUrl
+      }
     }
   }, [items.length, checkoutUrl, redirecting])
 
@@ -75,9 +78,10 @@ export default function CheckoutPage() {
             )}
 
             <div className="pt-2 space-y-3">
-              {checkoutUrl ? (
+              {checkoutUrl && isSafeShopifyCheckoutUrl(checkoutUrl) ? (
                 <a
                   href={checkoutUrl}
+                  rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary py-3 px-6 text-xs font-bold text-primary-foreground shadow hover:opacity-90 transition-opacity"
                 >
                   Continue to Shopify Checkout <ExternalLink className="h-4 w-4" />

@@ -32,6 +32,7 @@ import {
   FileText,
   Clock,
   MapPin,
+  Loader2,
 } from "lucide-react"
 import { useCart } from "@/lib/context/cart-context"
 import { useWishlist } from "@/lib/context/wishlist-context"
@@ -39,6 +40,7 @@ import { useAuth } from "@/lib/context/auth-context"
 import { BrandLogo } from "@/components/brand-logo"
 import { ShopCategoryDrawer } from "@/components/shop-category-drawer"
 import { SHOP_CATEGORIES } from "@/lib/config/shop-categories"
+import { useShopifyLiveSearch } from "@/lib/shopify/hooks"
 
 interface SiteHeaderProps {
   onOpenCart?: () => void
@@ -67,6 +69,7 @@ export function SiteHeader({
   const [mounted, setMounted] = useState(false)
   const [moreMenuOpen, setMoreMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const { results: liveResults, loading: liveLoading, totalCount: liveCount } = useShopifyLiveSearch(searchQuery, 250)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [shopCategoryDrawerOpen, setShopCategoryDrawerOpen] = useState(false)
@@ -397,26 +400,129 @@ export function SiteHeader({
 
       {/* Expandable Search Input Bar */}
       {searchOpen && (
-        <div className="border-t border-pink-100 bg-white/95 px-4 py-3 shadow-sm animate-in fade-in slide-in-from-top-2">
-          <form
-            onSubmit={handleSearchSubmit}
-            className="mx-auto max-w-2xl relative flex items-center"
-          >
-            <input
-              type="text"
-              placeholder="Search acrylic paints, resin kits, lippan supplies, workshops..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              autoFocus
-              className="w-full rounded-full border border-pink-200 bg-[#fffaff] py-2.5 pl-4 pr-12 text-xs sm:text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200"
-            />
-            <button
-              type="submit"
-              className="absolute right-1.5 p-2 rounded-full bg-[#7c2d8a] text-white hover:bg-purple-800 transition-colors cursor-pointer"
+        <div className="border-t border-pink-100 bg-white/95 px-4 py-3 shadow-sm animate-in fade-in slide-in-from-top-2 relative">
+          <div className="mx-auto max-w-2xl relative">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="relative flex items-center"
             >
-              <Search className="h-3.5 w-3.5" />
-            </button>
-          </form>
+              <input
+                type="text"
+                placeholder="Search acrylic paints, resin kits, lippan supplies, workshops..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+                className="w-full rounded-full border border-pink-200 bg-[#fffaff] py-2.5 pl-4 pr-12 text-xs sm:text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200"
+              />
+              <button
+                type="submit"
+                className="absolute right-1.5 p-2 rounded-full bg-[#7c2d8a] text-white hover:bg-purple-800 transition-colors cursor-pointer"
+              >
+                {liveLoading ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Search className="h-3.5 w-3.5" />
+                )}
+              </button>
+            </form>
+
+            {/* Live Search Suggestions Dropdown */}
+            {searchQuery.trim().length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-2 z-50 overflow-hidden rounded-2xl border border-pink-100 bg-white shadow-2xl max-h-[460px] flex flex-col animate-in fade-in slide-in-from-top-1">
+                <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-purple-50/80 via-pink-50/50 to-white border-b border-pink-100 text-xs">
+                  <span className="font-semibold text-stone-700">
+                    {liveLoading ? (
+                      <span className="flex items-center gap-1.5">
+                        <Loader2 className="h-3 w-3 animate-spin text-[#7c2d8a]" />
+                        Searching Shopify catalog...
+                      </span>
+                    ) : (
+                      `Matching Products in Shop (${liveCount})`
+                    )}
+                  </span>
+                  <span className="text-[11px] text-stone-400">
+                    Press <kbd className="px-1 py-0.5 rounded bg-stone-100 font-mono text-[10px]">Enter</kbd> to view all
+                  </span>
+                </div>
+
+                <div className="overflow-y-auto divide-y divide-pink-50/60 p-1.5 flex-1 overscroll-contain">
+                  {liveLoading && liveResults.length === 0 ? (
+                    <div className="py-8 text-center text-xs text-stone-500">
+                      <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#7c2d8a] mb-2" />
+                      Searching Shopify store for &quot;{searchQuery}&quot;...
+                    </div>
+                  ) : liveResults.length > 0 ? (
+                    liveResults.slice(0, 8).map((product) => (
+                      <Link
+                        key={product.id}
+                        href={`/product/${product.slug}`}
+                        onClick={() => {
+                          setSearchOpen(false)
+                          setSearchQuery("")
+                        }}
+                        className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-purple-50/70 transition-colors group"
+                      >
+                        <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-stone-100 shrink-0 border border-pink-100/80">
+                          <img
+                            src={product.thumbnail}
+                            alt={product.name}
+                            className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-semibold text-stone-900 group-hover:text-[#7c2d8a] transition-colors truncate">
+                            {product.name}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs font-bold text-[#7c2d8a]">₹{product.price}</span>
+                            {Boolean(product.originalPrice && product.originalPrice > product.price) && (
+                              <span className="text-[10px] text-stone-400 line-through">
+                                ₹{product.originalPrice}
+                              </span>
+                            )}
+                            {product.category && (
+                              <span className="text-[10px] bg-purple-100/60 text-[#7c2d8a] px-1.5 py-0.5 rounded-md font-medium truncate max-w-[130px]">
+                                {product.category}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-semibold text-[#7c2d8a] opacity-0 group-hover:opacity-100 transition-opacity shrink-0 flex items-center">
+                          View <ChevronRight className="h-3 w-3 ml-0.5" />
+                        </span>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="py-6 text-center text-xs text-stone-500">
+                      No matching products found in store for &quot;{searchQuery}&quot;.
+                      <p className="mt-1 text-[11px] text-stone-400">
+                        Try searching for &quot;mandala&quot;, &quot;resin&quot;, &quot;paint&quot;, or &quot;varnish&quot;.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {liveResults.length > 0 && (
+                  <div className="p-2 border-t border-pink-100 bg-stone-50/70 text-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+                        setSearchOpen(false)
+                        setSearchQuery("")
+                      }}
+                      className="w-full py-1.5 text-xs font-bold text-[#7c2d8a] hover:text-purple-900 hover:underline transition-all cursor-pointer flex items-center justify-center gap-1"
+                    >
+                      View all results for &quot;{searchQuery}&quot; ({liveCount})
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="mx-auto max-w-2xl mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-stone-500">
             <span className="font-semibold text-stone-700">Popular:</span>
             {["Acrylic Paints", "Resin Kit", "Lippan Mirrors", "Watercolors", "DIY Kits", "Workshops"].map(
@@ -490,23 +596,103 @@ export function SiteHeader({
 
               {/* 2. Scrollable Menu Body */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 pb-20 overscroll-contain">
-                {/* Search Bar */}
-                <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Search art supplies, DIY kits, workshops..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-xl border border-pink-200 bg-white py-2.5 pl-3.5 pr-11 text-xs sm:text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200 shadow-2xs"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-1.5 p-2 rounded-lg bg-[#7c2d8a] text-white hover:bg-purple-800 transition-colors cursor-pointer"
-                    aria-label="Search"
-                  >
-                    <Search className="h-3.5 w-3.5" />
-                  </button>
-                </form>
+                {/* Search Bar with Live Suggestions */}
+                <div className="relative">
+                  <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+                    <input
+                      type="text"
+                      placeholder="Search art supplies, DIY kits, workshops..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full rounded-xl border border-pink-200 bg-white py-2.5 pl-3.5 pr-11 text-xs sm:text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#7c2d8a] focus:ring-2 focus:ring-purple-200 shadow-2xs"
+                    />
+                    <button
+                      type="submit"
+                      className="absolute right-1.5 p-2 rounded-lg bg-[#7c2d8a] text-white hover:bg-purple-800 transition-colors cursor-pointer"
+                      aria-label="Search"
+                    >
+                      {liveLoading ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Search className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                  </form>
+
+                  {/* Mobile Live Suggestions Dropdown */}
+                  {searchQuery.trim().length > 0 && (
+                    <div className="mt-2 overflow-hidden rounded-xl border border-pink-100 bg-white shadow-lg max-h-[320px] flex flex-col">
+                      <div className="flex items-center justify-between px-3 py-2 bg-purple-50/70 border-b border-pink-100 text-[11px] font-semibold text-stone-700">
+                        <span>{liveLoading ? "Searching store..." : `Matching Products (${liveCount})`}</span>
+                        {liveLoading && <Loader2 className="h-3 w-3 animate-spin text-[#7c2d8a]" />}
+                      </div>
+
+                      <div className="overflow-y-auto divide-y divide-pink-50 p-1 flex-1">
+                        {liveLoading && liveResults.length === 0 ? (
+                          <div className="py-6 text-center text-xs text-stone-500">
+                            <Loader2 className="mx-auto h-4 w-4 animate-spin text-[#7c2d8a] mb-1.5" />
+                            Searching Shopify catalog...
+                          </div>
+                        ) : liveResults.length > 0 ? (
+                          liveResults.slice(0, 6).map((product) => (
+                            <Link
+                              key={product.id}
+                              href={`/product/${product.slug}`}
+                              onClick={() => {
+                                setMobileOpen(false)
+                                setSearchQuery("")
+                              }}
+                              className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-purple-50/70 transition-colors"
+                            >
+                              <div className="h-10 w-10 rounded-md overflow-hidden bg-stone-100 shrink-0 border border-pink-100">
+                                <img
+                                  src={product.thumbnail}
+                                  alt={product.name}
+                                  className="h-full w-full object-cover"
+                                  referrerPolicy="no-referrer"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-semibold text-stone-900 truncate">
+                                  {product.name}
+                                </p>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className="text-xs font-bold text-[#7c2d8a]">₹{product.price}</span>
+                                  {product.category && (
+                                    <span className="text-[10px] bg-purple-100/60 text-[#7c2d8a] px-1.5 py-0.2 rounded font-medium truncate max-w-[100px]">
+                                      {product.category}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <ChevronRight className="h-4 w-4 text-stone-400 shrink-0" />
+                            </Link>
+                          ))
+                        ) : (
+                          <div className="py-4 text-center text-xs text-stone-500">
+                            No products found matching &quot;{searchQuery}&quot;.
+                          </div>
+                        )}
+                      </div>
+
+                      {liveResults.length > 0 && (
+                        <div className="p-1.5 border-t border-pink-100 bg-stone-50 text-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+                              setMobileOpen(false)
+                              setSearchQuery("")
+                            }}
+                            className="w-full py-1 text-xs font-bold text-[#7c2d8a] hover:underline cursor-pointer"
+                          >
+                            View all results ({liveCount}) →
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Primary Call to Action: Book a Class */}
                 <button

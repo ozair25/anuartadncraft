@@ -37,7 +37,6 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
             className="w-full h-auto max-h-[85vh] sm:max-h-[720px] object-cover object-center block"
             referrerPolicy="no-referrer"
             loading="eager"
-            // @ts-expect-error React 19 fetchPriority
             fetchPriority="high"
             decoding="async"
             onError={(e) => {

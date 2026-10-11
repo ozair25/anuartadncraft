@@ -83,7 +83,7 @@ export function useShopifyProducts(options?: {
           return
         }
 
-        if (isMounted && rawProducts.length > 0) {
+        if (isMounted) {
           setProducts(rawProducts)
         }
       } catch (err) {
@@ -232,3 +232,77 @@ export function useShopifyCollections(options?: { initialCollections?: Collectio
 
   return { collections, loading, error }
 }
+
+/**
+ * Hook for live debounced product search against the Shopify Storefront catalog.
+ * Manages debounce (default 250ms), request deduplication, and prevents race conditions.
+ */
+export function useShopifyLiveSearch(query: string, debounceMs = 250) {
+  const [results, setResults] = useState<Product[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [totalCount, setTotalCount] = useState<number>(0)
+  const [error, setError] = useState<string | null>(null)
+  const [activeReq] = useState(() => ({ current: 0 }))
+
+  useEffect(() => {
+    const trimmed = (query || "").trim()
+    if (!trimmed) {
+      setResults([])
+      setLoading(false)
+      setTotalCount(0)
+      setError(null)
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+    const currentId = ++activeReq.current
+    const controller = new AbortController()
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/shopify/search?q=${encodeURIComponent(trimmed)}&limit=10`,
+          {
+            signal: controller.signal,
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        )
+
+        if (!res.ok) {
+          throw new Error(`Search request failed (${res.status})`)
+        }
+
+        const data = await res.json()
+
+        // Prevent race condition: only update if this is the newest query
+        if (activeReq.current === currentId) {
+          setResults(Array.isArray(data.products) ? data.products : [])
+          setTotalCount(
+            typeof data.totalCount === "number"
+              ? data.totalCount
+              : data.products?.length || 0
+          )
+          setLoading(false)
+        }
+      } catch (err: any) {
+        if (err.name !== "AbortError" && activeReq.current === currentId) {
+          console.error("[useShopifyLiveSearch] Error:", err)
+          setError(err.message || "Failed to search products")
+          setResults([])
+          setLoading(false)
+        }
+      }
+    }, debounceMs)
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [query, debounceMs, activeReq])
+
+  return { results, loading, totalCount, error }
+}
+

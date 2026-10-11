@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { CartItem, Product } from "@/types/ecommerce"
+import { isSafeShopifyCheckoutUrl } from "@/lib/security/schemas"
 
 interface CartContextType {
   items: CartItem[]
@@ -236,7 +237,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const savedCheckoutUrl = localStorage.getItem(SHOPIFY_CHECKOUT_URL_KEY)
       if (savedCartId) {
         setShopifyCartId(savedCartId)
-        if (savedCheckoutUrl) {
+        if (savedCheckoutUrl && isSafeShopifyCheckoutUrl(savedCheckoutUrl)) {
           setCheckoutUrl(savedCheckoutUrl)
         }
 
@@ -250,7 +251,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           .then((data) => {
             if (data.cart) {
               setItems(mapShopifyCartToCartItems(data.cart))
-              if (data.cart.checkoutUrl) {
+              if (data.cart.checkoutUrl && isSafeShopifyCheckoutUrl(data.cart.checkoutUrl)) {
                 setCheckoutUrl(data.cart.checkoutUrl)
               }
             } else {
@@ -516,7 +517,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const redirectToCheckout = () => {
     if (typeof window !== "undefined") {
-      if (checkoutUrl) {
+      if (checkoutUrl && isSafeShopifyCheckoutUrl(checkoutUrl)) {
         window.location.href = checkoutUrl
       } else {
         window.location.href = "/cart"

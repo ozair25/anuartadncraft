@@ -23,6 +23,7 @@ export interface Product {
   thumbnail: string
   image?: string
   stock: number
+  inStock?: boolean
   category: string
   subcategory?: string // Reserved for future client-provided subcategories
   collection?: string
@@ -159,9 +160,11 @@ export interface ContactEnquiry {
   id: string
   name: string
   email: string
+  phone?: string
   subject: string
   message: string
   date: string
+  createdAt?: string
   status: 'New' | 'Replied' | 'Archived'
 }
 

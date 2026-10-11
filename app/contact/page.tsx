@@ -28,12 +28,35 @@ export default function ContactPage() {
     message: "",
   })
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
   const [cartOpen, setCartOpen] = useState(false)
   const [bookModalOpen, setBookModalOpen] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.name && (formData.email || formData.phone) && formData.message) {
+    if (!formData.name || (!formData.email && !formData.phone) || !formData.message) {
+      setFormError("Please provide your name, phone number, and message.")
+      return
+    }
+
+    setSubmitting(true)
+    setFormError(null)
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        setFormError(data.error || "Failed to send note. Please try again.")
+        setSubmitting(false)
+        return
+      }
+
       addEnquiry(formData)
       setSubmitted(true)
       setFormData({
@@ -43,6 +66,11 @@ export default function ContactPage() {
         subject: "Art Supplies & Workshop Inquiry",
         message: "",
       })
+    } catch {
+      addEnquiry(formData)
+      setSubmitted(true)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -252,12 +280,30 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    {/* Anti-spam honeypot */}
+                    <input
+                      type="text"
+                      name="website"
+                      value=""
+                      onChange={() => {}}
+                      style={{ display: "none" }}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+
+                    {formError && (
+                      <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-700">
+                        {formError}
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 rounded-full bg-[#7c2d8a] hover:bg-[#682274] px-8 py-3.5 text-xs font-bold text-white shadow-md hover:scale-105 transition-all cursor-pointer"
+                      disabled={submitting}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#7c2d8a] hover:bg-[#682274] px-8 py-3.5 text-xs font-bold text-white shadow-md hover:scale-105 transition-all cursor-pointer disabled:opacity-60"
                     >
                       <Send className="h-4 w-4" />
-                      <span>Submit Inquiry</span>
+                      <span>{submitting ? "Sending Note..." : "Submit Inquiry"}</span>
                     </button>
                   </form>
                 )}

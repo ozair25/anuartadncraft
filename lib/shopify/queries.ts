@@ -107,6 +107,26 @@ export const GET_ALL_PRODUCTS_PAGINATED_QUERY = `
   }
 `
 
+export const SEARCH_PRODUCTS_QUERY = `
+  ${PRODUCT_FRAGMENT}
+  query SearchProducts($query: String!, $first: Int = 24, $cursor: String) {
+    search(query: $query, types: [PRODUCT], first: $first, after: $cursor) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      edges {
+        node {
+          ... on Product {
+            ...ProductDetails
+          }
+        }
+      }
+    }
+  }
+`
+
 export const GET_PRODUCT_BY_HANDLE_QUERY = `
   ${PRODUCT_FRAGMENT}
   query GetProductByHandle($handle: String!) {

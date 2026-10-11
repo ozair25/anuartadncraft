@@ -18,7 +18,7 @@ export function CuratedCollections() {
   const collections =
     shopifyCollections && shopifyCollections.length >= 2
       ? shopifyCollections.slice(0, 4).map((c, i) => ({
-          title: c.name,
+          title: c.title,
           slug: c.slug,
           img: c.image || DEFAULT_COLLECTIONS[i % DEFAULT_COLLECTIONS.length].img,
         }))

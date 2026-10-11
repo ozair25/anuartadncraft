@@ -17,27 +17,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 const AUTH_STORAGE_KEY = "anu_arts_auth_user"
 
-const MOCK_DEFAULT_USER: UserProfile = {
-  id: "usr-1",
-  email: "sayedozair25@gmail.com",
-  displayName: "Ozair Sayed",
-  role: "user",
-  phone: "+91 98765 43210",
-  createdAt: "2026-01-01T00:00:00Z",
-  addresses: [
-    {
-      id: "addr-1",
-      name: "Ozair Sayed",
-      phone: "+91 98765 43210",
-      street: "102 Art Studio Enclave, Bandra West",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400050",
-      isDefault: true,
-    },
-  ],
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [mounted, setMounted] = useState(false)
@@ -47,14 +26,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem(AUTH_STORAGE_KEY)
       if (saved) {
-        setUser(JSON.parse(saved))
+        const parsed = JSON.parse(saved)
+        if (parsed && typeof parsed === "object" && parsed.id && parsed.email) {
+          setUser(parsed)
+        } else {
+          setUser(null)
+        }
       } else {
-        // Logged in as demo admin by default
-        setUser(MOCK_DEFAULT_USER)
+        setUser(null)
       }
-    } catch (e) {
-      console.error("Failed to load auth user", e)
-      setUser(MOCK_DEFAULT_USER)
+    } catch {
+      setUser(null)
     }
   }, [])
 
@@ -68,12 +50,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, mounted])
 
-  const login = (email: string, role: "user" | "admin" = "user") => {
+  const login = (email: string, _role: "user" | "admin" = "user") => {
+    const cleanEmail = email.trim().toLowerCase()
     const newUser: UserProfile = {
       id: "usr-" + Date.now(),
-      email,
-      displayName: email.split("@")[0],
-      role,
+      email: cleanEmail,
+      displayName: cleanEmail.split("@")[0] || "Customer",
+      role: "user", // Customers are strictly given "user" role
       addresses: [],
       createdAt: new Date().toISOString(),
     }
