@@ -204,9 +204,9 @@ export function SiteHeader({
       </div>
 
       {/* 2. Main Navigation Bar */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 px-3 py-2 sm:px-6 md:px-8 md:py-2.5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-1.5 sm:gap-4 px-3 py-2 sm:px-6 md:px-8 md:py-2.5">
         {/* Brand Logo (Left) */}
-        <div className="flex items-center gap-2 shrink-0 py-1">
+        <div className="flex items-center min-w-0 shrink py-0.5">
           <BrandLogo size="lg" showTagline={false} />
         </div>
 
@@ -345,16 +345,16 @@ export function SiteHeader({
         </nav>
 
         {/* Right Section: Shop Button, Cart Button & Mobile Menu Button */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 pl-1">
           {/* Quick Mobile Shop Categories Trigger */}
           <button
             type="button"
             onClick={() => setShopCategoryDrawerOpen(true)}
-            className="lg:hidden min-h-[38px] px-3 flex items-center gap-1 text-stone-800 hover:text-[#7c2d8a] cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors shadow-2xs touch-manipulation text-xs font-bold"
+            className="lg:hidden min-h-[34px] sm:min-h-[38px] px-2 sm:px-3 flex items-center gap-1 text-stone-800 hover:text-[#7c2d8a] cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors shadow-2xs touch-manipulation text-[11px] sm:text-xs font-bold"
             aria-label="Open Shop categories menu"
             title="Browse Shop Categories"
           >
-            <ShoppingBag className="h-3.5 w-3.5 text-[#7c2d8a]" />
+            <ShoppingBag className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#7c2d8a]" />
             <span>Shop</span>
           </button>
 
@@ -362,7 +362,7 @@ export function SiteHeader({
           <button
             type="button"
             onClick={handleCartClick}
-            className="relative min-w-[40px] min-h-[40px] flex items-center justify-center text-stone-700 hover:text-[#7c2d8a] cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors shadow-2xs touch-manipulation"
+            className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-stone-700 hover:text-[#7c2d8a] cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors shadow-2xs touch-manipulation shrink-0"
             aria-label={`Shopping cart with ${totalItems} items`}
             title="View Shopping Cart"
           >
@@ -383,16 +383,16 @@ export function SiteHeader({
               e.stopPropagation()
               setMobileOpen((prev) => !prev)
             }}
-            className="relative z-50 min-w-[44px] min-h-[44px] flex items-center justify-center text-stone-900 hover:text-[#7c2d8a] lg:hidden cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 active:bg-purple-200 border border-purple-200 transition-colors shadow-2xs touch-manipulation"
+            className="relative z-50 w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center text-stone-900 hover:text-[#7c2d8a] lg:hidden cursor-pointer rounded-full bg-purple-50 hover:bg-purple-100 active:bg-purple-200 border border-purple-200 transition-colors shadow-2xs touch-manipulation shrink-0"
             aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav-modal"
             title={mobileOpen ? "Close Menu" : "Open Menu"}
           >
             {mobileOpen ? (
-              <X className="h-6 w-6 text-[#7c2d8a]" />
+              <X className="h-5 w-5 sm:h-6 sm:w-6 text-[#7c2d8a]" />
             ) : (
-              <Menu className="h-6 w-6 text-[#7c2d8a]" />
+              <Menu className="h-5 w-5 sm:h-6 sm:w-6 text-[#7c2d8a]" />
             )}
           </button>
         </div>

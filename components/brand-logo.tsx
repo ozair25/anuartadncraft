@@ -34,12 +34,12 @@ export function BrandLogo({
 
   const containerClasses =
     size === "sm"
-      ? "h-9 sm:h-10 w-auto"
+      ? "h-8 sm:h-9 md:h-10 w-auto"
       : size === "lg"
-      ? "h-14 sm:h-16 w-auto"
+      ? "h-10 sm:h-14 md:h-16 w-auto"
       : size === "xl"
-      ? "h-18 sm:h-20 w-auto"
-      : "h-12 sm:h-13 w-auto"
+      ? "h-14 sm:h-18 md:h-20 w-auto"
+      : "h-9 sm:h-12 md:h-13 w-auto"
 
   return (
     <Link
@@ -57,10 +57,9 @@ export function BrandLogo({
           <img
             src={LOGO_SRC}
             alt="Anu Arts & Craft"
-            className="h-full w-auto object-contain transition-all duration-300 border-0 shadow-none"
+            className="h-full w-auto max-w-[135px] xs:max-w-[160px] sm:max-w-[240px] md:max-w-[260px] object-contain transition-all duration-300 border-0 shadow-none"
             style={{
               maxHeight: heightStyle.maxHeight,
-              maxWidth: heightStyle.maxWidth,
             }}
             loading="eager"
             onError={(e) => {

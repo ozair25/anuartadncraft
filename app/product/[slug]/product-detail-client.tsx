@@ -53,6 +53,7 @@ export function ProductDetailClient({
 
   const {
     addItem,
+    buyNow,
     isCartOpen,
     closeCart,
     isLoadingCart,
@@ -121,10 +122,7 @@ export function ProductDetailClient({
       }
     }
 
-    const success = await addItem(productToAdd, quantity, selectedOptionsMap)
-    if (success) {
-      redirectToCheckout()
-    }
+    await buyNow(productToAdd, quantity, selectedOptionsMap)
   }
 
   const relatedProducts = initialRelatedProducts

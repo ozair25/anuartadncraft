@@ -92,7 +92,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   disabled={isLoadingCart}
-                  onClick={redirectToCheckout}
+                  onClick={() => redirectToCheckout()}
                   className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary py-3 px-6 text-xs font-bold text-primary-foreground shadow hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
                 >
                   {isLoadingCart ? (
