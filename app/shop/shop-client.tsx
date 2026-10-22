@@ -143,7 +143,7 @@ export function ShopClient({
     products: allProducts,
     loading: isLoadingProducts,
     error: shopifyError,
-  } = useShopifyProducts({ initialProducts })
+  } = useShopifyProducts({ initialProducts, fetchAll: true })
 
   const {
     collections: shopifyCollections,

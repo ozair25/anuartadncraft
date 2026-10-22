@@ -4,7 +4,7 @@ import { Product } from "@/types/ecommerce"
 
 // Revalidate homepage every 60 seconds (Incremental Static Regeneration)
 // Ensures instant sub-50ms TTFB while maintaining fresh Shopify catalog
-export const revalidate = 60
+export const revalidate = 3600
 
 export default async function Page() {
   let products: Product[] = []

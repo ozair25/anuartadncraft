@@ -7,6 +7,10 @@ export function useShopifyProducts(options?: {
   collection?: string
   query?: string
   initialProducts?: Product[]
+  /** Pass true to always fetch the full catalog from /api/shopify/products even
+   *  when initialProducts is already non-empty. Only shop-client.tsx needs this
+   *  because the server now seeds only the first 48 products for ISR efficiency. */
+  fetchAll?: boolean
 }) {
   const [products, setProducts] = useState<Product[]>(options?.initialProducts || [])
   const [loading, setLoading] = useState<boolean>(
@@ -24,11 +28,20 @@ export function useShopifyProducts(options?: {
   useEffect(() => {
     let isMounted = true
 
-    // Skip redundant client fetch if initial products already populated and no sub-filters requested
-    if (options?.initialProducts && options.initialProducts.length > 0 && !options.collection && !options.query) {
+    // Skip the client-side catalog fetch when the server already supplied a complete
+    // product list, unless the caller opts in with fetchAll:true. Only shop-client.tsx
+    // passes fetchAll:true because its server render is seeded with only 48 products.
+    if (
+      options?.initialProducts &&
+      options.initialProducts.length > 0 &&
+      !options.collection &&
+      !options.query &&
+      !options.fetchAll
+    ) {
       setLoading(false)
       return
     }
+
 
     async function fetchProducts() {
       try {

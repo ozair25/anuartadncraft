@@ -65,7 +65,7 @@ async function fetchAllProductsFromShopify(query?: string): Promise<Product[]> {
         cursor,
         query: query || undefined,
       },
-      revalidate: 180,
+      revalidate: 3600,
     })
 
     if (response.errors && response.errors.length > 0) {
@@ -243,7 +243,7 @@ export const searchShopifyProducts = cache(
           first: limit,
           cursor: options.cursor || undefined,
         },
-        revalidate: 60,
+        revalidate: 3600,
       })
 
       if (response.errors && response.errors.length > 0) {
@@ -352,7 +352,7 @@ export const getProductByHandle = cache(async (handle: string): Promise<Product 
   }>({
     query: GET_PRODUCT_BY_HANDLE_QUERY,
     variables: { handle },
-    revalidate: 60,
+    revalidate: 3600,
   })
 
   if (response.errors && response.errors.length > 0) {
@@ -397,7 +397,7 @@ export const getProductsByCollection = cache(async (
       handle: collectionHandle,
       first,
     },
-    revalidate: 60,
+    revalidate: 3600,
   })
 
   if (response.errors && response.errors.length > 0) {
@@ -436,7 +436,7 @@ export const getCollections = cache(async (first = 100): Promise<Collection[]> =
     }>({
       query: GET_COLLECTIONS_QUERY,
       variables: { first },
-      revalidate: 300,
+      revalidate: 3600,
     })
 
     if (

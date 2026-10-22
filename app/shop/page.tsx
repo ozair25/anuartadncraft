@@ -4,7 +4,7 @@ import { Metadata } from "next"
 import { JsonLd } from "@/components/seo/json-ld"
 import { SITE_URL, SITE_NAME, getBreadcrumbListSchema } from "@/lib/seo/config"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: "Shop Art & Craft Supplies, DIY Kits & Tools",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 
 export default async function ShopPage() {
   const [initialProducts, initialCollections] = await Promise.all([
-    getAllProducts({ fetchAll: true }).catch(() => []),
+    getAllProducts({ first: 48 }).catch(() => []),
     getCollections().catch(() => []),
   ])
 

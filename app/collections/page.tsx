@@ -8,7 +8,7 @@ import {
   getBreadcrumbListSchema,
 } from "@/lib/seo/config"
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: "Curated Art Collections & Craft Supply Bundles",
