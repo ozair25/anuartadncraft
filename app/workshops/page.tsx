@@ -70,8 +70,8 @@ const ALL_WORKSHOPS: WorkshopItem[] = [
     includes: "Workshop kit and guidance",
     tutorialAccess: "Lifetime access to tutorials after enrollment",
     mode: "Online workshop",
-    image: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
-    secondaryImage: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_1_ftgwa9.jpg",
+    image: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
+    secondaryImage: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_1_ftgwa9.jpg",
     description: "Learn the art of creating a lotus pond from scratch. Learn how to make clay embellishments, paint the elements, and complete the artwork with a resin pour.",
     highlights: [
       "Format: Online workshop",

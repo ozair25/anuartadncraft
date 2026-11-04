@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       "Join creative workshops at Anu Arts & Craft Studio. Learn the Koi Fish and Resin Lotus Pond art with complete guidance, materials kit, and lifetime tutorial access.",
     images: [
       {
-        url: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
+        url: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
         width: 1200,
         height: 630,
         alt: "Koi Fish and Resin Lotus Pond Workshop - Anu Arts",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     description:
       "Join creative workshops at Anu Arts & Craft Studio. Learn the Koi Fish and Resin Lotus Pond art.",
     images: [
-      "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
+      "https://res.cloudinary.com/qg6jicjx/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
     ],
   },
 }
@@ -57,7 +57,7 @@ export default function WorkshopsLayout({
     description:
       "Learn the art of creating a lotus pond from scratch with clay embellishments, painting, and resin pouring with complete workshop kit and lifetime tutorial guidance.",
     image:
-      "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
+      "https://res.cloudinary.com/qg6jicjx/image/upload/v1791665950/WhatsApp_Image_2026-10-11_at_12.01.10_AM_b7fcnh.jpg",
     mode: "Online workshop",
   })
 

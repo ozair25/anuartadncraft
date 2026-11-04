@@ -64,7 +64,7 @@ export default function AboutPage() {
               <div className="relative w-full max-w-[460px] rounded-2xl overflow-hidden shadow-lg bg-white">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
+                  src="https://res.cloudinary.com/qg6jicjx/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
                   alt="Anu Arts Studio"
                   className="w-full h-auto block object-contain rounded-2xl"
                   referrerPolicy="no-referrer"

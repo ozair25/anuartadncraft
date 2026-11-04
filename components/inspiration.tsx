@@ -3,8 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 
-const CLOUDINARY_LEFT = "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784923409/left_fjows4.png"
-const CLOUDINARY_RIGHT = "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784923405/right_d12jcm.png"
+const CLOUDINARY_LEFT = "https://res.cloudinary.com/qg6jicjx/image/upload/v1784923409/left_fjows4.png"
+const CLOUDINARY_RIGHT = "https://res.cloudinary.com/qg6jicjx/image/upload/v1784923405/right_d12jcm.png"
 
 export function Inspiration() {
   const [leftImgSrc, setLeftImgSrc] = useState(CLOUDINARY_LEFT)

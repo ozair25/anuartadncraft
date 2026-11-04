@@ -6,10 +6,10 @@ import { RibbonLabel } from "@/components/ribbon-label"
 import { useShopifyCollections } from "@/lib/shopify/hooks"
 
 const DEFAULT_COLLECTIONS = [
-  { title: "Acrylic Painting Essentials", slug: "acrylic-painting-essentials", img: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784974074/download_20_eq14mc.jpg" },
-  { title: "DIY Craft Kits For All Ages", slug: "diy-craft-kits-for-all-ages", img: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784974233/184K_views_2_3K_reactions___Ideas_con_botellas_recicladas_%EF%B8%8F____fblifestyle___Arte_Sano_Creativo___Facebook_pryqci.jpg" },
-  { title: "Art Journal Essentials", slug: "art-journal-essentials", img: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784974074/download_22_raxeud.jpg" },
-  { title: "Home Decor & More", slug: "home-decor-and-more", img: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784974074/download_23_oi3f4o.jpg" },
+  { title: "Acrylic Painting Essentials", slug: "acrylic-painting-essentials", img: "https://res.cloudinary.com/qg6jicjx/image/upload/v1784974074/download_20_eq14mc.jpg" },
+  { title: "DIY Craft Kits For All Ages", slug: "diy-craft-kits-for-all-ages", img: "https://res.cloudinary.com/qg6jicjx/image/upload/v1784974233/184K_views_2_3K_reactions___Ideas_con_botellas_recicladas_%EF%B8%8F____fblifestyle___Arte_Sano_Creativo___Facebook_pryqci.jpg" },
+  { title: "Art Journal Essentials", slug: "art-journal-essentials", img: "https://res.cloudinary.com/qg6jicjx/image/upload/v1784974074/download_22_raxeud.jpg" },
+  { title: "Home Decor & More", slug: "home-decor-and-more", img: "https://res.cloudinary.com/qg6jicjx/image/upload/v1784974074/download_23_oi3f4o.jpg" },
 ]
 
 export function CuratedCollections() {

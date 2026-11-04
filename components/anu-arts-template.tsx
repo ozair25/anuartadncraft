@@ -65,7 +65,7 @@ export const diyKitCategories = [
     title: "Candle Making Kits",
     desc: "Complete DIY kits with pure soy wax, soothing aromas, cotton wicks & aesthetic jars.",
     icon: Flame,
-    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791483128/DIY_Candle_Making_Kit_Collection_o6v40a.png",
+    imageUrl: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791483128/DIY_Candle_Making_Kit_Collection_o6v40a.png",
     iconBg: "bg-amber-100 text-amber-700 border border-amber-200/60",
     badgeBg: "from-amber-500/20 via-orange-400/10 to-transparent",
   },
@@ -74,7 +74,7 @@ export const diyKitCategories = [
     title: "Resin Art Kits",
     desc: "Crystal epoxy ocean waves, glossy geode coasters, art trays & preservation materials.",
     icon: Sparkles,
-    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791485871/Resin_Craft_Kits_and_Floral_Creations_mgnlho.png",
+    imageUrl: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791485871/Resin_Craft_Kits_and_Floral_Creations_mgnlho.png",
     iconBg: "bg-purple-100 text-[#7c2d8a] border border-purple-200/60",
     badgeBg: "from-purple-500/20 via-purple-400/10 to-transparent",
   },
@@ -83,7 +83,7 @@ export const diyKitCategories = [
     title: "Mandala Art Kits",
     desc: "Dotting tools, pre-marked MDF boards, vibrant acrylic paints & practice sheets.",
     icon: CircleDot,
-    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791485787/Vibrant_Mandala_Craft_Kit_Showcase_wr7jl5.png",
+    imageUrl: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791485787/Vibrant_Mandala_Craft_Kit_Showcase_wr7jl5.png",
     iconBg: "bg-pink-100 text-[#d92672] border border-pink-200/60",
     badgeBg: "from-pink-500/20 via-pink-400/10 to-transparent",
   },
@@ -92,7 +92,7 @@ export const diyKitCategories = [
     title: "Flower Making Kits",
     desc: "Fine Italian crepe papers, floral wire, shaping tools & templates for lifelike everlasting blooms.",
     icon: Flower2,
-    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791483127/i_craft_Chenille_Stems_Collection_kuqwxy.png",
+    imageUrl: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791483127/i_craft_Chenille_Stems_Collection_kuqwxy.png",
     iconBg: "bg-rose-100 text-rose-700 border border-rose-200/60",
     badgeBg: "from-rose-500/20 via-pink-400/10 to-transparent",
   },
@@ -101,7 +101,7 @@ export const diyKitCategories = [
     title: "Kids Paint Kits",
     desc: "Exciting, non-toxic guided art kits with canvas boards, washable paints & creative brushes.",
     icon: Smile,
-    imageUrl: "https://res.cloudinary.com/dtrvyelcg/image/upload/v1791485787/Colourful_Kids_DIY_Craft_Kit_Collage_ngsgkt.png",
+    imageUrl: "https://res.cloudinary.com/qg6jicjx/image/upload/v1791485787/Colourful_Kids_DIY_Craft_Kit_Collage_ngsgkt.png",
     iconBg: "bg-gradient-to-br from-amber-100 to-orange-100 text-amber-800 border border-amber-200/60",
     badgeBg: "from-amber-500/20 via-orange-400/10 to-transparent",
   },
@@ -835,7 +835,7 @@ export function AnuArtsTemplate({
             ) : (
               <div className="relative w-full max-w-[460px] rounded-2xl overflow-hidden shadow-lg bg-white">
                 <img
-                  src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
+                  src="https://res.cloudinary.com/qg6jicjx/image/upload/v1790512023/anu_studio_ppg0ne.jpg"
                   alt="Anu Arts & Craft Studio Environment"
                   className="w-full h-auto block object-contain rounded-2xl"
                   referrerPolicy="no-referrer"

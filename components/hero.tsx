@@ -23,16 +23,16 @@ export function Hero({ onExploreWorkshops, onVisitStore, onContact }: HeroProps)
           {/* Mobile View Hero Banner (<640px) */}
           <source
             media="(max-width: 639px)"
-            srcSet="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790521179/ChatGPT_Image_Sep_27_2026_08_29_18_PM_tendlx.png"
+            srcSet="https://res.cloudinary.com/qg6jicjx/image/upload/v1790521179/ChatGPT_Image_Sep_27_2026_08_29_18_PM_tendlx.png"
           />
           {/* Desktop & Tablet Hero Banner (>=640px) */}
           <source
             media="(min-width: 640px)"
-            srcSet="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790518333/ChatGPT_Image_Sep_27_2026_07_34_44_PM_o155pl.png"
+            srcSet="https://res.cloudinary.com/qg6jicjx/image/upload/v1790518333/ChatGPT_Image_Sep_27_2026_07_34_44_PM_o155pl.png"
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://res.cloudinary.com/dtrvyelcg/image/upload/v1790518333/ChatGPT_Image_Sep_27_2026_07_34_44_PM_o155pl.png"
+            src="https://res.cloudinary.com/qg6jicjx/image/upload/v1790518333/ChatGPT_Image_Sep_27_2026_07_34_44_PM_o155pl.png"
             alt="Anu Arts & Craft Studio Hero Banner"
             className="w-full h-auto max-h-[85vh] sm:max-h-[720px] object-cover object-center block"
             referrerPolicy="no-referrer"

@@ -13,7 +13,7 @@ const categories = [
 ]
 
 export function ShopByCategory() {
-  const bgImageUrl = "https://res.cloudinary.com/dtrvyelcg/image/upload/v1784128276/%D0%9E%D0%B1%D0%BE%D0%B8_dxm3wn.jpg"
+  const bgImageUrl = "https://res.cloudinary.com/qg6jicjx/image/upload/v1784128276/%D0%9E%D0%B1%D0%BE%D0%B8_dxm3wn.jpg"
 
   return (
     <section className="relative overflow-hidden py-16 md:py-24">
