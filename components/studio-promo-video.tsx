@@ -4,9 +4,9 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { Play, Volume2, VolumeX } from "lucide-react"
 
 const DEFAULT_VIDEO_URL =
-  "https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.mp4"
+  "https://res.cloudinary.com/qg6jicjx/video/upload/c_limit,q_auto,w_1280/anuarts.vid1_1_o3f0w5.mp4"
 const DEFAULT_POSTER_URL =
-  "https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.jpg"
+  "https://res.cloudinary.com/qg6jicjx/video/upload/anuarts.vid1_1_o3f0w5.jpg"
 
 interface StudioPromoVideoProps {
   className?: string

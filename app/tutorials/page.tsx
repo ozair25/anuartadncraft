@@ -156,8 +156,8 @@ export default function TutorialsPage() {
               <div className="lg:col-span-5 flex justify-center">
                 <StudioPromoVideo
                   compact
-                  videoUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472117/anuarts.vid2_1_qw8cpb.mp4"
-                  posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472117/anuarts.vid2_1_qw8cpb.jpg"
+                  videoUrl="https://res.cloudinary.com/qg6jicjx/video/upload/c_limit,q_auto,w_1280/anuarts.vid2_1_qw8cpb.mp4"
+                  posterUrl="https://res.cloudinary.com/qg6jicjx/video/upload/anuarts.vid2_1_qw8cpb.jpg"
                   title="Behind the Craft at Anu Arts"
                   subtitle="Live workshop vibes, masterclass demonstrations & authentic supplies in Indore"
                 />
@@ -764,6 +764,7 @@ export default function TutorialsPage() {
                       controls
                       autoPlay
                       playsInline
+                      preload="none"
                       className="w-full h-full object-contain bg-black"
                     />
                   </div>

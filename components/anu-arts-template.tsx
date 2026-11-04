@@ -827,8 +827,8 @@ export function AnuArtsTemplate({
             {aboutMediaType === "video" ? (
               <StudioPromoVideo
                 compact
-                videoUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.mp4"
-                posterUrl="https://res.cloudinary.com/dtrvyelcg/video/upload/v1791472095/anuarts.vid1_1_o3f0w5.jpg"
+                videoUrl="https://res.cloudinary.com/qg6jicjx/video/upload/c_limit,q_auto,w_1280/anuarts.vid1_1_o3f0w5.mp4"
+                posterUrl="https://res.cloudinary.com/qg6jicjx/video/upload/anuarts.vid1_1_o3f0w5.jpg"
                 title="Inside Anu Arts & Craft Studio"
                 subtitle="Workshops, craft supplies & creative energy in Indore"
               />
